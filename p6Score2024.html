@@ -1,14 +1,51 @@
 <!DOCTYPE html>
-
 <html>
-   <head>
-     <title>สะสมคะแนน ป.6 ปี2024</title>
+<title>วิทยาการณ์คำนวณชั้นป.6</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-      <base target="_top">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
 
-   </head>
-   <body>
-      <!-- <p align="Center"><img width="20px" src="https://cdn-icons-png.flaticon.com/512/6569/6569138.png"><font size="3" color="red"> พรุ่งนี้ (พุธ, 26 มิ.ย. 67) ทดสอบความเข้าใจหลังเรียน หน่วยที่ 1 การแก้ปัญหาเชิงตรรกกะ </font></p> -->
-     <p align="Center"> <iframe style="position: absolute;top: 15;left: 0;width: 100%;height: 100%;border: 0;" src="https://script.google.com/macros/s/AKfycbyUBCoSohQC80qkdeZH1kOyaYbEnAwPNhMLFAfPFKAsf88o-c0Z0cITDjYhe5I0j_L_Hw/exec"></iframe></p>
-   </body>
+<div class="w3-container">
+  <h2>กระดานกิจกรรม</h2>
+  <p>ยังไม่มีกิจกรรมพิเศษ..</p>
+
+  <div class="w3-bar w3-black">
+    <button class="w3-bar-item w3-button tablink w3-red" onclick="openTab(event,'Score')">ดูคะแนน ล่าสุด</button>
+    <button class="w3-bar-item w3-button tablink" onclick="openTab(event,'Shop')">ร้านค้า</button>
+    <button class="w3-bar-item w3-button tablink" onclick="openTab(event,'Log')">บันทึกร้านค้า</button>
+  </div>
+  
+  <div id="Score" class="w3-container w3-border tab">
+        <p><iframe style="position: absolute;top: 15;left: 0;width: 100%;height: 100%;border: 0;" src="https://script.google.com/macros/s/AKfycbyUBCoSohQC80qkdeZH1kOyaYbEnAwPNhMLFAfPFKAsf88o-c0Z0cITDjYhe5I0j_L_Hw/exec"></iframe></p>
+  </div>
+
+  <div id="Shop" class="w3-container w3-border tab" style="display:none">
+    <h2>ร้านค้า</h2>
+    <p>Coming Soon..</p> 
+  </div>
+
+  <div id="Log" class="w3-container w3-border tab" style="display:none">
+    <h2>บันทึกสินค้าเข้า / ขายสินค้า</h2>
+    <p>อยู่ระหว่างการปรับปรุง!</p>
+  </div>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("tab");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " w3-red";
+}
+</script>
+
+</body>
 </html>
+
