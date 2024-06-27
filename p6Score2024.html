@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <style>
-div.gallery {
-  margin: 5px;
-  border: 1px solid #ccc;
-  float: left;
-  width: 180px;
-}
 
-div.gallery:hover {
-  border: 1px solid #777;
-}
-
-div.gallery img {
-  width: 100%;
-  height: auto;
-}
-
-div.desc {
-  padding: 15px;
-  text-align: center;
-}
-</style>
 <title>วิทยาการณ์คำนวณชั้นป.6</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!-- Google font -->
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+		<!-- Bootstrap -->
+		<link type="text/css" rel="stylesheet" href="bootstrap.min.css"/>
+
+		<!-- Slick -->
+		<link type="text/css" rel="stylesheet" href="slick.css"/>
+		<link type="text/css" rel="stylesheet" href="slick-theme.css"/>
+
+		<!-- nouislider -->
+		<link type="text/css" rel="stylesheet" href="nouislider.min.css"/>
+
+		<!-- Font Awesome Icon -->
+		<link rel="stylesheet" href="font-awesome.min.css">
+
+		<!-- Custom stlylesheet -->
+		<link type="text/css" rel="stylesheet" href="style.css"/>
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+    
   </head>
 <body>
 
@@ -45,37 +50,90 @@ div.desc {
 
   <div id="Shop" class="w3-container w3-border tab" style="display:none">
     <h2>ร้านค้า</h2>
-    <p><div class="gallery">
-  
-    <img src="https://kkosses.github.io/web/1.png" alt="สติ๊กเกอร์ป้ายชื่อ" width="600" height="400">
-  
-  <div class="desc">แลก 3 คะแนน</div>
-  <div class="desc"><font color="green"><b>In Stock  </b> </font><br> 1คน/5อัน/1สัปดาห์ <br>และต้องจองคิวล่วงหน้า</div>
-</div>
+    <p>
+      <!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
 
-<div class="gallery">
- 
-    <img src="https://kkosses.github.io/web/3.png" alt="เซ็ตดินสอไม้" width="600" height="400">
+			
 
-  <div class="desc">ชิ้นละ 15 คะแนน</div>
-  <div class="desc"><font color="green"><b>In Stock</b> </font><br><br> 1คน/1อัน/1สัปดาห์</div>
-</div>
+					<!-- Products tab & slick -->
+					<div class="col-md-12">
+						<div class="row">
+							<div class="products-tabs">
+								<!-- tab -->
+								<div id="tab1" class="tab-pane active">
+									<div class="products-slick" data-nav="#slick-nav-1">
+										<!-- product -->
+										<div class="product">
+											<div class="product-img">
+												<img src="https://kkosses.github.io/web/1.png" alt="">
+												
+											</div>
+											<div class="product-body">
+													<h3 class="product-category">In Stocks</h3>					
+												<h3 class="product-name">1คน/2อัน/1สัปดาห์</h3>
+													
+												<button class="primary-btn order-submit">
+												<i class="fa fa-shopping-cart"> </i>  7 คะแนน</button>
 
-<div class="gallery">
+											
+												
+												
+											</div>
+										
+										</div>
+										<!-- /product -->
+										<!-- product -->
+										<div class="product">
+											<div class="product-img">
+												<img src="https://kkosses.github.io/web/2.png" alt="">
+												
+											</div>
+											<div class="product-body">
+												<h3 class="product-category">2ชิ้น/สัปดาห์</h3>										
+												<h3 class="product-name">1คน/1อัน/32วัน</h3>
+													
+												<button class="primary-btn order-submit">
+												<i class="fa fa-shopping-cart"> </i>  100 คะแนน</button>
 
-    <img src="https://kkosses.github.io/web/4.png" alt="เซ็ตปากกา" width="600" height="400">
+											
+												
+												
+											</div>
+										
+										</div>
+										<!-- /product -->
 
-  <div class="desc">ชิ้นละ 15 คะแนน</div>
-  <div class="desc"><font color="green"><b>In Stock  </b> </font><br><br> 1คน/1อัน/1สัปดาห์</div>
-</div>
+										
+									</div>
+									<div id="slick-nav-1" class="products-slick-nav"></div>
+								</div>
+								<!-- /tab -->
+							</div>
+						</div>
+					</div>
+					<!-- Products tab & slick -->
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->
 
-<div class="gallery">
- 
-    <img src="https://kkosses.github.io/web/2.png" alt="คูปองอาหารว่างแสนอร่อย" width="600" height="400">
 
-  <div class="desc">แลก 150 คะแนน</div>
-  <div class="desc"><font color="blue"><b>2ใบ/สัปดาห์ </b> </font><br> 1คน/เดือน <br> มีอายุ5วัน ไม่นับวันหยุด</div>
-</div></p> 
+		<!-- jQuery Plugins -->
+		<script src="jquery.min.js"></script>
+		<script src="bootstrap.min.js"></script>
+		<script src="slick.min.js"></script>
+		<script src="nouislider.min.js"></script>
+		<script src="jquery.zoom.min.js"></script>
+		<script src="main.js"></script>
+
+    </p> 
   </div>
 
   <div id="Log" class="w3-container w3-border tab" style="display:none">
