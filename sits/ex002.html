@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="language" content="th">
+    <meta http-equiv="Content-Language" content="th">
+    <meta name="accept-charset" content="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="charset" content="utf-8">
+    <meta name="encoding" content="utf-8">
+    <title>เกมฝึกพิมพ์คอมพิวเตอร์</title>
+    <style>
+        /* Using only Tahoma font for Thai support */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Thai Language Support - Tahoma only */
+        :lang(th) {
+            font-family: 'Tahoma', sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Ensure proper Thai character rendering */
+        .thai-text {
+            font-family: 'Tahoma', sans-serif !important;
+            unicode-bidi: embed;
+            direction: ltr;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            unicode-bidi: embed;
+            direction: ltr;
+            font-feature-settings: "liga" 1, "kern" 1;
+            -webkit-text-stroke: 0.1px transparent;
+        }
+        
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        
+        .container {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-height: 80vh;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(45deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-content {
+            padding: 20px;
+            max-height: calc(80vh - 80px);
+            overflow-y: auto;
+        }
+        
+        .reward-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .reward-text {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+        }
+        
+        .reward-word {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+        
+        .reward-time {
+            color: #adb5bd;
+            font-size: 0.75rem;
+        }
+        
+        .no-rewards {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .game-area {
+            padding: 40px;
+        }
+        
+        .image-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .computer-image {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .word-display {
+            background: #f8f9ff;
+            border: 3px solid #e1e8ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .target-word {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+            font-family: 'Tahoma', sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            unicode-bidi: embed;
+            direction: ltr;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.3;
+        }
+        
+        .word-translation {
+            font-size: 1.4rem;
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 12px;
+            font-family: 'Tahoma', sans-serif;
+            font-weight: 500;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0px;
+            unicode-bidi: embed;
+            direction: ltr;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
+        }
+        
+        .word-description {
+            font-size: 1.1rem;
+            color: #2d3748;
+            line-height: 1.8;
+            margin-bottom: 12px;
+            font-family: 'Tahoma', sans-serif;
+            font-weight: 500;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0px;
+            word-spacing: 0px;
+            unicode-bidi: embed;
+            direction: ltr;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            text-align: center;
+        }
+        
+        .word-type {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-family: 'Tahoma', sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0px;
+            unicode-bidi: embed;
+            direction: ltr;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: nowrap;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .typing-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.8rem;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            font-family: 'Tahoma', sans-serif;
+            transition: all 0.3s ease;
+            text-align: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            unicode-bidi: embed;
+            direction: ltr;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            ime-mode: auto;
+            -webkit-ime-mode: auto;
+            line-height: 1.4;
+            font-weight: 500;
+            letter-spacing: 0px;
+        }
+        
+        .typing-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        
+        .typing-input.correct {
+            border-color: #48bb78;
+            background-color: #f0fff4;
+        }
+        
+        .typing-input.incorrect {
+            border-color: #f56565;
+            background-color: #fff5f5;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tahoma', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .feedback {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .feedback.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .feedback.success {
+            background: linear-gradient(45deg, #48bb78, #68d391);
+            color: white;
+        }
+        
+        .feedback.reward {
+            background: linear-gradient(45deg, #ed8936, #f6ad55);
+            color: white;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -30px, 0);
+            }
+            70% {
+                transform: translate3d(0, -15px, 0);
+            }
+            90% {
+                transform: translate3d(0, -4px, 0);
+            }
+        }
+        
+        .bounce {
+            animation: bounce 1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>🏆 ประวัติรางวัล</h3>
+                <p>รางวัลที่ได้รับ</p>
+            </div>
+            <div class="sidebar-content">
+                <div id="rewardHistory" class="reward-history">
+                    <div class="no-rewards">
+                        ยังไม่มีรางวัล<br>
+                        เริ่มเล่นเกมเลย! 🎮
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="header">
+                <h1>🖥️ เกมฝึกพิมพ์คอมพิวเตอร์</h1>
+                <p>ฝึกพิมพ์คำศัพท์คอมพิวเตอร์ ภาษาไทย-อังกฤษ</p>
+                <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
+                    🌐 รองรับภาษาไทย | Encoding: UTF-8 | ภาษา: ไทย-อังกฤษ
+                </div>
+            </div>
+        
+        <div class="game-area">
+            <!-- Image section hidden -->
+            <div class="image-section" style="display: none;">
+                <div class="computer-image" id="computerImage">💻</div>
+            </div>
+            
+            <div class="word-display">
+                <div class="target-word thai-text" id="targetWord">คอมพิวเตอร์</div>
+                <div class="word-translation thai-text" id="wordTranslation">Computer</div>
+                <div class="word-description thai-text" id="wordDescription">เครื่องคำนวณอิเล็กทรอนิกส์ที่ใช้ประมวลผลข้อมูล</div>
+                <div class="word-type thai-text" id="wordType">ฮาร์ดแวร์</div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" class="typing-input thai-text" id="typingInput" placeholder="พิมพ์คำที่แสดงด้านบน..." autocomplete="off" lang="th">
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" onclick="newWord()">คำใหม่</button>
+                <button class="btn btn-secondary" onclick="clearInput()">ล้างข้อความ</button>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="correctCount">0</div>
+                    <div class="stat-label">ถูกต้อง</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">ทั้งหมด</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="accuracy">0%</div>
+                    <div class="stat-label">ความแม่นยำ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const computerWords = [
+            // Hardware
+            { thai: 'คอมพิวเตอร์', english: 'Computer', icon: '💻', description: 'เครื่องคำนวณอิเล็กทรอนิกส์ที่ใช้ประมวลผลข้อมูล', type: 'ฮาร์ดแวร์' },
+            { thai: 'หน่วยประมวลผล', english: 'CPU', icon: '🔧', description: 'สมองของคอมพิวเตอร์ที่ทำหน้าที่ประมวลผลคำสั่ง', type: 'ฮาร์ดแวร์' },
+            { thai: 'หน่วยความจำ', english: 'Memory', icon: '💾', description: 'อุปกรณ์เก็บข้อมูลชั่วคราวสำหรับการประมวลผล', type: 'ฮาร์ดแวร์' },
+            { thai: 'ฮาร์ดดิสก์', english: 'Hard Disk', icon: '💿', description: 'อุปกรณ์เก็บข้อมูลถาวรในคอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'จอภาพ', english: 'Monitor', icon: '🖥️', description: 'อุปกรณ์แสดงผลภาพและข้อความจากคอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'แป้นพิมพ์', english: 'Keyboard', icon: '⌨️', description: 'อุปกรณ์ป้อนข้อมูลตัวอักษรและตัวเลข', type: 'ฮาร์ดแวร์' },
+            { thai: 'เมาส์', english: 'Mouse', icon: '🖱️', description: 'อุปกรณ์ชี้ตำแหน่งและคลิกบนหน้าจอ', type: 'ฮาร์ดแวร์' },
+            { thai: 'เครื่องพิมพ์', english: 'Printer', icon: '🖨️', description: 'อุปกรณ์พิมพ์เอกสารและรูปภาพออกมาเป็นกระดาษ', type: 'ฮาร์ดแวร์' },
+            { thai: 'ลำโพง', english: 'Speaker', icon: '🔊', description: 'อุปกรณ์ส่งเสียงออกมาจากคอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'ไมโครโฟน', english: 'Microphone', icon: '🎤', description: 'อุปกรณ์รับเสียงเข้าสู่คอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'กล้องเว็บแคม', english: 'Webcam', icon: '📹', description: 'กล้องถ่ายวิดีโอสำหรับการประชุมออนไลน์', type: 'ฮาร์ดแวร์' },
+            { thai: 'เมนบอร์ด', english: 'Motherboard', icon: '🔌', description: 'แผงวงจรหลักที่เชื่อมต่ออุปกรณ์ต่างๆ ในคอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'การ์ดจอ', english: 'Graphics Card', icon: '🎮', description: 'อุปกรณ์ประมวลผลภาพและกราฟิก', type: 'ฮาร์ดแวร์' },
+            { thai: 'แรม', english: 'RAM', icon: '💾', description: 'หน่วยความจำหลักที่เข้าถึงได้อย่างรวดเร็ว', type: 'ฮาร์ดแวร์' },
+            { thai: 'เพาเวอร์ซัพพลาย', english: 'Power Supply', icon: '🔋', description: 'อุปกรณ์จ่ายไฟฟ้าให้กับส่วนประกอบต่างๆ', type: 'ฮาร์ดแวร์' },
+            
+            // ซอฟท์แวร์
+            { thai: 'ระบบปฏิบัติการ', english: 'Operating System', icon: '💻', description: 'โปรแกรมหลักที่ควบคุมการทำงานของคอมพิวเตอร์', type: 'ซอฟท์แวร์' },
+            { thai: 'โปรแกรม', english: 'Program', icon: '📱', description: 'ชุดคำสั่งที่เขียนขึ้นเพื่อให้คอมพิวเตอร์ทำงาน', type: 'ซอฟท์แวร์' },
+            { thai: 'แอปพลิเคชัน', english: 'Application', icon: '📲', description: 'โปรแกรมที่ออกแบบมาเพื่อใช้งานเฉพาะด้าน', type: 'ซอฟท์แวร์' },
+            { thai: 'เว็บเบราว์เซอร์', english: 'Web Browser', icon: '🌐', description: 'โปรแกรมสำหรับเรียกดูเว็บไซต์บนอินเทอร์เน็ต', type: 'ซอฟท์แวร์' },
+            { thai: 'ไฟร์วอลล์', english: 'Firewall', icon: '🛡️', description: 'โปรแกรมป้องกันการเข้าถึงที่ไม่ได้รับอนุญาต', type: 'ซอฟท์แวร์' },
+            { thai: 'แอนตี้ไวรัส', english: 'Antivirus', icon: '🦠', description: 'โปรแกรมป้องกันและกำจัดไวรัสคอมพิวเตอร์', type: 'ซอฟท์แวร์' },
+            { thai: 'ไดรเวอร์', english: 'Driver', icon: '⚙️', description: 'โปรแกรมที่ช่วยให้ระบบปฏิบัติการสื่อสารกับฮาร์ดแวร์', type: 'ซอฟท์แวร์' },
+            { thai: 'อัปเดต', english: 'Update', icon: '🔄', description: 'การปรับปรุงโปรแกรมให้ใหม่และดีขึ้น', type: 'ซอฟท์แวร์' },
+            { thai: 'ดาวน์โหลด', english: 'Download', icon: '⬇️', description: 'การนำข้อมูลจากอินเทอร์เน็ตมาเก็บในเครื่อง', type: 'ซอฟท์แวร์' },
+            { thai: 'อัปโหลด', english: 'Upload', icon: '⬆️', description: 'การส่งข้อมูลจากเครื่องไปยังอินเทอร์เน็ต', type: 'ซอฟท์แวร์' },
+            
+            // เครือข่าย
+            { thai: 'อินเทอร์เน็ต', english: 'Internet', icon: '🌐', description: 'เครือข่ายคอมพิวเตอร์ทั่วโลกที่เชื่อมต่อกัน', type: 'เครือข่าย' },
+            { thai: 'เว็บไซต์', english: 'Website', icon: '🌍', description: 'หน้าเว็บที่มีข้อมูลและเนื้อหาต่างๆ', type: 'เครือข่าย' },
+            { thai: 'อีเมล', english: 'Email', icon: '📧', description: 'จดหมายอิเล็กทรอนิกส์ที่ส่งผ่านอินเทอร์เน็ต', type: 'เครือข่าย' },
+            { thai: 'ไวไฟ', english: 'WiFi', icon: '📶', description: 'เทคโนโลยีเชื่อมต่ออินเทอร์เน็ตแบบไร้สาย', type: 'เครือข่าย' },
+            { thai: 'เราเตอร์', english: 'Router', icon: '📡', description: 'อุปกรณ์กระจายสัญญาณอินเทอร์เน็ต', type: 'ฮาร์ดแวร์' },
+            { thai: 'เซิร์ฟเวอร์', english: 'Server', icon: '🖥️', description: 'คอมพิวเตอร์ที่ให้บริการข้อมูลแก่เครื่องอื่น', type: 'ฮาร์ดแวร์' },
+            { thai: 'คลาวด์', english: 'Cloud', icon: '☁️', description: 'บริการเก็บข้อมูลและประมวลผลบนอินเทอร์เน็ต', type: 'เครือข่าย' },
+            { thai: 'ดาต้าเบส', english: 'Database', icon: '🗄️', description: 'ระบบจัดเก็บและจัดการข้อมูลอย่างเป็นระบบ', type: 'ซอฟท์แวร์' },
+            
+            // คำศัพท์เพิ่มเติม
+            { thai: 'โซเชียลเน็ตเวิร์ก', english: 'Social Network', icon: '👥', description: 'เครือข่ายสังคมออนไลน์สำหรับการติดต่อสื่อสาร', type: 'เครือข่าย' },
+            { thai: 'ไฟล์', english: 'File', icon: '📄', description: 'เอกสารหรือข้อมูลที่เก็บไว้ในคอมพิวเตอร์', type: 'ซอฟท์แวร์' },
+            { thai: 'คุกกี้', english: 'Cookie', icon: '🍪', description: 'ข้อมูลเล็กๆ ที่เว็บไซต์เก็บไว้ในเบราว์เซอร์', type: 'เครือข่าย' },
+            { thai: 'เอชทีเอ็มแอล', english: 'HTML', icon: '🌐', description: 'ภาษาสำหรับสร้างหน้าเว็บไซต์', type: 'ซอฟท์แวร์' },
+            { thai: 'ยูอาร์แอล', english: 'URL', icon: '🔗', description: 'ที่อยู่เว็บไซต์บนอินเทอร์เน็ต', type: 'เครือข่าย' },
+            { thai: 'ซอฟท์แวร์', english: 'Software', icon: '💿', description: 'โปรแกรมและระบบที่ทำให้คอมพิวเตอร์ทำงานได้', type: 'ซอฟท์แวร์' },
+            { thai: 'ลบ', english: 'Delete', icon: '🗑️', description: 'การกำจัดไฟล์หรือข้อมูลออกจากระบบ', type: 'ซอฟท์แวร์' },
+            { thai: 'บุ๊กมาร์ก', english: 'Bookmarks', icon: '🔖', description: 'การบันทึกที่อยู่เว็บไซต์ที่ชื่นชอบ', type: 'ซอฟท์แวร์' },
+            { thai: 'แถบเครื่องมือ', english: 'Tool bar', icon: '🔧', description: 'แถบที่มีปุ่มเครื่องมือต่างๆ ในโปรแกรม', type: 'ซอฟท์แวร์' },
+            { thai: 'แถบงาน', english: 'Taskbar', icon: '📊', description: 'แถบด้านล่างหน้าจอที่แสดงโปรแกรมที่เปิดอยู่', type: 'ซอฟท์แวร์' },
+            { thai: 'เดสก์ท็อป', english: 'Desktop', icon: '🖥️', description: 'หน้าจอหลักของระบบปฏิบัติการ', type: 'ซอฟท์แวร์' },
+            { thai: 'โฟลเดอร์', english: 'Folder', icon: '📁', description: 'แฟ้มสำหรับจัดเก็บไฟล์ต่างๆ', type: 'ซอฟท์แวร์' },
+            { thai: 'ไอคอน', english: 'Icon', icon: '🎯', description: 'รูปภาพเล็กๆ ที่แทนโปรแกรมหรือไฟล์', type: 'ซอฟท์แวร์' },
+            { thai: 'ฮาร์ดแวร์', english: 'Hardware', icon: '🔩', description: 'ส่วนประกอบทางกายภาพของคอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'ข้อผิดพลาด', english: 'Error', icon: '❌', description: 'ปัญหาหรือความผิดพลาดในระบบ', type: 'ซอฟท์แวร์' },
+            { thai: 'ปรับปรุง', english: 'Update', icon: '🔄', description: 'การอัปเดตโปรแกรมให้เป็นเวอร์ชันใหม่', type: 'ซอฟท์แวร์' },
+            { thai: 'ดาวน์โหลด', english: 'Download', icon: '⬇️', description: 'การนำข้อมูลจากอินเทอร์เน็ตมาเก็บในเครื่อง', type: 'ซอฟท์แวร์' },
+            { thai: 'ยูเอสบี', english: 'USB', icon: '🔌', description: 'พอร์ตเชื่อมต่ออุปกรณ์ภายนอกกับคอมพิวเตอร์', type: 'ฮาร์ดแวร์' },
+            { thai: 'ปิดเครื่อง', english: 'Shut down', icon: '⏻', description: 'การปิดระบบคอมพิวเตอร์อย่างถูกต้อง', type: 'ซอฟท์แวร์' },
+            { thai: 'รีสตาร์ท', english: 'Restart', icon: '🔄', description: 'การปิดแล้วเปิดระบบใหม่', type: 'ซอฟท์แวร์' },
+            { thai: 'คลิก', english: 'Click', icon: '👆', description: 'การกดปุ่มเมาส์เพื่อเลือกหรือเปิดสิ่งต่างๆ', type: 'ซอฟท์แวร์' },
+            { thai: 'พิมพ์', english: 'Print', icon: '🖨️', description: 'การพิมพ์เอกสารออกมาเป็นกระดาษ', type: 'ซอฟท์แวร์' },
+            { thai: 'เชื่อมต่อ', english: 'Connect', icon: '🔗', description: 'การเชื่อมต่อกับเครือข่ายหรืออุปกรณ์อื่น', type: 'เครือข่าย' },
+            { thai: 'เริ่ม', english: 'Start', icon: '▶️', description: 'การเริ่มต้นโปรแกรมหรือกระบวนการ', type: 'ซอฟท์แวร์' },
+            { thai: 'ค้นหา', english: 'Search', icon: '🔍', description: 'การหาข้อมูลหรือไฟล์ที่ต้องการ', type: 'ซอฟท์แวร์' },
+            { thai: 'ชื่อผู้ใช้', english: 'Username', icon: '👤', description: 'ชื่อที่ใช้ในการเข้าสู่ระบบ', type: 'ซอฟท์แวร์' },
+            { thai: 'ไฟล์แนบ', english: 'Attachment', icon: '📎', description: 'ไฟล์ที่แนบมากับอีเมลหรือข้อความ', type: 'ซอฟท์แวร์' },
+            { thai: 'อีเมลขยะ', english: 'Spam mail', icon: '📧', description: 'อีเมลที่ไม่ต้องการหรือเป็นโฆษณา', type: 'เครือข่าย' },
+            { thai: 'จดหมายขยะ', english: 'Junk mail', icon: '🗑️', description: 'อีเมลที่ไม่มีประโยชน์หรือเป็นขยะ', type: 'เครือข่าย' },
+            { thai: 'รหัสผ่าน', english: 'Password', icon: '🔐', description: 'รหัสลับสำหรับเข้าสู่ระบบหรือปกป้องข้อมูล', type: 'ซอฟท์แวร์' }
+        ];
+
+        let currentWord = {};
+        let correctCount = 0;
+        let totalCount = 0;
+        let isTypingThai = true;
+        let rewardHistory = [];
+
+        const rewards = [
+            { text: '🎉 เก่งมาก!', probability: 0.8 },
+            { text: '🍭 ได้ขนม!', probability: 0.05 },
+            { text: '⭐ ได้สติกเกอร์!', probability: 0.15 }
+        ];
+
+        function getRandomWord() {
+            return computerWords[Math.floor(Math.random() * computerWords.length)];
+        }
+
+        function getRandomReward() {
+            const random = Math.random();
+            let cumulativeProbability = 0;
+            
+            for (let reward of rewards) {
+                cumulativeProbability += reward.probability;
+                if (random <= cumulativeProbability) {
+                    return reward.text;
+                }
+            }
+            return rewards[0].text; // fallback
+        }
+
+        function addToHistory(rewardText, word) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('th-TH', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            const historyItem = {
+                reward: rewardText,
+                word: word,
+                time: timeString,
+                timestamp: now.getTime()
+            };
+            
+            rewardHistory.unshift(historyItem); // เพิ่มที่ด้านบน
+            
+            // เก็บแค่ 20 รายการล่าสุด
+            if (rewardHistory.length > 20) {
+                rewardHistory = rewardHistory.slice(0, 20);
+            }
+            
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('rewardHistory');
+            
+            if (rewardHistory.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="no-rewards">
+                        ยังไม่มีรางวัล<br>
+                        เริ่มเล่นเกมเลย! 🎮
+                    </div>
+                `;
+                return;
+            }
+            
+            let historyHTML = '';
+            rewardHistory.forEach(item => {
+                historyHTML += `
+                    <div class="reward-item">
+                        <div class="reward-text">${item.reward}</div>
+                        <div class="reward-word">${item.word}</div>
+                        <div class="reward-time">${item.time}</div>
+                    </div>
+                `;
+            });
+            
+            historyContainer.innerHTML = historyHTML;
+        }
+
+
+
+        function newWord() {
+            currentWord = getRandomWord();
+            isTypingThai = Math.random() < 0.5; // สุ่มภาษา
+            
+            document.getElementById('computerImage').textContent = currentWord.icon;
+            
+            // Use textContent instead of innerHTML to prevent encoding issues
+            document.getElementById('wordDescription').textContent = currentWord.description;
+            document.getElementById('wordType').textContent = currentWord.type;
+            
+            if (isTypingThai) {
+                document.getElementById('targetWord').textContent = currentWord.english;
+                document.getElementById('wordTranslation').textContent = `(${currentWord.thai})`;
+                document.getElementById('typingInput').placeholder = 'พิมพ์คำภาษาไทย...';
+            } else {
+                document.getElementById('targetWord').textContent = currentWord.thai;
+                document.getElementById('wordTranslation').textContent = `(${currentWord.english})`;
+                document.getElementById('typingInput').placeholder = 'Type in English...';
+            }
+            
+            clearInput();
+            hideFeedback();
+        }
+
+        function clearInput() {
+            const input = document.getElementById('typingInput');
+            input.value = '';
+            input.className = 'typing-input';
+            input.focus();
+        }
+
+        function checkAnswer() {
+            const input = document.getElementById('typingInput');
+            const userInput = input.value.trim();
+            
+            // Normalize Thai text to handle encoding issues
+            function normalizeThaiText(text) {
+                return text.normalize('NFC').replace(/\s+/g, ' ').trim();
+            }
+            
+            const correctAnswer = isTypingThai ? 
+                normalizeThaiText(currentWord.thai) : 
+                currentWord.english.trim();
+            
+            const normalizedUserInput = isTypingThai ? 
+                normalizeThaiText(userInput) : 
+                userInput;
+
+            // For Thai text, compare normalized text
+            // For English text, compare with lowercase
+            let isCorrect = false;
+            if (isTypingThai) {
+                isCorrect = normalizedUserInput === correctAnswer;
+            } else {
+                isCorrect = normalizedUserInput.toLowerCase() === correctAnswer.toLowerCase();
+            }
+
+            if (isCorrect) {
+                input.className = 'typing-input correct';
+                const reward = getRandomReward();
+                const wordDisplay = isTypingThai ? currentWord.english + ' → ' + currentWord.thai : currentWord.thai + ' → ' + currentWord.english;
+                
+                showFeedback(reward, 'success');
+                addToHistory(reward, wordDisplay);
+                correctCount++;
+                totalCount++;
+                updateStats();
+                
+                // Auto generate new word after 2 seconds
+                setTimeout(() => {
+                    newWord();
+                }, 2000);
+            } else if (userInput.length > 0) {
+                input.className = 'typing-input incorrect';
+            } else {
+                input.className = 'typing-input';
+            }
+        }
+
+        function showFeedback(message, type) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = `feedback ${type} show bounce`;
+        }
+
+        function hideFeedback() {
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback';
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('totalCount').textContent = totalCount;
+            const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // Event listeners
+        document.getElementById('typingInput').addEventListener('input', checkAnswer);
+        document.getElementById('typingInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('typingInput');
+                const userInput = input.value.trim();
+                
+                // Normalize Thai text to handle encoding issues
+                function normalizeThaiText(text) {
+                    return text.normalize('NFC').replace(/\s+/g, ' ').trim();
+                }
+                
+                const correctAnswer = isTypingThai ? 
+                    normalizeThaiText(currentWord.thai) : 
+                    currentWord.english.trim();
+                
+                const normalizedUserInput = isTypingThai ? 
+                    normalizeThaiText(userInput) : 
+                    userInput;
+                
+                // Check if answer is correct using same logic as checkAnswer function
+                let isCorrect = false;
+                if (isTypingThai) {
+                    isCorrect = normalizedUserInput === correctAnswer;
+                } else {
+                    isCorrect = normalizedUserInput.toLowerCase() === correctAnswer.toLowerCase();
+                }
+                
+                if (!isCorrect) {
+                    totalCount++;
+                    updateStats();
+                    showFeedback('😅 ลองใหม่นะ!', 'reward');
+                    setTimeout(() => {
+                        newWord();
+                    }, 1500);
+                }
+            }
+        });
+
+        // Initialize game
+        newWord();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964c03d685a6731f',t:'MTc1MzQ1MDI1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
