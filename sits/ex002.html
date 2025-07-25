@@ -481,6 +481,7 @@
             <div class="controls">
                 <button class="btn btn-primary" onclick="newWord()">คำใหม่</button>
                 <button class="btn btn-secondary" onclick="clearInput()">ล้างข้อความ</button>
+                <button class="btn btn-secondary" onclick="speakWord()" style="background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);">🔊 อ่านออกเสียง</button>
             </div>
             
             <div class="feedback" id="feedback"></div>
@@ -583,10 +584,10 @@
         let rewardHistory = [];
 
         const rewards = [
-            { text: '🎉 เก่งมาก!', probability: 0.8 },
-            { text: '🍭 ได้ขนม!', probability: 0.05 },
+            { text: '🎉 เก่งมาก!', probability: 0.83 },
+            { text: '🍭 ได้ขนม!', probability: 0.04 },
             { text: '🧩 ได้จิ๊กซอว์!', probability: 0.03 },
-            { text: '⭐ ได้สติกเกอร์!', probability: 0.12 }
+            { text: '⭐ ได้สติกเกอร์!', probability: 0.1 }
         ];
 
         function getRandomWord() {
@@ -795,8 +796,51 @@
             }
         });
 
+        function speakWord() {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                // First utterance - speak the vocabulary word
+                const wordUtterance = new SpeechSynthesisUtterance();
+                
+                if (isTypingThai) {
+                    wordUtterance.text = currentWord.english;
+                    wordUtterance.lang = 'en-US';
+                } else {
+                    wordUtterance.text = currentWord.thai;
+                    wordUtterance.lang = 'th-TH';
+                }
+                
+                wordUtterance.rate = 0.5;
+                wordUtterance.volume = 0.8;
+                wordUtterance.pitch = 1;
+                
+                // Second utterance - speak the description after a pause
+                const descriptionUtterance = new SpeechSynthesisUtterance();
+                descriptionUtterance.text = currentWord.description;
+                descriptionUtterance.lang = 'th-TH';
+                descriptionUtterance.rate = 0.5;
+                descriptionUtterance.volume = 0.8;
+                descriptionUtterance.pitch = 1;
+                
+                // Speak word first
+                speechSynthesis.speak(wordUtterance);
+                
+                // Speak description after word is finished
+                wordUtterance.onend = function() {
+                    setTimeout(() => {
+                        speechSynthesis.speak(descriptionUtterance);
+                    }, 800); // 800ms pause between word and description
+                };
+                
+            } else {
+                showFeedback('😅 เบราว์เซอร์ไม่รองรับการอ่านออกเสียง', 'reward');
+            }
+        }
+
         // Initialize game
         newWord();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964c03d685a6731f',t:'MTc1MzQ1MDI1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964c20b2142b4b5c',t:'MTc1MzQ1MTQ0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
