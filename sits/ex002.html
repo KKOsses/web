@@ -475,15 +475,15 @@
                 <div class="reward-summary">
                     <div class="summary-item">
                         <span class="summary-icon">🍭</span>
-                        <span class="summary-text">ขนม: <span id="candyCount">0</span>/10 ชิ้น</span>
+                        <span class="summary-text">ขนม: <span id="candyCount">0</span> ชิ้น</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-icon">⭐</span>
-                        <span class="summary-text">สติกเกอร์: <span id="stickerCount">0</span>/10 ชิ้น</span>
+                        <span class="summary-text">สติกเกอร์: <span id="stickerCount">0</span> ชิ้น</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-icon">🧩</span>
-                        <span class="summary-text">จิ๊กซอว์: <span id="puzzleCount">0</span>/10 ชิ้น</span>
+                        <span class="summary-text">จิ๊กซอว์: <span id="puzzleCount">0</span> ชิ้น</span>
                     </div>
                 </div>
                 
@@ -865,56 +865,68 @@
                 // Cancel any ongoing speech
                 speechSynthesis.cancel();
                 
-                // First utterance - speak the vocabulary word
-                const wordUtterance = new SpeechSynthesisUtterance();
-                
-                if (isTypingThai) {
-                    wordUtterance.text = currentWord.english;
-                    wordUtterance.lang = 'en-US';
-                } else {
-                    wordUtterance.text = currentWord.thai;
-                    wordUtterance.lang = 'th-TH';
-                }
-                
-                wordUtterance.rate = 0.5;
-                wordUtterance.volume = 0.85;
-                wordUtterance.pitch = 1;
-                
-                // Second utterance - speak the description after a pause
-                const descriptionUtterance = new SpeechSynthesisUtterance();
-                descriptionUtterance.text = currentWord.description;
-                descriptionUtterance.lang = 'th-TH';
-                descriptionUtterance.rate = 0.5;
-                descriptionUtterance.volume = 0.85;
-                descriptionUtterance.pitch = 1;
-                
-                // Add error handling
-                wordUtterance.onerror = function(event) {
-                    console.log('Speech error:', event);
-                    showFeedback('😅 ไม่สามารถอ่านออกเสียงได้', 'reward');
-                };
-                
-                descriptionUtterance.onerror = function(event) {
-                    console.log('Description speech error:', event);
-                };
-                
-                // Speak word first
-                speechSynthesis.speak(wordUtterance);
-                
-                // Speak description after word is finished
-                wordUtterance.onend = function() {
-                    setTimeout(() => {
-                        speechSynthesis.speak(descriptionUtterance);
-                    }, 800); // 800ms pause between word and description
-                };
+                // Wait a bit for cancellation to complete
+                setTimeout(() => {
+                    // Create speech parts separately for better pronunciation
+                    const parts = [];
+                    
+                    if (isTypingThai) {
+                        // If user needs to type Thai, speak English word + Thai translation + description
+                        parts.push(currentWord.english);
+                        parts.push('แปลว่า');
+                        parts.push(currentWord.thai);
+                        parts.push('หมายถึง');
+                        parts.push(currentWord.description);
+                    } else {
+                        // If user needs to type English, speak Thai word + English translation + description
+                        parts.push(currentWord.thai);
+                        parts.push('แปลว่า');
+                        parts.push(currentWord.english);
+                        parts.push('หมายถึง');
+                        parts.push(currentWord.description);
+                    }
+                    
+                    // Join with longer pauses for clarity
+                    const speechText = parts.join(' ... ');
+                    
+                    console.log('Speaking:', speechText); // Debug log
+                    
+                    const utterance = new SpeechSynthesisUtterance();
+                    utterance.text = speechText;
+                    utterance.lang = 'th-TH';
+                    utterance.rate = 0.6; // Slower for better clarity
+                    utterance.volume = 1.0;
+                    utterance.pitch = 1.0;
+                    
+                    // Add error handling
+                    utterance.onerror = function(event) {
+                        console.log('Speech error:', event);
+                        showFeedback('😅 ไม่สามารถอ่านออกเสียงได้', 'reward');
+                        setTimeout(hideFeedback, 2000);
+                    };
+                    
+                    utterance.onstart = function() {
+                        showFeedback('🔊 กำลังอ่านออกเสียง...', 'reward');
+                    };
+                    
+                    utterance.onend = function() {
+                        showFeedback('✅ อ่านคำอธิบายเสร็จแล้ว', 'success');
+                        setTimeout(hideFeedback, 1500);
+                    };
+                    
+                    // Speak the text
+                    speechSynthesis.speak(utterance);
+                    
+                }, 200);
                 
             } else {
                 showFeedback('😅 เบราว์เซอร์ไม่รองรับการอ่านออกเสียง', 'reward');
+                setTimeout(hideFeedback, 2000);
             }
         }
 
         // Initialize game
         newWord();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96552e23a5f24f52',t:'MTc1MzU0NjM2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9655368964034f52',t:'MTc1MzU0NjcwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
