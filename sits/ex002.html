@@ -141,6 +141,36 @@
             padding: 20px;
         }
         
+        .reward-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .summary-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .summary-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .summary-text {
+            font-weight: 500;
+        }
+        
 
         
         @keyframes slideIn {
@@ -442,6 +472,21 @@
                 <p>รางวัลที่ได้รับ</p>
             </div>
             <div class="sidebar-content">
+                <div class="reward-summary">
+                    <div class="summary-item">
+                        <span class="summary-icon">🍭</span>
+                        <span class="summary-text">ขนม: <span id="candyCount">0</span> ชิ้น</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">⭐</span>
+                        <span class="summary-text">สติกเกอร์: <span id="stickerCount">0</span> ชิ้น</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">🧩</span>
+                        <span class="summary-text">จิ๊กซอว์: <span id="puzzleCount">0</span> ชิ้น</span>
+                    </div>
+                </div>
+                
                 <div id="rewardHistory" class="reward-history">
                     <div class="no-rewards">
                         ยังไม่มีรางวัล<br>
@@ -582,12 +627,15 @@
         let totalCount = 0;
         let isTypingThai = true;
         let rewardHistory = [];
+        let candyCount = 0;
+        let stickerCount = 0;
+        let puzzleCount = 0;
 
         const rewards = [
-            { text: '🎉 เก่งมาก!', probability: 0.8 },
-            { text: '🍭 ได้ขนม!', probability: 0.05 },
-            { text: '🧩 ได้จิ๊กซอว์!', probability: 0.04 },
-            { text: '⭐ ได้สติกเกอร์!', probability: 0.11 }
+            { text: '🎉 เก่งมาก!', probability: 0.83 },
+            { text: '🍭 ได้ขนม!', probability: 0.04 },
+            { text: '🧩 ได้จิ๊กซอว์!', probability: 0.03 },
+            { text: '⭐ ได้สติกเกอร์!', probability: 0.1 }
         ];
 
         function getRandomWord() {
@@ -623,12 +671,22 @@
             
             rewardHistory.unshift(historyItem); // เพิ่มที่ด้านบน
             
+            // นับรางวัลแต่ละประเภท
+            if (rewardText.includes('🍭')) {
+                candyCount++;
+            } else if (rewardText.includes('⭐')) {
+                stickerCount++;
+            } else if (rewardText.includes('🧩')) {
+                puzzleCount++;
+            }
+            
             // เก็บแค่ 20 รายการล่าสุด
             if (rewardHistory.length > 20) {
                 rewardHistory = rewardHistory.slice(0, 20);
             }
             
             updateHistoryDisplay();
+            updateRewardSummary();
         }
 
         function updateHistoryDisplay() {
@@ -656,6 +714,12 @@
             });
             
             historyContainer.innerHTML = historyHTML;
+        }
+
+        function updateRewardSummary() {
+            document.getElementById('candyCount').textContent = candyCount;
+            document.getElementById('stickerCount').textContent = stickerCount;
+            document.getElementById('puzzleCount').textContent = puzzleCount;
         }
 
 
@@ -842,5 +906,5 @@
         // Initialize game
         newWord();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964c20b2142b4b5c',t:'MTc1MzQ1MTQ0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9650f6aba5907331',t:'MTc1MzUwMjE0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
