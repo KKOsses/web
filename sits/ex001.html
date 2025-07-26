@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบความรู้คอมพิวเตอร์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-800 mb-2">💻 แบบทดสอบความรู้คอมพิวเตอร์</h1>
+            <p class="text-lg text-gray-600">สำหรับนักเรียนชั้นประถมศึกษา - มัธยมศึกษาตอนต้น</p>
+        </div>
+
+        <!-- Level Selection -->
+        <div id="levelSelection" class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">เลือกระดับความยาก</h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <button onclick="selectLevel(1)" class="level-btn bg-green-500 hover:bg-green-600 text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all">
+                    <div class="text-3xl mb-2">🌱</div>
+                    <div class="font-semibold">ระดับที่ 1</div>
+                    <div class="text-sm opacity-90">เริ่มต้น</div>
+                </button>
+                <button onclick="selectLevel(2)" class="level-btn bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all">
+                    <div class="text-3xl mb-2">🌿</div>
+                    <div class="font-semibold">ระดับที่ 2</div>
+                    <div class="text-sm opacity-90">ง่าย</div>
+                </button>
+                <button onclick="selectLevel(3)" class="level-btn bg-yellow-500 hover:bg-yellow-600 text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all">
+                    <div class="text-3xl mb-2">🌳</div>
+                    <div class="font-semibold">ระดับที่ 3</div>
+                    <div class="text-sm opacity-90">ปานกลาง</div>
+                </button>
+                <button onclick="selectLevel(4)" class="level-btn bg-orange-500 hover:bg-orange-600 text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all">
+                    <div class="text-3xl mb-2">🔥</div>
+                    <div class="font-semibold">ระดับที่ 4</div>
+                    <div class="text-sm opacity-90">ยาก</div>
+                </button>
+                <button onclick="selectLevel(5)" class="level-btn bg-red-500 hover:bg-red-600 text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-all">
+                    <div class="text-3xl mb-2">⚡</div>
+                    <div class="font-semibold">ระดับที่ 5</div>
+                    <div class="text-sm opacity-90">ยากมาก</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Interface -->
+        <div id="quizInterface" class="hidden max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <!-- Progress Bar and Timer -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-600">ความคืบหน้า</span>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm font-medium text-indigo-600" id="timerDisplay">⏱️ 00:00</span>
+                            <span class="text-sm font-medium text-gray-600" id="progressText">1/30</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progressBar" class="bg-indigo-600 h-3 rounded-full transition-all duration-300" style="width: 3.33%"></div>
+                    </div>
+                </div>
+
+                <!-- Question -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <span id="levelBadge" class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium mr-3">ระดับที่ 1</span>
+                        <span class="text-gray-500">คำถามที่ <span id="questionNumber">1</span></span>
+                    </div>
+                    <h3 id="questionText" class="text-xl font-semibold text-gray-800 leading-relaxed">
+                        คอมพิวเตอร์ย่อมาจากคำว่าอะไร?
+                    </h3>
+                </div>
+
+                <!-- Answer Options -->
+                <div id="answerOptions" class="space-y-3 mb-8">
+                    <!-- Options will be populated by JavaScript -->
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center">
+                    <button onclick="goBack()" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors">
+                        ← กลับ
+                    </button>
+                    <div class="flex space-x-3">
+                        <button id="prevBtn" onclick="previousQuestion()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            ← ก่อนหน้า
+                        </button>
+                        <button id="nextBtn" onclick="nextQuestion()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                            ถัดไป →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsInterface" class="hidden max-w-6xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <!-- Score Summary -->
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4" id="resultEmoji">🎉</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">ผลการทำแบบทดสอบ</h2>
+                    <div class="text-5xl font-bold text-indigo-600 mb-2" id="scoreDisplay">0/30</div>
+                    <div class="text-xl text-gray-600 mb-2" id="scorePercentage">0%</div>
+                    <div class="text-lg text-indigo-600 font-medium" id="timeUsed">⏱️ เวลาที่ใช้: 0 นาที 0 วินาที</div>
+                </div>
+
+                <!-- Wrong Answers Review -->
+                <div id="wrongAnswersSection" class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">📝 เฉลยข้อที่ตอบผิด</h3>
+                    <div id="wrongAnswersList" class="space-y-4 max-h-96 overflow-y-auto">
+                        <!-- Wrong answers will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-center space-x-4">
+                    <button onclick="restartQuiz()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                        ทำใหม่
+                    </button>
+                    <button onclick="goToLevelSelection()" class="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors">
+                        เลือกระดับใหม่
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Export Modal -->
+        <div id="textExportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-gray-800">📋 คัดลอกคำถาม-คำตอบ</h3>
+                        <button onclick="closeTextExport()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                    </div>
+                    <p class="text-gray-600 mt-2">เลือกระดับที่ต้องการคัดลอก</p>
+                </div>
+                
+                <div class="p-6">
+                    <div class="grid grid-cols-5 gap-3 mb-6">
+                        <button onclick="showTextForLevel(1)" class="export-level-btn bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg font-medium transition-colors">
+                            ระดับที่ 1
+                        </button>
+                        <button onclick="showTextForLevel(2)" class="export-level-btn bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg font-medium transition-colors">
+                            ระดับที่ 2
+                        </button>
+                        <button onclick="showTextForLevel(3)" class="export-level-btn bg-yellow-500 hover:bg-yellow-600 text-white p-3 rounded-lg font-medium transition-colors">
+                            ระดับที่ 3
+                        </button>
+                        <button onclick="showTextForLevel(4)" class="export-level-btn bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg font-medium transition-colors">
+                            ระดับที่ 4
+                        </button>
+                        <button onclick="showTextForLevel(5)" class="export-level-btn bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg font-medium transition-colors">
+                            ระดับที่ 5
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium text-gray-700" id="exportLevelTitle">เลือกระดับด้านบน</span>
+                            <button onclick="copyToClipboard()" id="copyBtn" class="hidden px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors">
+                                📋 คัดลอก
+                            </button>
+                        </div>
+                        <textarea id="exportText" class="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none" readonly placeholder="เลือกระดับเพื่อแสดงคำถาม-คำตอบ"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Button in Level Selection -->
+       <!-- <div class="text-center mt-8">
+            <button onclick="openTextExport()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors shadow-lg">
+                📋 คัดลอกคำถาม-คำตอบ
+            </button>
+        </div> -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const quizData = {
+            1: [
+                {q: "คอมพิวเตอร์ย่อมาจากคำว่าอะไร?", a: "Computer", options: ["Computer", "Compute", "Complex", "Complete"]},
+                {q: "อุปกรณ์ใดที่ใช้สำหรับพิมพ์ข้อมูลเข้าคอมพิวเตอร์?", a: "แป้นพิมพ์", options: ["แป้นพิมพ์", "เมาส์", "จอภาพ", "ลำโพง"]},
+                {q: "หน่วยความจำหลักของคอมพิวเตอร์เรียกว่าอะไร?", a: "RAM", options: ["RAM", "ROM", "CPU", "GPU"]},
+                {q: "อุปกรณ์ใดที่แสดงผลข้อมูลจากคอมพิวเตอร์?", a: "จอภาพ", options: ["จอภาพ", "แป้นพิมพ์", "เมาส์", "ฮาร์ดดิสก์"]},
+                {q: "เมาส์มีกี่ปุ่มพื้นฐาน?", a: "2 ปุ่ม", options: ["1 ปุ่ม", "2 ปุ่ม", "3 ปุ่ม", "4 ปุ่ม"]},
+                {q: "CPU ย่อมาจากอะไร?", a: "Central Processing Unit", options: ["Central Processing Unit", "Computer Processing Unit", "Central Program Unit", "Computer Program Unit"]},
+                {q: "อุปกรณ์ใดที่ใช้เก็บข้อมูลถาวร?", a: "ฮาร์ดดิสก์", options: ["ฮาร์ดดิสก์", "RAM", "CPU", "จอภาพ"]},
+                {q: "ปุ่มใดบนแป้นพิมพ์ที่ใช้ลบตัวอักษร?", a: "Backspace", options: ["Backspace", "Enter", "Shift", "Ctrl"]},
+                {q: "โปรแกรมใดที่ใช้เขียนเอกสาร?", a: "Microsoft Word", options: ["Microsoft Word", "Calculator", "Paint", "Notepad"]},
+                {q: "อินเทอร์เน็ตคืออะไร?", a: "เครือข่ายคอมพิวเตอร์ทั่วโลก", options: ["เครือข่ายคอมพิวเตอร์ทั่วโลก", "โปรแกรมคอมพิวเตอร์", "อุปกรณ์คอมพิวเตอร์", "ระบบปฏิบัติการ"]},
+                {q: "ไฟล์ที่มีนามสกุล .txt คืออะไร?", a: "ไฟล์ข้อความ", options: ["ไฟล์ข้อความ", "ไฟล์รูปภาพ", "ไฟล์เสียง", "ไฟล์วิดีโอ"]},
+                {q: "ปุ่ม Enter ใช้ทำอะไร?", a: "ขึ้นบรรทัดใหม่", options: ["ขึ้นบรรทัดใหม่", "ลบตัวอักษร", "บันทึกไฟล์", "ปิดโปรแกรม"]},
+                {q: "Windows คืออะไร?", a: "ระบบปฏิบัติการ", options: ["ระบบปฏิบัติการ", "โปรแกรมเกม", "เว็บไซต์", "อุปกรณ์คอมพิวเตอร์"]},
+                {q: "ไอคอนคืออะไร?", a: "รูปภาพเล็กๆ ที่แทนโปรแกรม", options: ["รูปภาพเล็กๆ ที่แทนโปรแกรม", "ข้อความ", "เสียง", "วิดีโอ"]},
+                {q: "การคลิกเมาส์ 2 ครั้งติดกันเรียกว่าอะไร?", a: "Double Click", options: ["Double Click", "Single Click", "Right Click", "Drag"]},
+                {q: "ปุ่ม Shift ใช้ทำอะไร?", a: "พิมพ์ตัวพิมพ์ใหญ่", options: ["พิมพ์ตัวพิมพ์ใหญ่", "ลบตัวอักษร", "บันทึกไฟล์", "เปิดโปรแกรม"]},
+                {q: "โฟลเดอร์คืออะไร?", a: "ที่เก็บไฟล์", options: ["ที่เก็บไฟล์", "โปรแกรม", "เกม", "เว็บไซต์"]},
+                {q: "ปุ่ม Ctrl+C ใช้ทำอะไร?", a: "คัดลอก", options: ["คัดลอก", "วาง", "ตัด", "บันทึก"]},
+                {q: "ปุ่ม Ctrl+V ใช้ทำอะไร?", a: "วาง", options: ["วาง", "คัดลอก", "ตัด", "เลิกทำ"]},
+                {q: "เว็บเบราว์เซอร์คืออะไร?", a: "โปรแกรมท่องอินเทอร์เน็ต", options: ["โปรแกรมท่องอินเทอร์เน็ต", "เกม", "โปรแกรมเขียนเอกสาร", "โปรแกรมวาดรูป"]},
+                {q: "USB ย่อมาจากอะไร?", a: "Universal Serial Bus", options: ["Universal Serial Bus", "United Serial Bus", "Universal System Bus", "United System Bus"]},
+                {q: "ไฟล์ที่มีนามสกุล .jpg คืออะไร?", a: "ไฟล์รูปภาพ", options: ["ไฟล์รูปภาพ", "ไฟล์ข้อความ", "ไฟล์เสียง", "ไฟล์วิดีโอ"]},
+                {q: "การบันทึกไฟล์ใช้ปุ่มอะไร?", a: "Ctrl+S", options: ["Ctrl+S", "Ctrl+C", "Ctrl+V", "Ctrl+Z"]},
+                {q: "Desktop คืออะไร?", a: "หน้าจอหลักของคอมพิวเตอร์", options: ["หน้าจอหลักของคอมพิวเตอร์", "โปรแกรม", "ไฟล์", "โฟลเดอร์"]},
+                {q: "ปุ่ม Delete ใช้ทำอะไร?", a: "ลบไฟล์หรือข้อความ", options: ["ลบไฟล์หรือข้อความ", "บันทึกไฟล์", "เปิดโปรแกรม", "ปิดโปรแกรม"]},
+                {q: "Start Menu อยู่ตรงไหน?", a: "มุมซ้ายล่างของหน้าจอ", options: ["มุมซ้ายล่างของหน้าจอ", "มุมขวาล่าง", "มุมซ้ายบน", "กลางหน้าจอ"]},
+                {q: "Taskbar คืออะไร?", a: "แถบด้านล่างของหน้าจอ", options: ["แถบด้านล่างของหน้าจอ", "แถบด้านบน", "แถบด้านซ้าย", "แถบด้านขวา"]},
+                {q: "การปิดโปรแกรมใช้ปุ่มอะไร?", a: "Alt+F4", options: ["Alt+F4", "Ctrl+C", "Ctrl+V", "Ctrl+S"]},
+                {q: "Paint คือโปรแกรมอะไร?", a: "โปรแกรมวาดรูป", options: ["โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร", "โปรแกรมคำนวณ", "โปรแกรมเล่นเพลง"]},
+                {q: "Calculator คือโปรแกรมอะไร?", a: "โปรแกรมคำนวณ", options: ["โปรแกรมคำนวณ", "โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร", "โปรแกรมเล่นเพลง"]}
+            ],
+            2: [
+                {q: "ROM ย่อมาจากอะไร?", a: "Read Only Memory", options: ["Read Only Memory", "Random Only Memory", "Read Open Memory", "Random Open Memory"]},
+                {q: "ไฟล์ที่มีนามสกุล .mp3 คืออะไร?", a: "ไฟล์เสียง", options: ["ไฟล์เสียง", "ไฟล์รูปภาพ", "ไฟล์ข้อความ", "ไฟล์วิดีโอ"]},
+                {q: "โปรแกรม Antivirus ใช้ทำอะไร?", a: "ป้องกันไวรัส", options: ["ป้องกันไวรัส", "เล่นเพลง", "วาดรูป", "คำนวณ"]},
+                {q: "ปุ่ม F5 ใช้ทำอะไร?", a: "รีเฟรช", options: ["รีเฟรช", "บันทึก", "คัดลอก", "วาง"]},
+                {q: "URL ย่อมาจากอะไร?", a: "Uniform Resource Locator", options: ["Uniform Resource Locator", "Universal Resource Locator", "Uniform Resource Link", "Universal Resource Link"]},
+                {q: "ไฟล์ที่มีนามสกุล .pdf คืออะไร?", a: "ไฟล์เอกสาร", options: ["ไฟล์เอกสาร", "ไฟล์รูปภาพ", "ไฟล์เสียง", "ไฟล์วิดีโอ"]},
+                {q: "Ctrl+Z ใช้ทำอะไร?", a: "เลิกทำ", options: ["เลิกทำ", "ทำซ้ำ", "คัดลอก", "วาง"]},
+                {q: "Ctrl+Y ใช้ทำอะไร?", a: "ทำซ้ำ", options: ["ทำซ้ำ", "เลิกทำ", "คัดลอก", "วาง"]},
+                {q: "Wi-Fi คืออะไร?", a: "เครือข่ายไร้สาย", options: ["เครือข่ายไร้สาย", "โปรแกรม", "อุปกรณ์", "ไฟล์"]},
+                {q: "Bluetooth ใช้ทำอะไร?", a: "เชื่อมต่ออุปกรณ์ไร้สาย", options: ["เชื่อมต่ออุปกรณ์ไร้สาย", "เล่นเพลง", "วาดรูป", "คำนวณ"]},
+                {q: "Recycle Bin คืออะไร?", a: "ถังขยะของคอมพิวเตอร์", options: ["ถังขยะของคอมพิวเตอร์", "โปรแกรม", "ไฟล์", "โฟลเดอร์"]},
+                {q: "Screenshot คืออะไร?", a: "การจับภาพหน้าจอ", options: ["การจับภาพหน้าจอ", "การบันทึกเสียง", "การบันทึกวิดีโอ", "การพิมพ์"]},
+                {q: "Ctrl+A ใช้ทำอะไร?", a: "เลือกทั้งหมด", options: ["เลือกทั้งหมด", "คัดลอก", "วาง", "ตัด"]},
+                {q: "Ctrl+X ใช้ทำอะไร?", a: "ตัด", options: ["ตัด", "คัดลอก", "วาง", "เลิกทำ"]},
+                {q: "ไฟล์ที่มีนามสกุล .mp4 คืออะไร?", a: "ไฟล์วิดีโอ", options: ["ไฟล์วิดีโอ", "ไฟล์เสียง", "ไฟล์รูปภาพ", "ไฟล์ข้อความ"]},
+                {q: "Email คืออะไร?", a: "จดหมายอิเล็กทรอนิกส์", options: ["จดหมายอิเล็กทรอนิกส์", "โปรแกรม", "เกม", "เว็บไซต์"]},
+                {q: "Password คืออะไร?", a: "รหัสผ่าน", options: ["รหัสผ่าน", "ชื่อผู้ใช้", "อีเมล", "เบอร์โทร"]},
+                {q: "Caps Lock ใช้ทำอะไร?", a: "ล็อคตัวพิมพ์ใหญ่", options: ["ล็อคตัวพิมพ์ใหญ่", "ล็อคตัวพิมพ์เล็ก", "ล็อคตัวเลข", "ล็อคสัญลักษณ์"]},
+                {q: "Num Lock ใช้ทำอะไร?", a: "เปิด/ปิดแป้นตัวเลข", options: ["เปิด/ปิดแป้นตัวเลข", "เปิด/ปิดแป้นตัวอักษร", "เปิด/ปิดเมาส์", "เปิด/ปิดจอภาพ"]},
+                {q: "Scroll Lock ใช้ทำอะไร?", a: "ล็อคการเลื่อนหน้าจอ", options: ["ล็อคการเลื่อนหน้าจอ", "ล็อคแป้นพิมพ์", "ล็อคเมาส์", "ล็อคจอภาพ"]},
+                {q: "Tab ใช้ทำอะไร?", a: "เว้นช่องว่าง", options: ["เว้นช่องว่าง", "ขึ้นบรรทัดใหม่", "ลบตัวอักษร", "บันทึกไฟล์"]},
+                {q: "Space Bar ใช้ทำอะไร?", a: "เว้นวรรค", options: ["เว้นวรรค", "ขึ้นบรรทัดใหม่", "ลบตัวอักษร", "บันทึกไฟล์"]},
+                {q: "Print Screen ใช้ทำอะไร?", a: "จับภาพหน้าจอ", options: ["จับภาพหน้าจอ", "พิมพ์เอกสาร", "บันทึกไฟล์", "เปิดโปรแกรม"]},
+                {q: "Home ใช้ทำอะไร?", a: "ไปต้นบรรทัด", options: ["ไปต้นบรรทัด", "ไปท้ายบรรทัด", "ขึ้นบรรทัด", "ลงบรรทัด"]},
+                {q: "End ใช้ทำอะไร?", a: "ไปท้ายบรรทัด", options: ["ไปท้ายบรรทัด", "ไปต้นบรรทัด", "ขึ้นบรรทัด", "ลงบรรทัด"]},
+                {q: "Page Up ใช้ทำอะไร?", a: "เลื่อนหน้าขึ้น", options: ["เลื่อนหน้าขึ้น", "เลื่อนหน้าลง", "ไปต้นเอกสาร", "ไปท้ายเอกสาร"]},
+                {q: "Page Down ใช้ทำอะไร?", a: "เลื่อนหน้าลง", options: ["เลื่อนหน้าลง", "เลื่อนหน้าขึ้น", "ไปต้นเอกสาร", "ไปท้ายเอกสาร"]},
+                {q: "Insert ใช้ทำอะไร?", a: "เปลี่ยนโหมดการพิมพ์", options: ["เปลี่ยนโหมดการพิมพ์", "แทรกไฟล์", "แทรกรูปภาพ", "แทรกตาราง"]},
+                {q: "Escape ใช้ทำอะไร?", a: "ยกเลิกหรือออก", options: ["ยกเลิกหรือออก", "เข้าโปรแกรม", "บันทึกไฟล์", "เปิดไฟล์"]},
+                {q: "Alt+Tab ใช้ทำอะไร?", a: "สลับระหว่างโปรแกรม", options: ["สลับระหว่างโปรแกรม", "เปิดโปรแกรมใหม่", "ปิดโปรแกรม", "บันทึกไฟล์"]}
+            ],
+            3: [
+                {q: "GPU ย่อมาจากอะไร?", a: "Graphics Processing Unit", options: ["Graphics Processing Unit", "General Processing Unit", "Graphics Program Unit", "General Program Unit"]},
+                {q: "SSD ย่อมาจากอะไร?", a: "Solid State Drive", options: ["Solid State Drive", "Super Speed Drive", "Solid Speed Drive", "Super State Drive"]},
+                {q: "HDD ย่อมาจากอะไร?", a: "Hard Disk Drive", options: ["Hard Disk Drive", "High Disk Drive", "Hard Data Drive", "High Data Drive"]},
+                {q: "BIOS ย่อมาจากอะไร?", a: "Basic Input Output System", options: ["Basic Input Output System", "Binary Input Output System", "Basic Internal Output System", "Binary Internal Output System"]},
+                {q: "IP Address คืออะไร?", a: "ที่อยู่ของอุปกรณ์ในเครือข่าย", options: ["ที่อยู่ของอุปกรณ์ในเครือข่าย", "รหัสผ่าน", "ชื่อผู้ใช้", "อีเมล"]},
+                {q: "DNS ย่อมาจากอะไร?", a: "Domain Name System", options: ["Domain Name System", "Data Name System", "Domain Network System", "Data Network System"]},
+                {q: "HTTP ย่อมาจากอะไร?", a: "HyperText Transfer Protocol", options: ["HyperText Transfer Protocol", "HyperText Transport Protocol", "HyperLink Transfer Protocol", "HyperLink Transport Protocol"]},
+                {q: "HTTPS ย่อมาจากอะไร?", a: "HyperText Transfer Protocol Secure", options: ["HyperText Transfer Protocol Secure", "HyperText Transport Protocol Secure", "HyperLink Transfer Protocol Secure", "HyperLink Transport Protocol Secure"]},
+                {q: "FTP ย่อมาจากอะไร?", a: "File Transfer Protocol", options: ["File Transfer Protocol", "Fast Transfer Protocol", "File Transport Protocol", "Fast Transport Protocol"]},
+                {q: "LAN ย่อมาจากอะไร?", a: "Local Area Network", options: ["Local Area Network", "Large Area Network", "Limited Area Network", "Long Area Network"]},
+                {q: "WAN ย่อมาจากอะไร?", a: "Wide Area Network", options: ["Wide Area Network", "Wireless Area Network", "World Area Network", "Web Area Network"]},
+                {q: "VPN ย่อมาจากอะไร?", a: "Virtual Private Network", options: ["Virtual Private Network", "Very Private Network", "Virtual Public Network", "Very Public Network"]},
+                {q: "ISP ย่อมาจากอะไร?", a: "Internet Service Provider", options: ["Internet Service Provider", "Internet System Provider", "Internal Service Provider", "Internal System Provider"]},
+                {q: "Firewall คืออะไร?", a: "ระบบป้องกันเครือข่าย", options: ["ระบบป้องกันเครือข่าย", "โปรแกรมเกม", "โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร"]},
+                {q: "Malware คืออะไร?", a: "โปรแกรมที่เป็นอันตราย", options: ["โปรแกรมที่เป็นอันตราย", "โปรแกรมที่มีประโยชน์", "โปรแกรมเกม", "โปรแกรมวาดรูป"]},
+                {q: "Spyware คืออะไร?", a: "โปรแกรมสอดแนม", options: ["โปรแกรมสอดแนม", "โปรแกรมป้องกัน", "โปรแกรมเกม", "โปรแกรมวาดรูป"]},
+                {q: "Adware คืออะไร?", a: "โปรแกรมแสดงโฆษณา", options: ["โปรแกรมแสดงโฆษณา", "โปรแกรมป้องกัน", "โปรแกรมเกม", "โปรแกรมวาดรูป"]},
+                {q: "Ransomware คืออะไร?", a: "โปรแกรมเรียกค่าไถ่", options: ["โปรแกรมเรียกค่าไถ่", "โปรแกรมป้องกัน", "โปรแกรมเกม", "โปรแกรมวาดรูป"]},
+                {q: "Phishing คืออะไร?", a: "การหลอกขโมยข้อมูล", options: ["การหลอกขโมยข้อมูล", "การป้องกันข้อมูล", "การสำรองข้อมูล", "การลบข้อมูล"]},
+                {q: "Cloud Computing คืออะไร?", a: "การประมวลผลบนคลาวด์", options: ["การประมวลผลบนคลาวด์", "การประมวลผลบนเครื่อง", "การเก็บข้อมูลบนเครื่อง", "การลบข้อมูล"]},
+                {q: "Backup คืออะไร?", a: "การสำรองข้อมูล", options: ["การสำรองข้อมูล", "การลบข้อมูล", "การแก้ไขข้อมูล", "การส่งข้อมูล"]},
+                {q: "Restore คืออะไร?", a: "การกู้คืนข้อมูล", options: ["การกู้คืนข้อมูล", "การลบข้อมูล", "การแก้ไขข้อมูล", "การส่งข้อมูล"]},
+                {q: "Defragmentation คืออะไร?", a: "การจัดเรียงข้อมูลในฮาร์ดดิสก์", options: ["การจัดเรียงข้อมูลในฮาร์ดดิสก์", "การลบข้อมูล", "การสำรองข้อมูล", "การส่งข้อมูล"]},
+                {q: "Registry คืออะไร?", a: "ฐานข้อมูลการตั้งค่าของ Windows", options: ["ฐานข้อมูลการตั้งค่าของ Windows", "โปรแกรมเกม", "โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร"]},
+                {q: "Driver คืออะไร?", a: "โปรแกรมควบคุมอุปกรณ์", options: ["โปรแกรมควบคุมอุปกรณ์", "โปรแกรมเกม", "โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร"]},
+                {q: "Codec คืออะไร?", a: "โปรแกรมเข้ารหัส/ถอดรหัสไฟล์", options: ["โปรแกรมเข้ารหัส/ถอดรหัสไฟล์", "โปรแกรมเกม", "โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร"]},
+                {q: "Plugin คืออะไร?", a: "ส่วนเสริมของโปรแกรม", options: ["ส่วนเสริมของโปรแกรม", "โปรแกรมหลัก", "ไฟล์ข้อมูล", "ไฟล์รูปภาพ"]},
+                {q: "Cache คืออะไร?", a: "หน่วยความจำชั่วคราว", options: ["หน่วยความจำชั่วคราว", "หน่วยความจำถาวร", "โปรแกรม", "ไฟล์"]},
+                {q: "Cookie คืออะไร?", a: "ไฟล์เก็บข้อมูลจากเว็บไซต์", options: ["ไฟล์เก็บข้อมูลจากเว็บไซต์", "โปรแกรมเกม", "โปรแกรมวาดรูป", "โปรแกรมเขียนเอกสาร"]},
+                {q: "Spam คืออะไร?", a: "อีเมลขยะ", options: ["อีเมลขยะ", "อีเมลสำคัญ", "โปรแกรม", "ไฟล์"]}
+            ],
+            4: [
+                {q: "TCP/IP ย่อมาจากอะไร?", a: "Transmission Control Protocol/Internet Protocol", options: ["Transmission Control Protocol/Internet Protocol", "Transfer Control Protocol/Internet Protocol", "Transmission Communication Protocol/Internet Protocol", "Transfer Communication Protocol/Internet Protocol"]},
+                {q: "SQL ย่อมาจากอะไร?", a: "Structured Query Language", options: ["Structured Query Language", "Standard Query Language", "System Query Language", "Simple Query Language"]},
+                {q: "API ย่อมาจากอะไร?", a: "Application Programming Interface", options: ["Application Programming Interface", "Advanced Programming Interface", "Application Program Interface", "Advanced Program Interface"]},
+                {q: "JSON ย่อมาจากอะไร?", a: "JavaScript Object Notation", options: ["JavaScript Object Notation", "Java Standard Object Notation", "JavaScript Open Notation", "Java Simple Object Notation"]},
+                {q: "XML ย่อมาจากอะไร?", a: "eXtensible Markup Language", options: ["eXtensible Markup Language", "eXternal Markup Language", "eXtensible Machine Language", "eXternal Machine Language"]},
+                {q: "CSS ย่อมาจากอะไร?", a: "Cascading Style Sheets", options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style Sheets", "Common Style Sheets"]},
+                {q: "HTML ย่อมาจากอะไร?", a: "HyperText Markup Language", options: ["HyperText Markup Language", "HyperLink Markup Language", "HyperText Machine Language", "HyperLink Machine Language"]},
+                {q: "PHP ย่อมาจากอะไร?", a: "PHP: Hypertext Preprocessor", options: ["PHP: Hypertext Preprocessor", "Personal Home Page", "Private Home Page", "Public Home Page"]},
+                {q: "AJAX ย่อมาจากอะไร?", a: "Asynchronous JavaScript and XML", options: ["Asynchronous JavaScript and XML", "Advanced JavaScript and XML", "Automatic JavaScript and XML", "Active JavaScript and XML"]},
+                {q: "CRUD ย่อมาจากอะไr?", a: "Create, Read, Update, Delete", options: ["Create, Read, Update, Delete", "Copy, Read, Update, Delete", "Create, Remove, Update, Delete", "Copy, Remove, Update, Delete"]},
+                {q: "MVC ย่อมาจากอะไร?", a: "Model-View-Controller", options: ["Model-View-Controller", "Model-View-Component", "Module-View-Controller", "Module-View-Component"]},
+                {q: "OOP ย่อมาจากอะไร?", a: "Object-Oriented Programming", options: ["Object-Oriented Programming", "Object-Oriented Process", "Objective-Oriented Programming", "Objective-Oriented Process"]},
+                {q: "IDE ย่อมาจากอะไร?", a: "Integrated Development Environment", options: ["Integrated Development Environment", "Interactive Development Environment", "Internal Development Environment", "Independent Development Environment"]},
+                {q: "SDK ย่อมาจากอะไร?", a: "Software Development Kit", options: ["Software Development Kit", "System Development Kit", "Standard Development Kit", "Secure Development Kit"]},
+                {q: "JVM ย่อมาจากอะไร?", a: "Java Virtual Machine", options: ["Java Virtual Machine", "JavaScript Virtual Machine", "Java Variable Machine", "JavaScript Variable Machine"]},
+                {q: "CLI ย่อมาจากอะไร?", a: "Command Line Interface", options: ["Command Line Interface", "Computer Line Interface", "Control Line Interface", "Common Line Interface"]},
+                {q: "GUI ย่อมาจากอะไร?", a: "Graphical User Interface", options: ["Graphical User Interface", "General User Interface", "Global User Interface", "Generic User Interface"]},
+                {q: "SSH ย่อมาจากอะไร?", a: "Secure Shell", options: ["Secure Shell", "System Shell", "Standard Shell", "Simple Shell"]},
+                {q: "SSL ย่อมาจากอะไร?", a: "Secure Sockets Layer", options: ["Secure Sockets Layer", "System Sockets Layer", "Standard Sockets Layer", "Simple Sockets Layer"]},
+                {q: "TLS ย่อมาจากอะไร?", a: "Transport Layer Security", options: ["Transport Layer Security", "Transfer Layer Security", "Transmission Layer Security", "Terminal Layer Security"]},
+                {q: "SMTP ย่อมาจากอะไร?", a: "Simple Mail Transfer Protocol", options: ["Simple Mail Transfer Protocol", "Secure Mail Transfer Protocol", "Standard Mail Transfer Protocol", "System Mail Transfer Protocol"]},
+                {q: "POP3 ย่อมาจากอะไร?", a: "Post Office Protocol version 3", options: ["Post Office Protocol version 3", "Personal Office Protocol version 3", "Public Office Protocol version 3", "Private Office Protocol version 3"]},
+                {q: "IMAP ย่อมาจากอะไร?", a: "Internet Message Access Protocol", options: ["Internet Message Access Protocol", "Internal Message Access Protocol", "International Message Access Protocol", "Interactive Message Access Protocol"]},
+                {q: "DHCP ย่อมาจากอะไร?", a: "Dynamic Host Configuration Protocol", options: ["Dynamic Host Configuration Protocol", "Direct Host Configuration Protocol", "Distributed Host Configuration Protocol", "Default Host Configuration Protocol"]},
+                {q: "NAT ย่อมาจากอะไร?", a: "Network Address Translation", options: ["Network Address Translation", "Network Access Translation", "Network Application Translation", "Network Authentication Translation"]},
+                {q: "RAID ย่อมาจากอะไร?", a: "Redundant Array of Independent Disks", options: ["Redundant Array of Independent Disks", "Random Array of Independent Disks", "Reliable Array of Independent Disks", "Rapid Array of Independent Disks"]},
+                {q: "UPS ย่อมาจากอะไร?", a: "Uninterruptible Power Supply", options: ["Uninterruptible Power Supply", "Universal Power Supply", "Unlimited Power Supply", "Uniform Power Supply"]},
+                {q: "PSU ย่อมาจากอะไร?", a: "Power Supply Unit", options: ["Power Supply Unit", "Processing Supply Unit", "Primary Supply Unit", "Portable Supply Unit"]},
+                {q: "NIC ย่อมาจากอะไร?", a: "Network Interface Card", options: ["Network Interface Card", "Network Internal Card", "Network Input Card", "Network Integration Card"]},
+                {q: "MAC Address ย่อมาจากอะไร?", a: "Media Access Control Address", options: ["Media Access Control Address", "Machine Access Control Address", "Memory Access Control Address", "Module Access Control Address"]}
+            ],
+            5: [
+                {q: "OSI Model มีกี่ชั้น?", a: "7 ชั้น", options: ["7 ชั้น", "5 ชั้น", "6 ชั้น", "8 ชั้น"]},
+                {q: "IPv6 Address มีความยาวกี่บิต?", a: "128 บิต", options: ["128 บิต", "64 บิต", "32 บิต", "256 บิต"]},
+                {q: "Big Endian และ Little Endian เกี่ยวข้องกับอะไร?", a: "การเรียงลำดับไบต์", options: ["การเรียงลำดับไบต์", "การเข้ารหัส", "การบีบอัด", "การส่งข้อมูล"]},
+                {q: "Turing Test ใช้ทดสอบอะไร?", a: "ปัญญาประดิษฐ์", options: ["ปัญญาประดิษฐ์", "ความเร็วคอมพิวเตอร์", "ความปลอดภัย", "ประสิทธิภาพ"]},
+                {q: "Moore's Law กล่าวถึงอะไร?", a: "จำนวนทรานซิสเตอร์เพิ่มขึ้นเป็น 2 เท่าทุก 2 ปี", options: ["จำนวนทรานซิสเตอร์เพิ่มขึ้นเป็น 2 เท่าทุก 2 ปี", "ความเร็วเพิ่มขึ้นเป็น 2 เท่าทุกปี", "ราคาลดลงครึ่งหนึ่งทุกปี", "ขนาดลดลงครึ่งหนึ่งทุก 2 ปี"]},
+                {q: "Quantum Computing ใช้หลักการอะไร?", a: "กลศาสตร์ควอนตัม", options: ["กลศาสตร์ควอนตัม", "กลศาสตร์คลาสสิก", "ทฤษฎีสัมพัทธภาพ", "อุณหพลศาสตร์"]},
+                {q: "Blockchain ใช้อัลกอริทึมอะไรในการเข้ารหัส?", a: "Hash Function", options: ["Hash Function", "Symmetric Encryption", "Asymmetric Encryption", "Digital Signature"]},
+                {q: "Machine Learning แบ่งออกเป็นกี่ประเภทหลัก?", a: "3 ประเภท", options: ["3 ประเภท", "2 ประเภท", "4 ประเภท", "5 ประเภท"]},
+                {q: "Neural Network ได้แรงบันดาลใจมาจากอะไร?", a: "สมองมนุษย์", options: ["สมองมนุษย์", "ระบบประสาท", "เซลล์ประสาท", "ทั้งหมดข้างต้น"]},
+                {q: "Big Data มีลักษณะสำคัญกี่ V?", a: "3 V", options: ["3 V", "4 V", "5 V", "6 V"]},
+                {q: "Cloud Computing มีรูปแบบการให้บริการกี่แบบหลัก?", a: "3 แบบ", options: ["3 แบบ", "2 แบบ", "4 แบบ", "5 แบบ"]},
+                {q: "IoT ย่อมาจากอะไร?", a: "Internet of Things", options: ["Internet of Things", "Internet of Technology", "Integration of Things", "Integration of Technology"]},
+                {q: "Edge Computing คืออะไร?", a: "การประมวลผลใกล้แหล่งข้อมูล", options: ["การประมวลผลใกล้แหล่งข้อมูล", "การประมวลผลบนคลาวด์", "การประมวลผลแบบกระจาย", "การประมวลผลแบบขนาน"]},
+                {q: "Microservices Architecture คืออะไร?", a: "สถาปัตยกรรมแบบแยกส่วนย่อย", options: ["สถาปัตยกรรมแบบแยกส่วนย่อย", "สถาปัตยกรรมแบบรวมศูนย์", "สถาปัตยกรรมแบบชั้น", "สถาปัตยกรรมแบบเครือข่าย"]},
+                {q: "DevOps รวมระหว่างอะไรบ้าง?", a: "Development และ Operations", options: ["Development และ Operations", "Design และ Operations", "Development และ Organization", "Design และ Organization"]},
+                {q: "Agile Methodology เน้นอะไรเป็นหลัก?", a: "การตอบสนองต่อการเปลี่ยนแปลง", options: ["การตอบสนองต่อการเปลี่ยนแปลง", "การทำตามแผน", "การจัดทำเอกสาร", "การควบคุมคุณภาพ"]},
+                {q: "Scrum มีบทบาทหลักกี่บทบาท?", a: "3 บทบาท", options: ["3 บทบาท", "2 บทบาท", "4 บทบาท", "5 บทบาท"]},
+                {q: "Git เป็นระบบอะไร?", a: "Version Control System", options: ["Version Control System", "Database Management System", "Operating System", "File Management System"]},
+                {q: "Docker คืออะไร?", a: "Container Platform", options: ["Container Platform", "Virtual Machine", "Operating System", "Programming Language"]},
+                {q: "Kubernetes ใช้ทำอะไร?", a: "จัดการ Container", options: ["จัดการ Container", "จัดการ Database", "จัดการ Network", "จัดการ Storage"]},
+                {q: "REST API ใช้ HTTP Method อะไรบ้าง?", a: "GET, POST, PUT, DELETE", options: ["GET, POST, PUT, DELETE", "READ, WRITE, UPDATE, REMOVE", "SELECT, INSERT, UPDATE, DELETE", "FETCH, SEND, MODIFY, ERASE"]},
+                {q: "GraphQL คืออะไร?", a: "Query Language สำหรับ API", options: ["Query Language สำหรับ API", "Database Language", "Programming Language", "Markup Language"]},
+                {q: "WebSocket ใช้ทำอะไร?", a: "การสื่อสารแบบ Real-time", options: ["การสื่อสารแบบ Real-time", "การส่งไฟล์", "การเข้ารหัส", "การบีบอัด"]},
+                {q: "Progressive Web App (PWA) คืออะไร?", a: "Web App ที่ทำงานเหมือน Native App", options: ["Web App ที่ทำงานเหมือน Native App", "Mobile App", "Desktop App", "Game App"]},
+                {q: "Single Page Application (SPA) คืออะไร?", a: "Web App ที่โหลดหน้าเดียว", options: ["Web App ที่โหลดหน้าเดียว", "Web App หลายหน้า", "Mobile App", "Desktop App"]},
+                {q: "Server-Side Rendering (SSR) คืออะไร?", a: "การ Render หน้าเว็บที่ Server", options: ["การ Render หน้าเว็บที่ Server", "การ Render หน้าเว็บที่ Client", "การ Render รูปภาพ", "การ Render วิดีโอ"]},
+                {q: "Content Delivery Network (CDN) ใช้ทำอะไร?", a: "กระจายเนื้อหาให้ใกล้ผู้ใช้", options: ["กระจายเนื้อหาให้ใกล้ผู้ใช้", "เก็บข้อมูล", "ประมวลผล", "เข้ารหัส"]},
+                {q: "Load Balancer ใช้ทำอะไร?", a: "กระจายโหลดไปยัง Server หลายตัว", options: ["กระจายโหลดไปยัง Server หลายตัว", "เพิ่มความเร็ว", "ลดการใช้หน่วยความจำ", "เข้ารหัสข้อมูล"]},
+                {q: "Horizontal Scaling คืออะไร?", a: "เพิ่มจำนวน Server", options: ["เพิ่มจำนวน Server", "เพิ่มประสิทธิภาพ Server", "ลดจำนวน Server", "ลดประสิทธิภาพ Server"]},
+                {q: "Vertical Scaling คืออะไร?", a: "เพิ่มประสิทธิภาพ Server", options: ["เพิ่มประสิทธิภาพ Server", "เพิ่มจำนวน Server", "ลดประสิทธิภาพ Server", "ลดจำนวน Server"]}
+            ]
+        };
+
+        let currentLevel = 1;
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let score = 0;
+        let startTime = null;
+        let endTime = null;
+        let shuffledQuestions = [];
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            startTime = new Date();
+            
+            // Shuffle questions for this level
+            shuffledQuestions = shuffleArray(quizData[level]);
+            
+            document.getElementById('levelSelection').classList.add('hidden');
+            document.getElementById('quizInterface').classList.remove('hidden');
+            
+            updateLevelBadge();
+            loadQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            const timer = setInterval(() => {
+                if (document.getElementById('quizInterface').classList.contains('hidden')) {
+                    clearInterval(timer);
+                    return;
+                }
+                
+                const now = new Date();
+                const elapsed = Math.floor((now - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                
+                document.getElementById('timerDisplay').textContent = 
+                    `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function updateLevelBadge() {
+            const badge = document.getElementById('levelBadge');
+            const colors = ['bg-green-100 text-green-800', 'bg-blue-100 text-blue-800', 'bg-yellow-100 text-yellow-800', 'bg-orange-100 text-orange-800', 'bg-red-100 text-red-800'];
+            badge.className = `px-3 py-1 rounded-full text-sm font-medium mr-3 ${colors[currentLevel - 1]}`;
+            badge.textContent = `ระดับที่ ${currentLevel}`;
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            
+            document.getElementById('questionNumber').textContent = currentQuestion + 1;
+            document.getElementById('questionText').textContent = question.q;
+            document.getElementById('progressText').textContent = `${currentQuestion + 1}/30`;
+            document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / 30) * 100}%`;
+            
+            const optionsContainer = document.getElementById('answerOptions');
+            optionsContainer.innerHTML = '';
+            
+            // Shuffle options for each question
+            const shuffledOptions = shuffleArray(question.options);
+            
+            shuffledOptions.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full p-4 text-left bg-gray-50 hover:bg-indigo-50 border border-gray-200 rounded-lg transition-colors answer-option';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(option, button);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').textContent = currentQuestion === 29 ? 'ดูผลลัพธ์' : 'ถัดไป →';
+        }
+
+        function selectAnswer(answer, button) {
+            // Remove previous selection
+            document.querySelectorAll('.answer-option').forEach(btn => {
+                btn.classList.remove('bg-indigo-100', 'border-indigo-300', 'text-indigo-800');
+                btn.classList.add('bg-gray-50', 'border-gray-200');
+            });
+            
+            // Highlight selected answer
+            button.classList.remove('bg-gray-50', 'border-gray-200');
+            button.classList.add('bg-indigo-100', 'border-indigo-300', 'text-indigo-800');
+            
+            userAnswers[currentQuestion] = answer;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < 29) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+                
+                // Restore previous answer if exists
+                if (userAnswers[currentQuestion]) {
+                    const buttons = document.querySelectorAll('.answer-option');
+                    buttons.forEach(btn => {
+                        if (btn.textContent === userAnswers[currentQuestion]) {
+                            btn.classList.remove('bg-gray-50', 'border-gray-200');
+                            btn.classList.add('bg-indigo-100', 'border-indigo-300', 'text-indigo-800');
+                        }
+                    });
+                }
+            }
+        }
+
+        function showResults() {
+            endTime = new Date();
+            
+            // Calculate score and wrong answers
+            score = 0;
+            const wrongAnswers = [];
+            
+            for (let i = 0; i < shuffledQuestions.length; i++) {
+                if (userAnswers[i] === shuffledQuestions[i].a) {
+                    score++;
+                } else {
+                    wrongAnswers.push({
+                        questionNumber: i + 1,
+                        question: shuffledQuestions[i].q,
+                        userAnswer: userAnswers[i] || 'ไม่ได้ตอบ',
+                        correctAnswer: shuffledQuestions[i].a
+                    });
+                }
+            }
+            
+            const percentage = Math.round((score / 30) * 100);
+            const timeElapsed = Math.floor((endTime - startTime) / 1000);
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            
+            document.getElementById('quizInterface').classList.add('hidden');
+            document.getElementById('resultsInterface').classList.remove('hidden');
+            
+            document.getElementById('scoreDisplay').textContent = `${score}/30`;
+            document.getElementById('scorePercentage').textContent = `${percentage}%`;
+            document.getElementById('timeUsed').textContent = `⏱️ เวลาที่ใช้: ${minutes} นาที ${seconds} วินาที`;
+            
+            // Set emoji based on score
+            const emoji = document.getElementById('resultEmoji');
+            if (percentage >= 90) emoji.textContent = '🏆';
+            else if (percentage >= 80) emoji.textContent = '🎉';
+            else if (percentage >= 70) emoji.textContent = '👏';
+            else if (percentage >= 60) emoji.textContent = '👍';
+            else emoji.textContent = '💪';
+            
+            // Display wrong answers
+            displayWrongAnswers(wrongAnswers);
+        }
+
+        function displayWrongAnswers(wrongAnswers) {
+            const wrongAnswersList = document.getElementById('wrongAnswersList');
+            const wrongAnswersSection = document.getElementById('wrongAnswersSection');
+            
+            if (wrongAnswers.length === 0) {
+                wrongAnswersSection.innerHTML = '<div class="text-center text-green-600 font-medium text-xl">🎉 ยินดีด้วย! คุณตอบถูกทุกข้อ!</div>';
+                return;
+            }
+            
+            wrongAnswersList.innerHTML = '';
+            
+            wrongAnswers.forEach((item, index) => {
+                const wrongAnswerDiv = document.createElement('div');
+                wrongAnswerDiv.className = 'bg-red-50 border border-red-200 rounded-lg p-4';
+                wrongAnswerDiv.innerHTML = `
+                    <div class="font-semibold text-red-800 mb-2">ข้อที่ ${item.questionNumber}</div>
+                    <div class="text-gray-800 mb-2"><strong>คำถาม:</strong> ${item.question}</div>
+                    <div class="text-red-600 mb-1"><strong>คำตอบของคุณ:</strong> ${item.userAnswer}</div>
+                    <div class="text-green-600"><strong>คำตอบที่ถูก:</strong> ${item.correctAnswer}</div>
+                `;
+                wrongAnswersList.appendChild(wrongAnswerDiv);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            startTime = new Date();
+            
+            // Shuffle questions again for new attempt
+            shuffledQuestions = shuffleArray(quizData[currentLevel]);
+            
+            document.getElementById('resultsInterface').classList.add('hidden');
+            document.getElementById('quizInterface').classList.remove('hidden');
+            
+            loadQuestion();
+            startTimer();
+        }
+
+        function goToLevelSelection() {
+            document.getElementById('resultsInterface').classList.add('hidden');
+            document.getElementById('quizInterface').classList.add('hidden');
+            document.getElementById('levelSelection').classList.remove('hidden');
+        }
+
+        function goBack() {
+            if (document.getElementById('quizInterface').classList.contains('hidden')) {
+                return;
+            }
+            
+            document.getElementById('quizInterface').classList.add('hidden');
+            document.getElementById('levelSelection').classList.remove('hidden');
+        }
+
+        // Text Export Functions
+        function openTextExport() {
+            document.getElementById('textExportModal').classList.remove('hidden');
+        }
+
+        function closeTextExport() {
+            document.getElementById('textExportModal').classList.add('hidden');
+        }
+
+        function showTextForLevel(level) {
+            const questions = quizData[level];
+            let textOutput = `ระดับที่ ${level}\n`;
+            textOutput += '='.repeat(20) + '\n\n';
+            
+            questions.forEach((question, index) => {
+                textOutput += `${index + 1}. คำถาม: ${question.q}\n`;
+                textOutput += `   คำตอบ: ${question.a}\n\n`;
+            });
+            
+            document.getElementById('exportText').value = textOutput;
+            document.getElementById('exportLevelTitle').textContent = `ระดับที่ ${level} (30 คำถาม)`;
+            document.getElementById('copyBtn').classList.remove('hidden');
+        }
+
+        function copyToClipboard() {
+            const textArea = document.getElementById('exportText');
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✅ คัดลอกแล้ว!';
+                copyBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                copyBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    copyBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                }, 2000);
+            } catch (err) {
+                alert('ไม่สามารถคัดลอกได้ กรุณาเลือกข้อความและกด Ctrl+C');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quiz is ready to use
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96513fc2a3aa7336',t:'MTc1MzUwNTE0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
