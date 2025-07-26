@@ -475,15 +475,15 @@
                 <div class="reward-summary">
                     <div class="summary-item">
                         <span class="summary-icon">🍭</span>
-                        <span class="summary-text">ขนม: <span id="candyCount">0</span> ชิ้น</span>
+                        <span class="summary-text">ขนม: <span id="candyCount">0</span>/10 ชิ้น</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-icon">⭐</span>
-                        <span class="summary-text">สติกเกอร์: <span id="stickerCount">0</span> ชิ้น</span>
+                        <span class="summary-text">สติกเกอร์: <span id="stickerCount">0</span>/10 ชิ้น</span>
                     </div>
                     <div class="summary-item">
                         <span class="summary-icon">🧩</span>
-                        <span class="summary-text">จิ๊กซอว์: <span id="puzzleCount">0</span> ชิ้น</span>
+                        <span class="summary-text">จิ๊กซอว์: <span id="puzzleCount">0</span>/10 ชิ้น</span>
                     </div>
                 </div>
                 
@@ -632,10 +632,10 @@
         let puzzleCount = 0;
 
         const rewards = [
-            { text: '🎉 เก่งมาก!', probability: 0.93 },
-            { text: '🍭 ได้ขนม!', probability: 0.01 },
-            { text: '🧩 ได้จิ๊กซอว์!', probability: 0.01 },
-            { text: '⭐ ได้สติกเกอร์!', probability: 0.05 }
+            { text: '🎉 เก่งมาก!', probability: 0.85 },
+            { text: '🍭 ได้ขนม!', probability: 0.03 },
+            { text: '🧩 ได้จิ๊กซอว์!', probability: 0.02 },
+            { text: '⭐ ได้สติกเกอร์!', probability: 0.1 }
         ];
 
         function getRandomWord() {
@@ -671,12 +671,12 @@
             
             rewardHistory.unshift(historyItem); // เพิ่มที่ด้านบน
             
-            // นับรางวัลแต่ละประเภท
-            if (rewardText.includes('🍭')) {
+            // นับรางวัลแต่ละประเภท (จำกัดไม่เกิน 10 ชิ้น)
+            if (rewardText.includes('🍭') && candyCount < 10) {
                 candyCount++;
-            } else if (rewardText.includes('⭐')) {
+            } else if (rewardText.includes('⭐') && stickerCount < 10) {
                 stickerCount++;
-            } else if (rewardText.includes('🧩')) {
+            } else if (rewardText.includes('🧩') && puzzleCount < 10) {
                 puzzleCount++;
             }
             
@@ -877,7 +877,7 @@
                 }
                 
                 wordUtterance.rate = 0.5;
-                wordUtterance.volume = 0.8;
+                wordUtterance.volume = 0.85;
                 wordUtterance.pitch = 1;
                 
                 // Second utterance - speak the description after a pause
@@ -885,8 +885,18 @@
                 descriptionUtterance.text = currentWord.description;
                 descriptionUtterance.lang = 'th-TH';
                 descriptionUtterance.rate = 0.5;
-                descriptionUtterance.volume = 0.8;
+                descriptionUtterance.volume = 0.85;
                 descriptionUtterance.pitch = 1;
+                
+                // Add error handling
+                wordUtterance.onerror = function(event) {
+                    console.log('Speech error:', event);
+                    showFeedback('😅 ไม่สามารถอ่านออกเสียงได้', 'reward');
+                };
+                
+                descriptionUtterance.onerror = function(event) {
+                    console.log('Description speech error:', event);
+                };
                 
                 // Speak word first
                 speechSynthesis.speak(wordUtterance);
@@ -906,5 +916,5 @@
         // Initialize game
         newWord();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9650f6aba5907331',t:'MTc1MzUwMjE0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96552e23a5f24f52',t:'MTc1MzU0NjM2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
