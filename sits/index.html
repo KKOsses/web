@@ -90,6 +90,44 @@
         // Links array to store all links
         let links = [];
 
+        // Load links from Google Sheets
+        async function loadLinksFromSheet() {
+            try {
+                const response = await fetch(`https://script.google.com/macros/s/AKfycbxwxGNetwhsGil3wbgRsALRc4jSvGeUyCesVpxP2t80oYMXF9c56X2bAQ_EK4l0hT9K/exec?action=getLinks`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+
+                // Since we can't read response with no-cors, we'll use JSONP instead
+                loadLinksWithJSONP();
+            } catch (error) {
+                console.error('Error loading from Google Sheets:', error);
+                renderLinks(); // Show empty state if loading fails
+            }
+        }
+
+        // Load links using JSONP to bypass CORS
+        function loadLinksWithJSONP() {
+            const script = document.createElement('script');
+            const callbackName = 'jsonpCallback_' + Date.now();
+            
+            window[callbackName] = function(data) {
+                if (data && data.links) {
+                    links = data.links.map((link, index) => ({
+                        id: Date.now() + index,
+                        title: link.title,
+                        url: link.url
+                    }));
+                }
+                renderLinks();
+                document.head.removeChild(script);
+                delete window[callbackName];
+            };
+
+            script.src = `https://script.google.com/macros/s/AKfycbxwxGNetwhsGil3wbgRsALRc4jSvGeUyCesVpxP2t80oYMXF9c56X2bAQ_EK4l0hT9K/exec?action=getLinks&callback=${callbackName}`;
+            document.head.appendChild(script);
+        }
+
         // Show modal
         function showModal() {
             modal.classList.remove('hidden');
@@ -105,15 +143,54 @@
         }
 
         // Add link to the list
-        function addLink(title, url) {
+        async function addLink(title, url) {
             // Ensure URL has protocol
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
             }
 
-            const link = { id: Date.now(), title, url };
-            links.push(link);
-            renderLinks();
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'กำลังบันทึก...';
+            submitBtn.disabled = true;
+
+            try {
+                // Send to Google Sheets using GET request to avoid CORS
+                const params = new URLSearchParams({
+                    action: 'addLink',
+                    title: title,
+                    url: url,
+                    timestamp: new Date().toLocaleString('th-TH')
+                });
+
+                const response = await fetch(`https://script.google.com/macros/s/AKfycbxwxGNetwhsGil3wbgRsALRc4jSvGeUyCesVpxP2t80oYMXF9c56X2bAQ_EK4l0hT9K/exec?${params}`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+
+                // Since we're using no-cors, we can't check response status
+                // Assume success and add to local list
+                const link = { id: Date.now(), title, url };
+                links.push(link);
+                renderLinks();
+                
+                // Show success message
+                showNotification('✅ ส่งข้อมูลไป Google Sheet แล้ว!', 'success');
+
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+                showNotification('❌ เกิดข้อผิดพลาดในการบันทึก', 'error');
+                
+                // Still add to local list as fallback
+                const link = { id: Date.now(), title, url };
+                links.push(link);
+                renderLinks();
+            } finally {
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
         }
 
         // Remove link
@@ -191,8 +268,34 @@
             }
         });
 
-        // Initial render
-        renderLinks();
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initial render - load data from Google Sheets
+        loadLinksFromSheet();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965132ef45ec731f',t:'MTc1MzUwNDYxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965171b62316732b',t:'MTc1MzUwNzE4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
