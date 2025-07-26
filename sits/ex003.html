@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมฝึกพิมพ์ - Typing Practice Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .main-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            align-items: flex-start;
+        }
+        
+        .history-sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 350px;
+            min-height: 600px;
+            flex-shrink: 0;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            flex: 1;
+            min-width: 500px;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+        
+        .language-toggle {
+            margin-bottom: 30px;
+        }
+        
+        .toggle-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .toggle-btn.active {
+            background: #48bb78;
+        }
+        
+        .mode-toggle {
+            margin-bottom: 30px;
+        }
+        
+        .mode-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active {
+            background: #ed8936;
+        }
+        
+        .timer-display {
+            margin-bottom: 30px;
+        }
+        
+        .timer-circle {
+            width: 120px;
+            height: 120px;
+            border: 6px solid #ed8936;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            box-shadow: 0 10px 20px rgba(237, 137, 54, 0.3);
+        }
+        
+        .timer-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #9a3412;
+        }
+        
+        .letter-display {
+            font-size: 8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 40px 0;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .input-area {
+            margin: 30px 0;
+        }
+        
+        .letter-input {
+            font-size: 3rem;
+            padding: 20px;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            text-align: center;
+            width: 150px;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .letter-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .letter-input.correct {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .letter-input.incorrect {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+        
+        .feedback {
+            margin: 20px 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feedback.correct {
+            color: #48bb78;
+        }
+        
+        .feedback.incorrect {
+            color: #f56565;
+        }
+        
+        .reward {
+            font-size: 2rem;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            80% { transform: translateY(-10px); }
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .accuracy-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .accuracy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f56565 0%, #ed8936 50%, #48bb78 100%);
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+        
+        .history-section {
+            height: 100%;
+        }
+        
+        .history-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 5px;
+        }
+        
+        .tab-btn {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .tab-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .history-content {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 500px;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .history-header h3 {
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .clear-btn {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .clear-btn:hover {
+            background: #e53e3e;
+            transform: translateY(-1px);
+        }
+        
+        .history-list {
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        
+        .history-item {
+            background: white;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .history-item-content {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .history-item-time {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+        
+        .letter-item {
+            display: inline-block;
+            background: white;
+            padding: 8px 12px;
+            margin: 4px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-container {
+                flex-direction: column;
+                max-width: 100%;
+            }
+            
+            .history-sidebar {
+                width: 100%;
+                min-height: auto;
+                order: 2;
+            }
+            
+            .game-container {
+                padding: 20px;
+                min-width: auto;
+                width: 100%;
+                order: 1;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .letter-display {
+                font-size: 6rem;
+            }
+            
+            .letter-input {
+                font-size: 2rem;
+                width: 120px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .history-tabs {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .tab-btn {
+                flex: 1;
+            }
+            
+            .history-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .history-content {
+                min-height: 300px;
+            }
+            
+            .history-list {
+                max-height: 250px;
+            }
+            
+            .mode-toggle {
+                margin-bottom: 20px;
+            }
+            
+            .mode-btn {
+                margin: 5px;
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .timer-circle {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .timer-text {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="history-sidebar">
+            <div class="history-section">
+                <div class="history-tabs">
+                    <button class="tab-btn active" onclick="showTab('rewards')">🏆 รางวัล</button>
+                    <button class="tab-btn" onclick="showTab('letters')">📝 ตัวอักษร</button>
+                </div>
+                
+                <div class="history-content" id="rewardsHistory">
+                    <div class="history-header">
+                        <h3>รางวัลที่ได้รับ (100)</h3>
+                        <button class="clear-btn" onclick="clearHistory('rewards')">ล้าง</button>
+                    </div>
+                    <div class="history-list" id="rewardsList">
+                        <p class="empty-message">ยังไม่มีรางวัล เริ่มเล่นเพื่อรับรางวัล!</p>
+                    </div>
+                </div>
+                
+                <div class="history-content" id="lettersHistory" style="display: none;">
+                    <div class="history-header">
+                        <h3>ตัวอักษรที่พิมพ์ถูก (100)</h3>
+                        <button class="clear-btn" onclick="clearHistory('letters')">ล้าง</button>
+                    </div>
+                    <div class="history-list" id="lettersList">
+                        <p class="empty-message">ยังไม่มีตัวอักษรที่พิมพ์ถูก เริ่มเล่นเลย!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-container">
+            <h1 class="title">🎮 เกมฝึกพิมพ์</h1>
+            <p class="subtitle">Typing Practice Game</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">คะแนน</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracy">100%</div>
+                    <div class="stat-label">ความแม่นยำ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="streak">0</div>
+                    <div class="stat-label">ต่อเนื่อง</div>
+                </div>
+            </div>
+            
+            <div class="accuracy-bar">
+                <div class="accuracy-fill" id="accuracyBar" style="width: 100%"></div>
+            </div>
+            
+            <div class="language-toggle">
+                <button class="toggle-btn active" id="thaiBtn" onclick="setLanguage('thai')">ภาษาไทย</button>
+                <button class="toggle-btn" id="englishBtn" onclick="setLanguage('english')">English</button>
+            </div>
+            
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="normalBtn" onclick="setMode('normal')">โหมดปกติ</button>
+                <button class="mode-btn" id="timerBtn" onclick="setMode('timer')">จับเวลา 60 วินาที</button>
+            </div>
+            
+            <div class="timer-display" id="timerDisplay" style="display: none;">
+                <div class="timer-circle">
+                    <div class="timer-text" id="timerText">60</div>
+                </div>
+            </div>
+            
+            <div class="letter-display" id="letterDisplay">ก</div>
+            
+            <div class="input-area">
+                <input type="text" class="letter-input" id="letterInput" maxlength="1" autocomplete="off">
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            <div class="reward" id="reward"></div>
+            
+            <button class="next-btn" onclick="nextLetter()">ตัวอักษรถัดไป</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let currentLanguage = 'thai';
+        let currentLetter = '';
+        let score = 0;
+        let totalAttempts = 0;
+        let correctAttempts = 0;
+        let streak = 0;
+        let gameMode = 'normal';
+        let timeLeft = 60;
+        let timerInterval = null;
+        let gameActive = true;
+        
+        // History tracking (max 100 items each)
+        let rewardsHistory = [];
+        let lettersHistory = [];
+        
+        // Character sets
+        const thaiLetters = [
+            'ก', 'ข', 'ค', 'ง', 'จ', 'ฉ', 'ช', 'ซ', 'ญ', 'ด', 'ต', 'ถ', 'ท', 'ธ', 'น', 'บ', 'ป', 'ผ', 'ฝ', 'พ', 'ฟ', 'ภ', 'ม', 'ย', 'ร', 'ล', 'ว', 'ศ', 'ษ', 'ส', 'ห', 'ฬ', 'อ', 'ฮ',
+            'ะ', 'า', 'ิ', 'ี', 'ึ', 'ื', 'ุ', 'ู', 'เ', 'แ', 'โ', 'ใ', 'ไ'
+        ];
+        
+        const englishLetters = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+        ];
+        
+        // Reward system
+        const rewards = [
+            { text: '🍭 ได้ขนม!', probability: 0.05 },
+            { text: '🧩 ได้จิ๊กซอว์!', probability: 0.04 },
+            { text: '⭐ ได้สติกเกอร์!', probability: 0.1 },
+            { text: '🎯 เก่งมาก!', probability: 0.8 },
+            { text: '🏆 ยอดเยี่ยม!', probability: 0.01 }
+        ];
+        
+        // DOM elements
+        const letterDisplay = document.getElementById('letterDisplay');
+        const letterInput = document.getElementById('letterInput');
+        const feedback = document.getElementById('feedback');
+        const reward = document.getElementById('reward');
+        const scoreElement = document.getElementById('score');
+        const accuracyElement = document.getElementById('accuracy');
+        const streakElement = document.getElementById('streak');
+        const accuracyBar = document.getElementById('accuracyBar');
+        const thaiBtn = document.getElementById('thaiBtn');
+        const englishBtn = document.getElementById('englishBtn');
+        
+        // Initialize game
+        function init() {
+            generateNewLetter();
+            letterInput.focus();
+        }
+        
+        // Set language
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            if (lang === 'thai') {
+                thaiBtn.classList.add('active');
+                englishBtn.classList.remove('active');
+            } else {
+                englishBtn.classList.add('active');
+                thaiBtn.classList.remove('active');
+            }
+            generateNewLetter();
+        }
+        
+        // Set game mode
+        function setMode(mode) {
+            gameMode = mode;
+            const normalBtn = document.getElementById('normalBtn');
+            const timerBtn = document.getElementById('timerBtn');
+            const timerDisplay = document.getElementById('timerDisplay');
+            
+            if (mode === 'normal') {
+                normalBtn.classList.add('active');
+                timerBtn.classList.remove('active');
+                timerDisplay.style.display = 'none';
+                stopTimer();
+                gameActive = true;
+            } else {
+                timerBtn.classList.add('active');
+                normalBtn.classList.remove('active');
+                timerDisplay.style.display = 'block';
+                resetTimer();
+                startTimer();
+            }
+            
+            // Reset game stats
+            score = 0;
+            totalAttempts = 0;
+            correctAttempts = 0;
+            streak = 0;
+            updateStats();
+            generateNewLetter();
+        }
+        
+        // Generate new letter
+        function generateNewLetter() {
+            const letters = currentLanguage === 'thai' ? thaiLetters : englishLetters;
+            currentLetter = letters[Math.floor(Math.random() * letters.length)];
+            letterDisplay.textContent = currentLetter;
+            letterInput.value = '';
+            letterInput.className = 'letter-input';
+            feedback.textContent = '';
+            feedback.className = 'feedback';
+            reward.textContent = '';
+        }
+        
+        // Timer functions
+        function startTimer() {
+            if (gameMode !== 'timer') return;
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerText').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+        
+        function resetTimer() {
+            timeLeft = 60;
+            document.getElementById('timerText').textContent = timeLeft;
+            stopTimer();
+        }
+        
+        function endGame() {
+            stopTimer();
+            gameActive = false;
+            
+            // Show final results
+            feedback.textContent = `⏰ หมดเวลา! คะแนนรวม: ${score}`;
+            feedback.className = 'feedback incorrect';
+            reward.textContent = `🎯 พิมพ์ถูก ${correctAttempts}/${totalAttempts} ตัว`;
+            
+            // Disable input
+            letterInput.disabled = true;
+            letterInput.style.opacity = '0.5';
+            
+            // Show restart option
+            setTimeout(() => {
+                if (confirm(`เกมจบแล้ว!\nคะแนน: ${score}\nความแม่นยำ: ${Math.round((correctAttempts / totalAttempts) * 100)}%\n\nต้องการเล่นใหม่หรือไม่?`)) {
+                    restartGame();
+                }
+            }, 2000);
+        }
+        
+        function restartGame() {
+            // Reset all stats
+            score = 0;
+            totalAttempts = 0;
+            correctAttempts = 0;
+            streak = 0;
+            gameActive = true;
+            
+            // Re-enable input
+            letterInput.disabled = false;
+            letterInput.style.opacity = '1';
+            
+            // Reset timer if in timer mode
+            if (gameMode === 'timer') {
+                resetTimer();
+                startTimer();
+            }
+            
+            updateStats();
+            generateNewLetter();
+            letterInput.focus();
+        }
+        
+        // Check answer
+        function checkAnswer() {
+            if (!gameActive) return;
+            
+            const userInput = letterInput.value;
+            totalAttempts++;
+            
+            // For English, check case sensitivity
+            let isCorrect = false;
+            if (currentLanguage === 'english') {
+                isCorrect = userInput === currentLetter; // Exact match including case
+            } else {
+                isCorrect = userInput === currentLetter; // Thai letters
+            }
+            
+            if (isCorrect) {
+                // Correct answer
+                correctAttempts++;
+                streak++;
+                score += 10 + (streak * 2); // Bonus points for streak
+                
+                letterInput.className = 'letter-input correct';
+                feedback.textContent = '✅ ถูกต้อง!';
+                feedback.className = 'feedback correct';
+                
+                // Add to letters history
+                addToLettersHistory(currentLetter, currentLanguage);
+                
+                // Show reward
+                showReward();
+                
+                // Auto advance to next letter after a short delay
+                setTimeout(() => {
+                    if (gameActive) {
+                        generateNewLetter();
+                    }
+                }, 800);
+                
+            } else {
+                // Incorrect answer
+                streak = 0;
+                letterInput.className = 'letter-input incorrect';
+                
+                // Show more specific feedback for English case sensitivity
+                if (currentLanguage === 'english' && userInput.toLowerCase() === currentLetter.toLowerCase()) {
+                    const isCurrentUpper = currentLetter === currentLetter.toUpperCase();
+                    feedback.textContent = `❌ ผิด! ต้องเป็น${isCurrentUpper ? 'ตัวใหญ่' : 'ตัวเล็ก'} "${currentLetter}"`;
+                } else {
+                    feedback.textContent = `❌ ผิด! ตัวอักษรคือ "${currentLetter}"`;
+                }
+                feedback.className = 'feedback incorrect';
+            }
+            
+            updateStats();
+        }
+        
+        // Show reward based on probability
+        function showReward() {
+            const random = Math.random();
+            let cumulativeProbability = 0;
+            
+            for (const rewardItem of rewards) {
+                cumulativeProbability += rewardItem.probability;
+                if (random <= cumulativeProbability) {
+                    reward.textContent = rewardItem.text;
+                    reward.style.animation = 'none';
+                    setTimeout(() => {
+                        reward.style.animation = 'bounce 0.6s ease-in-out';
+                    }, 10);
+                    
+                    // Add to rewards history
+                    addToRewardsHistory(rewardItem.text);
+                    break;
+                }
+            }
+        }
+        
+        // Update statistics
+        function updateStats() {
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 100;
+            accuracyElement.textContent = accuracy + '%';
+            accuracyBar.style.width = accuracy + '%';
+        }
+        
+        // Next letter
+        function nextLetter() {
+            if (!gameActive) return;
+            generateNewLetter();
+            letterInput.focus();
+        }
+        
+        // Event listeners
+        letterInput.addEventListener('input', function() {
+            if (this.value.length === 1) {
+                checkAnswer();
+            }
+        });
+        
+        letterInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                nextLetter();
+            }
+        });
+        
+        // Auto-focus input when clicking anywhere
+        document.addEventListener('click', function() {
+            letterInput.focus();
+        });
+        
+        // History management functions
+        function addToRewardsHistory(rewardText) {
+            const timestamp = new Date().toLocaleString('th-TH');
+            rewardsHistory.unshift({ text: rewardText, time: timestamp });
+            
+            // Keep only last 100 items
+            if (rewardsHistory.length > 100) {
+                rewardsHistory = rewardsHistory.slice(0, 100);
+            }
+            
+            updateRewardsDisplay();
+        }
+        
+        function addToLettersHistory(letter, language) {
+            lettersHistory.unshift({ letter: letter, language: language, time: new Date().toLocaleString('th-TH') });
+            
+            // Keep only last 100 items
+            if (lettersHistory.length > 100) {
+                lettersHistory = lettersHistory.slice(0, 100);
+            }
+            
+            updateLettersDisplay();
+        }
+        
+        function updateRewardsDisplay() {
+            const rewardsList = document.getElementById('rewardsList');
+            
+            if (rewardsHistory.length === 0) {
+                rewardsList.innerHTML = '<p class="empty-message">ยังไม่มีรางวัล เริ่มเล่นเพื่อรับรางวัล!</p>';
+                return;
+            }
+            
+            rewardsList.innerHTML = rewardsHistory.map(reward => `
+                <div class="history-item">
+                    <span class="history-item-content">${reward.text}</span>
+                    <span class="history-item-time">${reward.time}</span>
+                </div>
+            `).join('');
+        }
+        
+        function updateLettersDisplay() {
+            const lettersList = document.getElementById('lettersList');
+            
+            if (lettersHistory.length === 0) {
+                lettersList.innerHTML = '<p class="empty-message">ยังไม่มีตัวอักษรที่พิมพ์ถูก เริ่มเล่นเลย!</p>';
+                return;
+            }
+            
+            lettersList.innerHTML = lettersHistory.map(item => `
+                <span class="letter-item" title="พิมพ์เมื่อ: ${item.time} (${item.language === 'thai' ? 'ภาษาไทย' : 'English'})">${item.letter}</span>
+            `).join('');
+        }
+        
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide content
+            document.getElementById('rewardsHistory').style.display = tabName === 'rewards' ? 'block' : 'none';
+            document.getElementById('lettersHistory').style.display = tabName === 'letters' ? 'block' : 'none';
+        }
+        
+        function clearHistory(type) {
+            if (type === 'rewards') {
+                if (confirm('คุณต้องการล้างประวัติรางวัลทั้งหมดหรือไม่?')) {
+                    rewardsHistory = [];
+                    updateRewardsDisplay();
+                }
+            } else if (type === 'letters') {
+                if (confirm('คุณต้องการล้างประวัติตัวอักษรที่พิมพ์ถูกทั้งหมดหรือไม่?')) {
+                    lettersHistory = [];
+                    updateLettersDisplay();
+                }
+            }
+        }
+        
+        // Initialize game on load
+        init();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96507d37b1fa7322',t:'MTc1MzQ5NzE3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
