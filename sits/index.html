@@ -28,6 +28,9 @@
             <button id="randomTaskBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
                 🎲 สุ่มใบงานคอมพิวเตอร์
             </button>
+            <button id="exchangeBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
+                🎁 แลกรางวัล
+            </button>
         </div>
 
         <!-- Difficulty Selection Modal -->
@@ -109,6 +112,64 @@
         </div>
     </div>
 
+    <!-- Exchange Rewards Modal -->
+    <div id="exchangeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🎁 แลกรางวัล</h2>
+                <p class="text-gray-600">ใช้สติ๊กเกอร์และขนมแลกจิ๊กซอว์</p>
+            </div>
+            
+            <!-- Exchange Rates -->
+            <div class="bg-purple-50 rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-purple-800 mb-2">📊 อัตราการแลก</h3>
+                <div class="space-y-1 text-sm text-purple-700">
+                    <div class="flex justify-between">
+                        <span>🏷️ สติ๊กเกอร์ 10 อัน</span>
+                        <span>= จิ๊กซอว์ 1 ชิ้น 🧩</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>🍬 ขนม 3 อัน</span>
+                        <span>= จิ๊กซอว์ 1 ชิ้น 🧩</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="exchangeForm" class="space-y-4">
+                <div>
+                    <label for="stickerCount" class="block text-sm font-semibold text-gray-700 mb-2">🏷️ จำนวนสติ๊กเกอร์</label>
+                    <input type="number" id="stickerCount" min="0" value="0" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <div>
+                    <label for="candyCount" class="block text-sm font-semibold text-gray-700 mb-2">🍬 จำนวนขนม</label>
+                    <input type="number" id="candyCount" min="0" value="0" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <!-- Result Display -->
+                <div id="exchangeResult" class="bg-green-50 rounded-lg p-4 border border-green-200 hidden">
+                    <h4 class="font-semibold text-green-800 mb-2">🧮 ผลการคำนวณ</h4>
+                    <div id="resultContent" class="text-sm text-green-700 space-y-1"></div>
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="calculateBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        🧮 คำนวณ
+                    </button>
+                    <button type="button" id="confirmExchangeBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 hidden">
+                        ✅ แลก
+                    </button>
+                </div>
+                
+                <button type="button" id="closeExchangeModal" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200">
+                    ยกเลิก
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Add Link Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
@@ -146,6 +207,7 @@
         // Elements
         const addLinkBtn = document.getElementById('addLinkBtn');
         const randomTaskBtn = document.getElementById('randomTaskBtn');
+        const exchangeBtn = document.getElementById('exchangeBtn');
         const modal = document.getElementById('modal');
         const closeModal = document.getElementById('closeModal');
         const cancelBtn = document.getElementById('cancelBtn');
@@ -163,6 +225,14 @@
         const easyBtn = document.getElementById('easyBtn');
         const mediumBtn = document.getElementById('mediumBtn');
         const hardBtn = document.getElementById('hardBtn');
+        const exchangeModal = document.getElementById('exchangeModal');
+        const closeExchangeModal = document.getElementById('closeExchangeModal');
+        const stickerCount = document.getElementById('stickerCount');
+        const candyCount = document.getElementById('candyCount');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const confirmExchangeBtn = document.getElementById('confirmExchangeBtn');
+        const exchangeResult = document.getElementById('exchangeResult');
+        const resultContent = document.getElementById('resultContent');
 
         // Links array to store all links
         let links = [];
@@ -328,6 +398,71 @@
             difficultyModal.classList.remove('flex');
         }
 
+        // Show exchange modal
+        function showExchangeModal() {
+            exchangeModal.classList.remove('hidden');
+            exchangeModal.classList.add('flex');
+            stickerCount.focus();
+        }
+
+        // Hide exchange modal
+        function hideExchangeModal() {
+            exchangeModal.classList.add('hidden');
+            exchangeModal.classList.remove('flex');
+            stickerCount.value = '0';
+            candyCount.value = '0';
+            exchangeResult.classList.add('hidden');
+            confirmExchangeBtn.classList.add('hidden');
+        }
+
+        // Calculate exchange
+        function calculateExchange() {
+            const stickers = parseInt(stickerCount.value) || 0;
+            const candies = parseInt(candyCount.value) || 0;
+            
+            const jigsawFromStickers = Math.floor(stickers / 10);
+            const jigsawFromCandies = Math.floor(candies / 3);
+            const totalJigsaw = jigsawFromStickers + jigsawFromCandies;
+            
+            const remainingStickers = stickers % 10;
+            const remainingCandies = candies % 3;
+            
+            if (totalJigsaw === 0) {
+                resultContent.innerHTML = '<div class="text-red-600">❌ ไม่สามารถแลกได้ กรุณาเพิ่มจำนวนให้เพียงพอ</div>';
+                confirmExchangeBtn.classList.add('hidden');
+            } else {
+                resultContent.innerHTML = `
+                    <div class="font-semibold text-green-800">🧩 จิ๊กซอว์ที่ได้: ${totalJigsaw} ชิ้น</div>
+                    <div class="text-sm">
+                        <div>• จากสติ๊กเกอร์: ${jigsawFromStickers} ชิ้น</div>
+                        <div>• จากขนม: ${jigsawFromCandies} ชิ้น</div>
+                    </div>
+                    ${remainingStickers > 0 || remainingCandies > 0 ? `
+                    <div class="text-sm text-orange-600 mt-2">
+                        <div class="font-semibold">🔄 ของที่เหลือ:</div>
+                        ${remainingStickers > 0 ? `<div>• สติ๊กเกอร์: ${remainingStickers} อัน</div>` : ''}
+                        ${remainingCandies > 0 ? `<div>• ขนม: ${remainingCandies} อัน</div>` : ''}
+                    </div>
+                    ` : ''}
+                `;
+                confirmExchangeBtn.classList.remove('hidden');
+            }
+            
+            exchangeResult.classList.remove('hidden');
+        }
+
+        // Confirm exchange
+        function confirmExchange() {
+            const stickers = parseInt(stickerCount.value) || 0;
+            const candies = parseInt(candyCount.value) || 0;
+            const jigsawFromStickers = Math.floor(stickers / 10);
+            const jigsawFromCandies = Math.floor(candies / 3);
+            const totalJigsaw = jigsawFromStickers + jigsawFromCandies;
+            
+            showNotification(`🎉 แลกสำเร็จ! ได้รับจิ๊กซอว์ ${totalJigsaw} ชิ้น`, 'success');
+            hideExchangeModal();
+        }
+
         // Random task function by difficulty
         function getRandomTaskByDifficulty(difficulty) {
             const filteredTasks = computerTasks.filter(task => task.difficulty === difficulty);
@@ -375,8 +510,8 @@
                 <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200">
                     <div class="flex items-center">
                         <div class="flex-1">
-                            <h3 class="font-semibold text-gray-800 mb-1"><a href="${link.url}" target="_blank">${link.title}</a></h3>
-                            <p class="text-blue-600 text-sm break-all"><a href="${link.url}" target="_blank">${link.url}</a></p>
+                            <h3 class="font-semibold text-gray-800 mb-1">${link.title}</h3>
+                            <p class="text-blue-600 text-sm break-all">${link.url}</p>
                         </div>
                         <div class="ml-4">
                             <div class="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -389,9 +524,13 @@
         // Event listeners
         addLinkBtn.addEventListener('click', showModal);
         randomTaskBtn.addEventListener('click', showDifficultyModal);
+        exchangeBtn.addEventListener('click', showExchangeModal);
         closeModal.addEventListener('click', hideModal);
         cancelBtn.addEventListener('click', hideModal);
         closeDifficultyModal.addEventListener('click', hideDifficultyModal);
+        closeExchangeModal.addEventListener('click', hideExchangeModal);
+        calculateBtn.addEventListener('click', calculateExchange);
+        confirmExchangeBtn.addEventListener('click', confirmExchange);
         easyBtn.addEventListener('click', () => getRandomTaskByDifficulty('ง่าย'));
         mediumBtn.addEventListener('click', () => getRandomTaskByDifficulty('ปานกลาง'));
         hardBtn.addEventListener('click', () => getRandomTaskByDifficulty('ยาก'));
@@ -405,6 +544,12 @@
         difficultyModal.addEventListener('click', (e) => {
             if (e.target === difficultyModal) {
                 hideDifficultyModal();
+            }
+        });
+
+        exchangeModal.addEventListener('click', (e) => {
+            if (e.target === exchangeModal) {
+                hideExchangeModal();
             }
         });
 
@@ -430,6 +575,9 @@
                 }
                 if (!difficultyModal.classList.contains('hidden')) {
                     hideDifficultyModal();
+                }
+                if (!exchangeModal.classList.contains('hidden')) {
+                    hideExchangeModal();
                 }
             }
         });
@@ -461,5 +609,5 @@
         // Initialize
         loadLinksWithJSONP();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9658b1c800304f51',t:'MTc1MzU4MzIxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965a66c4b1aa7323',t:'MTc1MzYwMTExMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
