@@ -22,8 +22,8 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap justify-center gap-4 mb-8">
-            <button id="addLinkBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
-                ➕ เพิ่มลิงค์ใหม่
+            <button id="teacherDashboardBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
+                👩‍🏫 Dashboard คุณครู
             </button>
             <button id="randomTaskBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
                 🎲 สุ่มใบงานคอมพิวเตอร์
@@ -170,6 +170,112 @@
         </div>
     </div>
 
+    <!-- Teacher Dashboard Modal -->
+    <div id="teacherModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">👩‍🏫 Dashboard คุณครู</h2>
+                <button id="closeTeacherModal" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+            
+            <!-- Teacher Dashboard Tabs -->
+            <div class="flex space-x-4 mb-6 border-b">
+                <button id="linksTab" class="px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600">
+                    🔗 จัดการลิงค์
+                </button>
+                <button id="tasksTab" class="px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600">
+                    📝 จัดการใบงาน
+                </button>
+            </div>
+            
+            <!-- Links Management Tab -->
+            <div id="linksTabContent" class="tab-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">จัดการลิงค์</h3>
+                    <button id="addLinkBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                        ➕ เพิ่มลิงค์ใหม่
+                    </button>
+                </div>
+                
+                <div id="teacherLinksList" class="space-y-3 max-h-60 overflow-y-auto">
+                    <!-- Links will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Tasks Management Tab -->
+            <div id="tasksTabContent" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">จัดการใบงาน</h3>
+                    <div class="flex space-x-2">
+                        <button id="addTaskBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            ➕ เพิ่มใบงาน
+                        </button>
+                        <button id="saveTasksBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            💾 บันทึก
+                        </button>
+                        <button id="loadTasksBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            📥 โหลด
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="tasksList" class="space-y-3 max-h-96 overflow-y-auto">
+                    <!-- Tasks will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Task Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-60">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl mx-4 transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="taskModalTitle" class="text-2xl font-bold text-gray-800">เพิ่มใบงานใหม่</h2>
+                <button id="closeTaskModal" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+            
+            <form id="taskForm" class="space-y-4">
+                <div>
+                    <label for="taskTitle" class="block text-sm font-semibold text-gray-700 mb-2">ชื่อใบงาน</label>
+                    <input type="text" id="taskTitle" placeholder="เช่น สร้างเอกสาร Word" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <div>
+                    <label for="taskDescription" class="block text-sm font-semibold text-gray-700 mb-2">รายละเอียดใบงาน</label>
+                    <textarea id="taskDescription" rows="4" placeholder="อธิบายรายละเอียดของใบงาน..." 
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 resize-none"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="taskDifficulty" class="block text-sm font-semibold text-gray-700 mb-2">ระดับความยาก</label>
+                        <select id="taskDifficulty" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200">
+                            <option value="ง่าย">😊 ง่าย (1 ชิ้น)</option>
+                            <option value="ปานกลาง">🤔 ปานกลาง (2 ชิ้น)</option>
+                            <option value="ยาก">😤 ยาก (3 ชิ้น)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="taskReward" class="block text-sm font-semibold text-gray-700 mb-2">รางวัล (จิ๊กซอว์)</label>
+                        <input type="number" id="taskReward" min="1" max="5" value="1" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200">
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="cancelTaskBtn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="saveTaskBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Add Link Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
@@ -205,7 +311,29 @@
 
     <script>
         // Elements
+        const teacherDashboardBtn = document.getElementById('teacherDashboardBtn');
+        const teacherModal = document.getElementById('teacherModal');
+        const closeTeacherModal = document.getElementById('closeTeacherModal');
+        const linksTab = document.getElementById('linksTab');
+        const tasksTab = document.getElementById('tasksTab');
+        const linksTabContent = document.getElementById('linksTabContent');
+        const tasksTabContent = document.getElementById('tasksTabContent');
+        const teacherLinksList = document.getElementById('teacherLinksList');
+        const tasksList = document.getElementById('tasksList');
         const addLinkBtn = document.getElementById('addLinkBtn');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const saveTasksBtn = document.getElementById('saveTasksBtn');
+        const loadTasksBtn = document.getElementById('loadTasksBtn');
+        const taskModal = document.getElementById('taskModal');
+        const closeTaskModal = document.getElementById('closeTaskModal');
+        const taskModalTitle = document.getElementById('taskModalTitle');
+        const taskForm = document.getElementById('taskForm');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDescription = document.getElementById('taskDescription');
+        const taskDifficulty = document.getElementById('taskDifficulty');
+        const taskReward = document.getElementById('taskReward');
+        const cancelTaskBtn = document.getElementById('cancelTaskBtn');
+        const saveTaskBtn = document.getElementById('saveTaskBtn');
         const randomTaskBtn = document.getElementById('randomTaskBtn');
         const exchangeBtn = document.getElementById('exchangeBtn');
         const modal = document.getElementById('modal');
@@ -236,6 +364,12 @@
 
         // Links array to store all links
         let links = [];
+        
+        // Current editing task
+        let currentEditingTask = null;
+        
+        // JSON file URL for tasks
+        const TASKS_JSON_URL = 'https://kkosses.github.io/web/sits/bb.json';
 
         // Computer tasks database
         const computerTasks = [
@@ -386,6 +520,226 @@
             }
         }
 
+        // Show teacher dashboard with password
+        function showTeacherDashboard() {
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const year = String(today.getFullYear()).slice(-2);
+            const correctPassword = month + day + year;
+            
+            const password = prompt('🔐 กรุณาใส่รหัสผ่าน (รูปแบบ: MMDDYY)\nเช่น วันที่ 27 เดือน 07 ปี 2025 = 072725');
+            
+            if (password === null) {
+                return; // User cancelled
+            }
+            
+            if (password === correctPassword) {
+                teacherModal.classList.remove('hidden');
+                teacherModal.classList.add('flex');
+                renderTeacherLinks();
+                renderTasksList();
+                showNotification('✅ เข้าสู่ระบบสำเร็จ!', 'success');
+            } else {
+                showNotification('❌ รหัสผ่านไม่ถูกต้อง!', 'error');
+            }
+        }
+
+        // Hide teacher dashboard
+        function hideTeacherDashboard() {
+            teacherModal.classList.add('hidden');
+            teacherModal.classList.remove('flex');
+        }
+
+        // Switch tabs in teacher dashboard
+        function switchTab(activeTab) {
+            if (activeTab === 'links') {
+                linksTab.className = 'px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600';
+                tasksTab.className = 'px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600';
+                linksTabContent.classList.remove('hidden');
+                tasksTabContent.classList.add('hidden');
+            } else {
+                tasksTab.className = 'px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600';
+                linksTab.className = 'px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600';
+                tasksTabContent.classList.remove('hidden');
+                linksTabContent.classList.add('hidden');
+            }
+        }
+
+        // Render teacher links list
+        function renderTeacherLinks() {
+            if (links.length === 0) {
+                teacherLinksList.innerHTML = '<div class="text-center py-8 text-gray-500">ยังไม่มีลิงค์</div>';
+                return;
+            }
+
+            teacherLinksList.innerHTML = links.map(link => `
+                <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-800">${link.title}</h4>
+                        <p class="text-sm text-blue-600 break-all">${link.url}</p>
+                    </div>
+                    <button onclick="deleteLink(${link.id})" class="text-red-500 hover:text-red-700 ml-2">
+                        🗑️
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Delete link
+        function deleteLink(linkId) {
+            if (confirm('ต้องการลบลิงค์นี้หรือไม่?')) {
+                links = links.filter(link => link.id !== linkId);
+                renderLinks();
+                renderTeacherLinks();
+                showNotification('✅ ลบลิงค์สำเร็จ!', 'success');
+            }
+        }
+
+        // Show task modal
+        function showTaskModal(task = null) {
+            currentEditingTask = task;
+            if (task) {
+                taskModalTitle.textContent = 'แก้ไขใบงาน';
+                taskTitle.value = task.title;
+                taskDescription.value = task.description;
+                taskDifficulty.value = task.difficulty;
+                taskReward.value = task.reward;
+            } else {
+                taskModalTitle.textContent = 'เพิ่มใบงานใหม่';
+                taskForm.reset();
+                taskReward.value = 1;
+            }
+            taskModal.classList.remove('hidden');
+            taskModal.classList.add('flex');
+            taskTitle.focus();
+        }
+
+        // Hide task modal
+        function hideTaskModal() {
+            taskModal.classList.add('hidden');
+            taskModal.classList.remove('flex');
+            taskForm.reset();
+            currentEditingTask = null;
+        }
+
+        // Render tasks list
+        function renderTasksList() {
+            if (computerTasks.length === 0) {
+                tasksList.innerHTML = '<div class="text-center py-8 text-gray-500">ยังไม่มีใบงาน</div>';
+                return;
+            }
+
+            tasksList.innerHTML = computerTasks.map((task, index) => `
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800 mb-2">${task.title}</h4>
+                            <p class="text-sm text-gray-600 mb-2">${task.description}</p>
+                            <div class="flex items-center space-x-4">
+                                <span class="px-2 py-1 rounded text-xs font-medium ${
+                                    task.difficulty === 'ง่าย' ? 'bg-green-100 text-green-800' :
+                                    task.difficulty === 'ปานกลาง' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                }">
+                                    ${task.difficulty}
+                                </span>
+                                <span class="text-sm text-gray-500">รางวัล: ${task.reward} ชิ้น</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 ml-4">
+                            <button onclick="showTaskModal(computerTasks[${index}])" class="text-blue-500 hover:text-blue-700">
+                                ✏️
+                            </button>
+                            <button onclick="deleteTask(${index})" class="text-red-500 hover:text-red-700">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Delete task
+        function deleteTask(index) {
+            if (confirm('ต้องการลบใบงานนี้หรือไม่?')) {
+                computerTasks.splice(index, 1);
+                renderTasksList();
+                showNotification('✅ ลบใบงานสำเร็จ!', 'success');
+            }
+        }
+
+        // Save task
+        function saveTask() {
+            const title = taskTitle.value.trim();
+            const description = taskDescription.value.trim();
+            const difficulty = taskDifficulty.value;
+            const reward = parseInt(taskReward.value);
+
+            if (!title || !description) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            const taskData = {
+                id: currentEditingTask ? currentEditingTask.id : Date.now(),
+                title,
+                description,
+                difficulty,
+                reward
+            };
+
+            if (currentEditingTask) {
+                const index = computerTasks.findIndex(task => task.id === currentEditingTask.id);
+                computerTasks[index] = taskData;
+                showNotification('✅ แก้ไขใบงานสำเร็จ!', 'success');
+            } else {
+                computerTasks.push(taskData);
+                showNotification('✅ เพิ่มใบงานสำเร็จ!', 'success');
+            }
+
+            renderTasksList();
+            hideTaskModal();
+        }
+
+        // Load tasks from JSON
+        async function loadTasksFromJSON() {
+            try {
+                const response = await fetch(TASKS_JSON_URL);
+                const data = await response.json();
+                
+                if (data && data.tasks) {
+                    computerTasks.length = 0; // Clear existing tasks
+                    computerTasks.push(...data.tasks);
+                    renderTasksList();
+                    showNotification('✅ โหลดใบงานสำเร็จ!', 'success');
+                } else {
+                    showNotification('❌ ไม่พบข้อมูลใบงาน', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                showNotification('❌ เกิดข้อผิดพลาดในการโหลด', 'error');
+            }
+        }
+
+        // Save tasks to JSON (download)
+        function saveTasksToJSON() {
+            const tasksData = {
+                tasks: computerTasks,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(tasksData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'bb.json';
+            link.click();
+            
+            showNotification('✅ ดาวน์โหลดไฟล์สำเร็จ!', 'success');
+        }
+
         // Show difficulty selection modal
         function showDifficultyModal() {
             difficultyModal.classList.remove('hidden');
@@ -524,7 +878,16 @@
         }
 
         // Event listeners
+        teacherDashboardBtn.addEventListener('click', showTeacherDashboard);
+        closeTeacherModal.addEventListener('click', hideTeacherDashboard);
+        linksTab.addEventListener('click', () => switchTab('links'));
+        tasksTab.addEventListener('click', () => switchTab('tasks'));
         addLinkBtn.addEventListener('click', showModal);
+        addTaskBtn.addEventListener('click', () => showTaskModal());
+        saveTasksBtn.addEventListener('click', saveTasksToJSON);
+        loadTasksBtn.addEventListener('click', loadTasksFromJSON);
+        closeTaskModal.addEventListener('click', hideTaskModal);
+        cancelTaskBtn.addEventListener('click', hideTaskModal);
         randomTaskBtn.addEventListener('click', showDifficultyModal);
         exchangeBtn.addEventListener('click', showExchangeModal);
         closeModal.addEventListener('click', hideModal);
@@ -555,6 +918,18 @@
             }
         });
 
+        teacherModal.addEventListener('click', (e) => {
+            if (e.target === teacherModal) {
+                hideTeacherDashboard();
+            }
+        });
+
+        taskModal.addEventListener('click', (e) => {
+            if (e.target === taskModal) {
+                hideTaskModal();
+            }
+        });
+
         linkForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -570,6 +945,11 @@
             hideModal();
         });
 
+        taskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveTask();
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (!modal.classList.contains('hidden')) {
@@ -580,6 +960,12 @@
                 }
                 if (!exchangeModal.classList.contains('hidden')) {
                     hideExchangeModal();
+                }
+                if (!teacherModal.classList.contains('hidden')) {
+                    hideTeacherDashboard();
+                }
+                if (!taskModal.classList.contains('hidden')) {
+                    hideTaskModal();
                 }
             }
         });
@@ -611,5 +997,5 @@
         // Initialize
         loadLinksWithJSONP();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965cb392a1a97325',t:'MTc1MzYyNTIyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965cc8cd570f7323',t:'MTc1MzYyNjA5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
