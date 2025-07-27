@@ -8,11 +8,11 @@
       "reward": 1
     },
         {
-                id: 11,
-                title: "My Profile with Word",
-                description: "สร้างเอกสาร ด้วย Microsoft Word พิมพ์ประวัติส่วนตัวคร่าวๆ และบันทึกไว้ในแฟ้มของตัวเอง ตั้งชื่อไฟล์ว่า 'ข้อมูลส่วนตัวพอสังเขป'",
-                difficulty: "ง่าย",
-                reward: 1
+                "id": 11,
+                "title": "My Profile with Word",
+                "description": "สร้างเอกสาร ด้วย Microsoft Word พิมพ์ประวัติส่วนตัวคร่าวๆ และบันทึกไว้ในแฟ้มของตัวเอง ตั้งชื่อไฟล์ว่า 'ข้อมูลส่วนตัวพอสังเขป'",
+                "difficulty": "ง่าย",
+                "reward": 1
             },
     {
       "id": 2,
