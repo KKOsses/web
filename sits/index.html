@@ -132,6 +132,10 @@
                         <span>🍬 ขนม 3 อัน</span>
                         <span>= จิ๊กซอว์ 1 ชิ้น 🧩</span>
                     </div>
+                    <div class="flex justify-between">
+                        <span>🏷️ สติ๊กเกอร์ 3 อัน</span>
+                        <span>= ขนม 1 อัน 🍬</span>
+                    </div>
                 </div>
             </div>
             
@@ -154,9 +158,12 @@
                     <div id="resultContent" class="text-sm text-green-700 space-y-1"></div>
                 </div>
                 
-                <div class="flex space-x-3 pt-4">
+                <div class="flex space-x-2 pt-4">
                     <button type="button" id="calculateBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
                         🧮 คำนวณ
+                    </button>
+                    <button type="button" id="exchangeStickersBtn" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        🔄 แลกขนม
                     </button>
                     <button type="button" id="confirmExchangeBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 hidden">
                         ✅ แลก
@@ -358,6 +365,7 @@
         const stickerCount = document.getElementById('stickerCount');
         const candyCount = document.getElementById('candyCount');
         const calculateBtn = document.getElementById('calculateBtn');
+        const exchangeStickersBtn = document.getElementById('exchangeStickersBtn');
         const confirmExchangeBtn = document.getElementById('confirmExchangeBtn');
         const exchangeResult = document.getElementById('exchangeResult');
         const resultContent = document.getElementById('resultContent');
@@ -774,11 +782,11 @@
             const stickers = parseInt(stickerCount.value) || 0;
             const candies = parseInt(candyCount.value) || 0;
             
-            const jigsawFromStickers = Math.floor(stickers / 10);
+            const jigsawFromStickers = Math.floor(stickers / 8);
             const jigsawFromCandies = Math.floor(candies / 3);
             const totalJigsaw = jigsawFromStickers + jigsawFromCandies;
             
-            const remainingStickers = stickers % 10;
+            const remainingStickers = stickers % 8;
             const remainingCandies = candies % 3;
             
             if (totalJigsaw === 0) {
@@ -805,11 +813,35 @@
             exchangeResult.classList.remove('hidden');
         }
 
+        // Exchange stickers for candies
+        function exchangeStickersForCandies() {
+            const stickers = parseInt(stickerCount.value) || 0;
+            
+            if (stickers < 3) {
+                showNotification('❌ ต้องมีสติ๊กเกอร์อย่างน้อย 3 อัน', 'error');
+                return;
+            }
+            
+            const candiesFromStickers = Math.floor(stickers / 3);
+            const remainingStickers = stickers % 3;
+            const currentCandies = parseInt(candyCount.value) || 0;
+            const newCandyTotal = currentCandies + candiesFromStickers;
+            
+            // Update the candy count
+            candyCount.value = newCandyTotal;
+            stickerCount.value = remainingStickers;
+            
+            showNotification(`🔄 แลกสำเร็จ! ได้ขนม ${candiesFromStickers} อัน`, 'success');
+            
+            // Auto calculate after exchange
+            calculateExchange();
+        }
+
         // Confirm exchange
         function confirmExchange() {
             const stickers = parseInt(stickerCount.value) || 0;
             const candies = parseInt(candyCount.value) || 0;
-            const jigsawFromStickers = Math.floor(stickers / 10);
+            const jigsawFromStickers = Math.floor(stickers / 8);
             const jigsawFromCandies = Math.floor(candies / 3);
             const totalJigsaw = jigsawFromStickers + jigsawFromCandies;
             
@@ -895,6 +927,7 @@
         closeDifficultyModal.addEventListener('click', hideDifficultyModal);
         closeExchangeModal.addEventListener('click', hideExchangeModal);
         calculateBtn.addEventListener('click', calculateExchange);
+        exchangeStickersBtn.addEventListener('click', exchangeStickersForCandies);
         confirmExchangeBtn.addEventListener('click', confirmExchange);
         easyBtn.addEventListener('click', () => getRandomTaskByDifficulty('ง่าย'));
         mediumBtn.addEventListener('click', () => getRandomTaskByDifficulty('ปานกลาง'));
@@ -997,5 +1030,5 @@
         // Initialize
         loadLinksWithJSONP();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965cc8cd570f7323',t:'MTc1MzYyNjA5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'968c616df11774d4',t:'MTc1NDEyNTE4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
