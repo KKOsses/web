@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการลิงค์ & ใบงานคอมพิวเตอร์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">💻 จัดการลิงค์ & ใบงานคอมพิวเตอร์</h1>
+            <p class="text-gray-600">เพิ่มลิงค์และสุ่มใบงานคอมพิวเตอร์สำหรับนักเรียน</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+            <button id="teacherDashboardBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
+                👩‍🏫 Dashboard คุณครู
+            </button>
+            <button id="randomTaskBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
+                🎲 สุ่มใบงานคอมพิวเตอร์
+            </button>
+            <button id="exchangeBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200">
+                🎁 แลกรางวัล
+            </button>
+        </div>
+
+        <!-- Difficulty Selection Modal -->
+        <div id="difficultyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">🎯 เลือกระดับความยาก</h2>
+                    <p class="text-gray-600">เลือกระดับที่ต้องการสำหรับใบงาน</p>
+                </div>
+                
+                <div class="space-y-3">
+                    <button id="randomAllBtn" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🎲</span>
+                            <div class="text-left">
+                                <div class="font-bold">สุ่มรวม + โบนัส</div>
+                                <div class="text-sm opacity-90">ปานกลาง 30% | ยาก 70% + โบนัส 2-3 ชิ้น</div>
+                            </div>
+                        </div>
+                        <span class="text-xl">🎁</span>
+                    </button>
+                    
+                    <button id="easyBtn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">😊</span>
+                            <div class="text-left">
+                                <div class="font-bold">ง่าย</div>
+                                <div class="text-sm opacity-90">รางวัล: จิ๊กซอว์ 1 ชิ้น (15 ใบงาน)</div>
+                            </div>
+                        </div>
+                        <span class="text-xl">🧩</span>
+                    </button>
+                    
+                    <button id="mediumBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🤔</span>
+                            <div class="text-left">
+                                <div class="font-bold">ปานกลาง</div>
+                                <div class="text-sm opacity-90">รางวัล: จิ๊กซอว์ 2 ชิ้น (10 ใบงาน)</div>
+                            </div>
+                        </div>
+                        <span class="text-xl">🧩🧩</span>
+                    </button>
+                    
+                    <button id="hardBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">😤</span>
+                            <div class="text-left">
+                                <div class="font-bold">ยาก</div>
+                                <div class="text-sm opacity-90">รางวัล: จิ๊กซอว์ 3 ชิ้น (15 ใบงาน)</div>
+                            </div>
+                        </div>
+                        <span class="text-xl">🧩🧩🧩</span>
+                    </button>
+                </div>
+                
+                <button id="closeDifficultyModal" class="w-full mt-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200">
+                    ยกเลิก
+                </button>
+            </div>
+        </div>
+
+        <!-- Task Display -->
+        <div id="taskDisplay" class="max-w-4xl mx-auto mb-8 hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800">🎯 ใบงานที่ได้</h3>
+                    <div id="rewardBadge" class="px-4 py-2 rounded-full text-white font-semibold"></div>
+                </div>
+                <div id="taskContent" class="text-gray-700 text-lg leading-relaxed"></div>
+                <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p class="text-yellow-800 font-semibold">🏆 รางวัล: <span id="rewardText"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links Container -->
+        <div id="linksContainer" class="max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">🔗 ลิงค์ที่บันทึกไว้</h2>
+            <div id="linksList" class="space-y-4">
+                <!-- Links will be added here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-12">
+                <div class="text-6xl mb-4">🔗</div>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">ยังไม่มีลิงค์</h3>
+                <p class="text-gray-500">กดปุ่ม "เพิ่มลิงค์ใหม่" เพื่อเริ่มต้น</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exchange Rewards Modal -->
+    <div id="exchangeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🎁 แลกรางวัล</h2>
+                <p class="text-gray-600">ใช้สติ๊กเกอร์และขนมแลกจิ๊กซอว์</p>
+            </div>
+            
+            <!-- Exchange Rates -->
+            <div class="bg-purple-50 rounded-lg p-4 mb-6">
+                <h3 class="font-semibold text-purple-800 mb-2">📊 อัตราการแลก</h3>
+                <div class="space-y-1 text-sm text-purple-700">
+                    <div class="flex justify-between">
+                        <span>🏷️ สติ๊กเกอร์ 10 อัน</span>
+                        <span>= จิ๊กซอว์ 1 ชิ้น 🧩</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>🍬 ขนม 3 อัน</span>
+                        <span>= จิ๊กซอว์ 1 ชิ้น 🧩</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>🏷️ สติ๊กเกอร์ 3 อัน</span>
+                        <span>= ขนม 1 อัน 🍬</span>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="exchangeForm" class="space-y-4">
+                <div>
+                    <label for="stickerCount" class="block text-sm font-semibold text-gray-700 mb-2">🏷️ จำนวนสติ๊กเกอร์</label>
+                    <input type="number" id="stickerCount" min="0" value="0" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <div>
+                    <label for="candyCount" class="block text-sm font-semibold text-gray-700 mb-2">🍬 จำนวนขนม</label>
+                    <input type="number" id="candyCount" min="0" value="0" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <!-- Result Display -->
+                <div id="exchangeResult" class="bg-green-50 rounded-lg p-4 border border-green-200 hidden">
+                    <h4 class="font-semibold text-green-800 mb-2">🧮 ผลการคำนวณ</h4>
+                    <div id="resultContent" class="text-sm text-green-700 space-y-1"></div>
+                </div>
+                
+                <div class="flex space-x-2 pt-4">
+                    <button type="button" id="calculateBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        🧮 คำนวณ
+                    </button>
+                    <button type="button" id="exchangeStickersBtn" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        🔄 แลกขนม
+                    </button>
+                    <button type="button" id="confirmExchangeBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 hidden">
+                        ✅ แลก
+                    </button>
+                </div>
+                
+                <button type="button" id="closeExchangeModal" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200">
+                    ยกเลิก
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Teacher Dashboard Modal -->
+    <div id="teacherModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">👩‍🏫 Dashboard คุณครู</h2>
+                <button id="closeTeacherModal" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+            
+            <!-- Teacher Dashboard Tabs -->
+            <div class="flex space-x-4 mb-6 border-b">
+                <button id="linksTab" class="px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600">
+                    🔗 จัดการลิงค์
+                </button>
+                <button id="tasksTab" class="px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600">
+                    📝 จัดการใบงาน
+                </button>
+                <button id="solutionsTab" class="px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600">
+                    💡 เฉลยใบงาน
+                </button>
+            </div>
+            
+            <!-- Links Management Tab -->
+            <div id="linksTabContent" class="tab-content">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">จัดการลิงค์</h3>
+                    <button id="addLinkBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                        ➕ เพิ่มลิงค์ใหม่
+                    </button>
+                </div>
+                
+                <div id="teacherLinksList" class="space-y-3 max-h-60 overflow-y-auto">
+                    <!-- Links will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Tasks Management Tab -->
+            <div id="tasksTabContent" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">จัดการใบงาน</h3>
+                    <div class="flex space-x-2">
+                        <button id="addTaskBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            ➕ เพิ่มใบงาน
+                        </button>
+                        <button id="saveTasksBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            💾 บันทึก
+                        </button>
+                        <button id="loadTasksBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            📥 โหลด
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="tasksList" class="space-y-3 max-h-96 overflow-y-auto">
+                    <!-- Tasks will be displayed here -->
+                </div>
+            </div>
+            
+            <!-- Solutions Tab -->
+            <div id="solutionsTabContent" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">เฉลยใบงาน</h3>
+                    <div class="flex space-x-2">
+                        <select id="difficultyFilter" class="px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="all">ทุกระดับ</option>
+                            <option value="ง่าย">ง่าย</option>
+                            <option value="ปานกลาง">ปานกลาง</option>
+                            <option value="ยาก">ยาก</option>
+                        </select>
+                        <button id="printSolutionsBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                            🖨️ พิมพ์เฉลย
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="solutionsList" class="space-y-4 max-h-96 overflow-y-auto">
+                    <!-- Solutions will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Task Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-60">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl mx-4 transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="taskModalTitle" class="text-2xl font-bold text-gray-800">เพิ่มใบงานใหม่</h2>
+                <button id="closeTaskModal" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+            
+            <form id="taskForm" class="space-y-4">
+                <div>
+                    <label for="taskTitle" class="block text-sm font-semibold text-gray-700 mb-2">ชื่อใบงาน</label>
+                    <input type="text" id="taskTitle" placeholder="เช่น สร้างเอกสาร Word" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <div>
+                    <label for="taskDescription" class="block text-sm font-semibold text-gray-700 mb-2">รายละเอียดใบงาน</label>
+                    <textarea id="taskDescription" rows="4" placeholder="อธิบายรายละเอียดของใบงาน..." 
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200 resize-none"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="taskDifficulty" class="block text-sm font-semibold text-gray-700 mb-2">ระดับความยาก</label>
+                        <select id="taskDifficulty" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200">
+                            <option value="ง่าย">😊 ง่าย (1 ชิ้น)</option>
+                            <option value="ปานกลาง">🤔 ปานกลาง (2 ชิ้น)</option>
+                            <option value="ยาก">😤 ยาก (3 ชิ้น)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="taskReward" class="block text-sm font-semibold text-gray-700 mb-2">รางวัล (จิ๊กซอว์)</label>
+                        <input type="number" id="taskReward" min="1" max="5" value="1" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200">
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="cancelTaskBtn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="saveTaskBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Link Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">เพิ่มลิงค์ใหม่</h2>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+            
+            <form id="linkForm" class="space-y-4">
+                <div>
+                    <label for="linkTitle" class="block text-sm font-semibold text-gray-700 mb-2">ชื่อลิงค์</label>
+                    <input type="text" id="linkTitle" placeholder="เช่น Google, Facebook, YouTube" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <div>
+                    <label for="linkUrl" class="block text-sm font-semibold text-gray-700 mb-2">URL</label>
+                    <input type="url" id="linkUrl" placeholder="https://example.com" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200">
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" id="cancelBtn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 rounded-lg transition-colors duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const teacherDashboardBtn = document.getElementById('teacherDashboardBtn');
+        const teacherModal = document.getElementById('teacherModal');
+        const closeTeacherModal = document.getElementById('closeTeacherModal');
+        const linksTab = document.getElementById('linksTab');
+        const tasksTab = document.getElementById('tasksTab');
+        const linksTabContent = document.getElementById('linksTabContent');
+        const tasksTabContent = document.getElementById('tasksTabContent');
+        const teacherLinksList = document.getElementById('teacherLinksList');
+        const tasksList = document.getElementById('tasksList');
+        const addLinkBtn = document.getElementById('addLinkBtn');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const saveTasksBtn = document.getElementById('saveTasksBtn');
+        const loadTasksBtn = document.getElementById('loadTasksBtn');
+        const taskModal = document.getElementById('taskModal');
+        const closeTaskModal = document.getElementById('closeTaskModal');
+        const taskModalTitle = document.getElementById('taskModalTitle');
+        const taskForm = document.getElementById('taskForm');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDescription = document.getElementById('taskDescription');
+        const taskDifficulty = document.getElementById('taskDifficulty');
+        const taskReward = document.getElementById('taskReward');
+        const cancelTaskBtn = document.getElementById('cancelTaskBtn');
+        const saveTaskBtn = document.getElementById('saveTaskBtn');
+        const randomTaskBtn = document.getElementById('randomTaskBtn');
+        const exchangeBtn = document.getElementById('exchangeBtn');
+        const modal = document.getElementById('modal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const linkForm = document.getElementById('linkForm');
+        const linksList = document.getElementById('linksList');
+        const emptyState = document.getElementById('emptyState');
+        const linkTitle = document.getElementById('linkTitle');
+        const linkUrl = document.getElementById('linkUrl');
+        const taskDisplay = document.getElementById('taskDisplay');
+        const taskContent = document.getElementById('taskContent');
+        const rewardBadge = document.getElementById('rewardBadge');
+        const rewardText = document.getElementById('rewardText');
+        const difficultyModal = document.getElementById('difficultyModal');
+        const closeDifficultyModal = document.getElementById('closeDifficultyModal');
+        const easyBtn = document.getElementById('easyBtn');
+        const mediumBtn = document.getElementById('mediumBtn');
+        const hardBtn = document.getElementById('hardBtn');
+        const randomAllBtn = document.getElementById('randomAllBtn');
+        const exchangeModal = document.getElementById('exchangeModal');
+        const closeExchangeModal = document.getElementById('closeExchangeModal');
+        const stickerCount = document.getElementById('stickerCount');
+        const candyCount = document.getElementById('candyCount');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const exchangeStickersBtn = document.getElementById('exchangeStickersBtn');
+        const confirmExchangeBtn = document.getElementById('confirmExchangeBtn');
+        const exchangeResult = document.getElementById('exchangeResult');
+        const resultContent = document.getElementById('resultContent');
+        const solutionsTab = document.getElementById('solutionsTab');
+        const solutionsTabContent = document.getElementById('solutionsTabContent');
+        const difficultyFilter = document.getElementById('difficultyFilter');
+        const printSolutionsBtn = document.getElementById('printSolutionsBtn');
+        const solutionsList = document.getElementById('solutionsList');
+
+        // Links array to store all links
+        let links = [];
+        
+        // Current editing task
+        let currentEditingTask = null;
+        
+        // JSON file URL for tasks
+        const TASKS_JSON_URL = 'https://kkosses.github.io/web/sits/bb.json';
+
+        // Computer tasks database
+        const computerTasks = [
+            // ใบงานระดับง่าย (15 ใบงาน)
+            {
+                id: 1,
+                title: "สร้างโฟลเดอร์และไฟล์ข้อความ",
+                description: "สร้างโฟลเดอร์ชื่อ 'งานของฉัน' บน Desktop จากนั้นสร้างไฟล์ Text Document ชื่อ 'ข้อมูลส่วนตัว.txt' ในโฟลเดอร์ แล้วเขียนชื่อ-นามสกุลของตัวเองลงไป",
+                difficulty: "ง่าย",
+                reward: 1,
+                solution: {
+                    steps: [
+                        "คลิกขวาบน Desktop เลือก New > Folder",
+                        "ตั้งชื่อโฟลเดอร์ว่า 'งานของฉัน' กด Enter",
+                        "ดับเบิลคลิกเข้าไปในโฟลเดอร์ 'งานของฉัน'",
+                        "คลิกขวาในพื้นที่ว่าง เลือก New > Text Document",
+                        "ตั้งชื่อไฟล์ว่า 'ข้อมูลส่วนตัว.txt' กด Enter",
+                        "ดับเบิลคลิกเปิดไฟล์ Text Document",
+                        "เขียนชื่อ-นามสกุลของตัวเองลงไป",
+                        "กด Ctrl+S เพื่อบันทึกไฟล์",
+                        "ปิดโปรแกรม Notepad"
+                    ],
+                    tips: [
+                        "ใช้ชื่อโฟลเดอร์และไฟล์ที่เข้าใจง่าย",
+                        "หลีกเลี่ยงการใช้อักขระพิเศษในชื่อไฟล์",
+                        "บันทึกไฟล์เป็นประจำเพื่อป้องกันข้อมูลสูญหาย"
+                    ],
+                    keyboardShortcuts: [
+                        "Ctrl+S = บันทึกไฟล์",
+                        "F2 = เปลี่ยนชื่อไฟล์/โฟลเดอร์",
+                        "Alt+F4 = ปิดหน้าต่าง"
+                    ]
+                }
+            },
+            {
+                id: 2,
+                title: "จัดระเบียบไฟล์",
+                description: "สร้างโฟลเดอร์ 3 โฟลเดอร์ชื่อ 'รูปภาพ', 'เอกสาร', 'วิดีโอ' บน Desktop จากนั้นสร้างไฟล์ตัวอย่างในแต่ละโฟลเดอร์ (สามารถใช้ไฟล์ว่างได้)",
+                difficulty: "ง่าย",
+                reward: 1,
+                solution: {
+                    steps: [
+                        "คลิกขวาบน Desktop เลือก New > Folder",
+                        "ตั้งชื่อโฟลเดอร์แรกว่า 'รูปภาพ' กด Enter",
+                        "ทำซ้ำขั้นตอนที่ 1-2 สร้างโฟลเดอร์ 'เอกสาร'",
+                        "ทำซ้ำขั้นตอนที่ 1-2 สร้างโฟลเดอร์ 'วิดีโอ'",
+                        "เข้าไปในโฟลเดอร์ 'รูปภาพ' สร้างไฟล์ Text ชื่อ 'รายการรูป.txt'",
+                        "เข้าไปในโฟลเดอร์ 'เอกสาร' สร้างไฟล์ Text ชื่อ 'รายการเอกสาร.txt'",
+                        "เข้าไปในโฟลเดอร์ 'วิดีโอ' สร้างไฟล์ Text ชื่อ 'รายการวิดีโอ.txt'",
+                        "ตรวจสอบว่าแต่ละโฟลเดอร์มีไฟล์ตัวอย่าง",
+                        "จัดเรียงโฟลเดอร์บน Desktop ให้เป็นระเบียบ"
+                    ],
+                    tips: [
+                        "ใช้ชื่อโฟลเดอร์ที่สื่อความหมายชัดเจน",
+                        "จัดกลุ่มไฟล์ตามประเภทเพื่อหาง่าย",
+                        "สร้างโครงสร้างโฟลเดอร์ที่เข้าใจง่าย"
+                    ],
+                    keyboardShortcuts: [
+                        "Ctrl+Shift+N = สร้างโฟลเดอร์ใหม่",
+                        "F5 = รีเฟรชหน้าต่าง",
+                        "Ctrl+A = เลือกทั้งหมด"
+                    ]
+                }
+            },
+            {
+                id: 3,
+                title: "ใช้งาน Calculator",
+                description: "เปิดโปรแกรม Calculator คำนวณ 125 + 267 - 89 × 3 ÷ 2 จากนั้นบันทึกผลลัพธ์ลงในไฟล์ Notepad ชื่อ 'ผลการคำนวณ.txt'",
+                difficulty: "ง่าย",
+                reward: 1,
+                solution: {
+                    steps: [
+                        "กด Windows Key พิมพ์ 'Calculator' กด Enter",
+                        "คำนวณตามลำดับ: 89 × 3 = 267",
+                        "จากนั้น 267 ÷ 2 = 133.5",
+                        "คำนวณ 125 + 267 = 392",
+                        "สุดท้าย 392 - 133.5 = 258.5",
+                        "เปิด Notepad (Windows Key + พิมพ์ 'Notepad')",
+                        "เขียน 'ผลการคำนวณ: 125 + 267 - 89 × 3 ÷ 2 = 258.5'",
+                        "กด Ctrl+S เพื่อบันทึก",
+                        "ตั้งชื่อไฟล์ว่า 'ผลการคำนวณ.txt'"
+                    ],
+                    tips: [
+                        "ใช้วงเล็บเพื่อจัดลำดับการคำนวณ",
+                        "ตรวจสอบผลลัพธ์ก่อนบันทึก",
+                        "Calculator มีโหมด Scientific สำหรับการคำนวณซับซ้อน"
+                    ],
+                    keyboardShortcuts: [
+                        "Ctrl+C = คัดลอกผลลัพธ์",
+                        "Ctrl+V = วางผลลัพธ์",
+                        "Del = ลบตัวเลขล่าสุด"
+                    ]
+                }
+            },
+            {
+                id: 4,
+                title: "เปลี่ยนชื่อไฟล์และโฟลเดอร์",
+                description: "สร้างโฟลเดอร์ชื่อ 'Test' บน Desktop จากนั้นเปลี่ยนชื่อเป็น 'ทดสอบ' สร้างไฟล์ Text Document ชื่อ 'file1.txt' แล้วเปลี่ยนชื่อเป็น 'ไฟล์ทดสอบ.txt'",
+                difficulty: "ง่าย",
+                reward: 1,
+                solution: {
+                    steps: [
+                        "คลิกขวาบน Desktop เลือก New > Folder",
+                        "ตั้งชื่อโฟลเดอร์ว่า 'Test' กด Enter",
+                        "คลิกขวาที่โฟลเดอร์ 'Test' เลือก Rename",
+                        "เปลี่ยนชื่อเป็น 'ทดสอบ' กด Enter",
+                        "เข้าไปในโฟลเดอร์ 'ทดสอบ'",
+                        "คลิกขวาในพื้นที่ว่าง เลือก New > Text Document",
+                        "ตั้งชื่อไฟล์ว่า 'file1.txt' กด Enter",
+                        "คลิกขวาที่ไฟล์ 'file1.txt' เลือก Rename",
+                        "เปลี่ยนชื่อเป็น 'ไฟล์ทดสอบ.txt' กด Enter"
+                    ],
+                    tips: [
+                        "ใช้ F2 เป็นทางลัดในการเปลี่ยนชื่อ",
+                        "หลีกเลี่ยงอักขระพิเศษ เช่น / \\ : * ? \" < > |",
+                        "ตรวจสอบนามสกุลไฟล์ให้ถูกต้อง"
+                    ],
+                    keyboardShortcuts: [
+                        "F2 = เปลี่ยนชื่อไฟล์/โฟลเดอร์",
+                        "Enter = ยืนยันการเปลี่ยนชื่อ",
+                        "Esc = ยกเลิกการเปลี่ยนชื่อ"
+                    ]
+                }
+            },
+            {
+                id: 5,
+                title: "ใช้งาน Notepad พื้นฐาน",
+                description: "เปิด Notepad เขียนรายการสิ่งของในกระเป๋านักเรียน 10 อย่าง (แต่ละบรรทัดใส่ 1 อย่าง) บันทึกเป็น 'รายการของในกระเป๋า.txt'",
+                difficulty: "ง่าย",
+                reward: 1,
+                solution: {
+                    steps: [
+                        "กด Windows Key พิมพ์ 'Notepad' กด Enter",
+                        "เขียนหัวข้อ 'รายการสิ่งของในกระเป๋านักเรียน'",
+                        "กด Enter 2 ครั้งเพื่อเว้นบรรทัด",
+                        "เขียนรายการ: 1. ปากกา, 2. ดินสอ, 3. ยางลบ",
+                        "เขียนต่อ: 4. ไม้บรรทัด, 5. สมุด, 6. หนังสือ",
+                        "เขียนต่อ: 7. กบเหลา, 8. คอมพาส, 9. กาว",
+                        "เขียนต่อ: 10. กรรไกร",
+                        "กด Ctrl+S เพื่อบันทึกไฟล์",
+                        "ตั้งชื่อไฟล์ว่า 'รายการของในกระเป๋า.txt' กด Save"
+                    ],
+                    tips: [
+                        "ใช้ Enter เพื่อขึ้นบรรทัดใหม่",
+                        "ใช้ Tab เพื่อจัดย่อหน้า",
+                        "บันทึกไฟล์เป็นประจำเพื่อป้องกันข้อมูลสูญหาย"
+                    ],
+                    keyboardShortcuts: [
+                        "Ctrl+S = บันทึกไฟล์",
+                        "Ctrl+O = เปิดไฟล์",
+                        "Ctrl+N = สร้างไฟล์ใหม่"
+                    ]
+                }
+            },
+            {
+                id: 31,
+                title: "ใช้งาน Windows Search",
+                description: "ใช้ช่องค้นหาใน Windows ค้นหาโปรแกรม 'Paint', 'Calculator', 'Notepad' เปิดแต่ละโปรแกรมแล้วปิด จากนั้นเขียนรายชื่อโปรแกรมที่เปิดได้ลงใน Notepad",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 32,
+                title: "ปรับแต่ง Desktop",
+                description: "เปลี่ยน Wallpaper ของ Desktop เป็นรูปที่ชอบ (ใช้รูปที่มีในเครื่อง) จัดเรียงไอคอนบน Desktop ให้เป็นระเบียบ และสร้างไฟล์ Text บันทึกว่าเปลี่ยนอะไรบ้าง",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 33,
+                title: "ใช้งาน Copy และ Paste",
+                description: "เปิด Notepad เขียนข้อความ 'สวัสดีครับ/ค่ะ' จากนั้น Copy ข้อความนี้ไปวาง (Paste) ใน Notepad ใหม่อีก 5 ครั้ง บันทึกเป็น 'ทดสอบ Copy Paste.txt'",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 34,
+                title: "สำรวจ Control Panel",
+                description: "เปิด Control Panel สำรวจหมวดหมู่ต่างๆ เช่น System, Programs, User Accounts เขียนรายชื่อหมวดหมู่ที่พบลงใน Notepad บันทึกเป็น 'รายการ Control Panel.txt'",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 35,
+                title: "ใช้งาน Recycle Bin",
+                description: "สร้างไฟล์ Text ชื่อ 'ทดสอบลบ.txt' ลบไฟล์นี้ จากนั้นเปิด Recycle Bin ดูไฟล์ที่ถูกลบ กู้คืนไฟล์กลับมา แล้วลบถาวรในครั้งที่ 2",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 36,
+                title: "ใช้งาน Task Manager",
+                description: "เปิด Task Manager (กด Ctrl+Shift+Esc) ดูโปรแกรมที่กำลังทำงาน เขียนรายชื่อโปรแกรม 5 โปรแกรมแรกลงใน Notepad บันทึกเป็น 'โปรแกรมที่ทำงาน.txt'",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 37,
+                title: "ปรับเสียงระบบ",
+                description: "คลิกขวาที่ไอคอนเสียงใน System Tray เปิด Volume Mixer ปรับระดับเสียงของโปรแกรมต่างๆ ทดสอบเสียงโดยเปิดเพลงหรือวิดีโอ",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 38,
+                title: "ใช้งาน Date and Time",
+                description: "คลิกขวาที่นาฬิกาใน System Tray เลือก 'Adjust date/time' ดูการตั้งค่าเวลา เขียนวันที่และเวลาปัจจุบันลงใน Notepad บันทึกเป็น 'วันเวลาปัจจุบัน.txt'",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 39,
+                title: "สร้างรายการงานประจำวัน",
+                description: "เปิด Notepad สร้างรายการงานที่ต้องทำในแต่ละวัน จันทร์-อาทิตย์ (แต่ละวันใส่ 3 งาน) จัดรูปแบบให้อ่านง่าย บันทึกเป็น 'งานประจำวัน.txt'",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+            {
+                id: 40,
+                title: "ทดสอบ Keyboard Shortcuts",
+                description: "ทดสอบการใช้ Keyboard Shortcuts: Ctrl+C (Copy), Ctrl+V (Paste), Ctrl+Z (Undo), Ctrl+S (Save), Alt+Tab (Switch Program) เขียนรายการ Shortcuts ที่ทดสอบลงใน Notepad",
+                difficulty: "ง่าย",
+                reward: 1
+            },
+
+            // ใบงานระดับปานกลาง (10 ใบงาน)
+            {
+                id: 6,
+                title: "สร้างตารางใน Word",
+                description: "เปิด Microsoft Word สร้างตารางขนาด 4×3 ใส่หัวข้อ 'ชื่อ', 'อายุ', 'งานอดิเรก' แล้วใส่ข้อมูลตัวอย่าง 3 คน บันทึกเป็น 'ตารางข้อมูล.docx'",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 7,
+                title: "จัดรูปแบบข้อความ",
+                description: "สร้างเอกสาร Word เขียนหัวข้อ 'การใช้งานคอมพิวเตอร์' (ตัวหนา ขนาด 18) และเขียนเนื้อหา 3 ย่อหน้าเกี่ยวกับประโยชน์ของคอมพิวเตอร์ จัดรูปแบบให้สวยงาม",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 8,
+                title: "ใช้งาน Paint",
+                description: "เปิด Paint วาดรูปบ้านง่ายๆ ประกอบด้วย หลังคา ผนัง ประตู หน้าต่าง และต้นไม้ 2 ต้น ระบายสีให้สวยงาม บันทึกเป็น 'บ้านของฉัน.png'",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 9,
+                title: "ใช้งาน Snipping Tool",
+                description: "ใช้ Snipping Tool จับภาพหน้าจอ Desktop, หน้าต่างโปรแกรม, และส่วนที่เลือก รวม 3 รูป จัดเรียงใน Word พร้อมคำอธิบายแต่ละรูป",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 10,
+                title: "สร้างรายการใน Word",
+                description: "สร้างเอกสาร Word ใส่หัวข้อ 'รายการอาหารโปรด' สร้างรายการแบบมีหมายเลข (Numbered List) 10 อย่าง และรายการแบบจุด (Bullet List) เครื่องดื่ม 5 อย่าง",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 11,
+                title: "ใช้งาน Excel พื้นฐาน",
+                description: "สร้างไฟล์ Excel ใส่ข้อมูลคะแนนสอบ 5 วิชา ในคอลัมน์ A ใส่ชื่อวิชา คอลัมน์ B ใส่คะแนน สร้างสูตรหาค่าเฉลี่ยในเซลล์ B6",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 12,
+                title: "จัดการไฟล์และโฟลเดอร์",
+                description: "สร้างโฟลเดอร์หลัก 'โรงเรียน' ข้างในสร้างโฟลเดอร์ย่อย 'ม.1', 'ม.2', 'ม.3' ในแต่ละโฟลเดอร์สร้างไฟล์ Word ชื่อ 'รายชื่อนักเรียน.docx'",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 13,
+                title: "ใช้งาน WordPad",
+                description: "เปิด WordPad เขียนจดหมายขอบคุณครู ความยาว 5 ประโยค จัดรูปแบบตัวอักษรให้สวยงาม เปลี่ยนสี ขนาด และแบบอักษร บันทึกเป็น 'จดหมายขอบคุณ.rtf'",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 14,
+                title: "สร้างแผนภูมิใน Excel",
+                description: "สร้างข้อมูลยอดขายผลไม้ 5 ชนิด ในเดือนหนึ่ง (ใส่ชื่อผลไม้และจำนวน) จากนั้นสร้างแผนภูมิแท่ง (Bar Chart) บันทึกเป็น 'ยอดขายผลไม้.xlsx'",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+            {
+                id: 15,
+                title: "ใช้งาน Windows Explorer",
+                description: "เปิด Windows Explorer สำรวจโฟลเดอร์ต่างๆ ในเครื่อง เปลี่ยนการแสดงผลเป็น Large Icons, List, Details สร้างไฟล์ Text บันทึกชื่อโฟลเดอร์ที่พบ 10 โฟลเดอร์",
+                difficulty: "ปานกลาง",
+                reward: 2
+            },
+
+            // ใบงานระดับยาก (15 ใบงาน)
+            {
+                id: 16,
+                title: "สร้างงานนำเสนอ PowerPoint",
+                description: "สร้าง PowerPoint 5 สไลด์ หัวข้อ 'แนะนำตัวเอง' ประกอบด้วย สไลด์ปก, ข้อมูลส่วนตัว, งานอดิเรก, ความฝัน, และขอบคุณ ใส่รูปภาพและเอฟเฟกต์",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 17,
+                title: "สร้างสเปรดชีท Excel",
+                description: "สร้างไฟล์ Excel บันทึกรายรับ-รายจ่ายรายเดือน มี 4 คอลัมน์: วันที่, รายการ, รายรับ, รายจ่าย ใส่ข้อมูลตัวอย่าง 10 รายการ และสร้างสูตรคำนวณยอดรวม",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 18,
+                title: "จัดการไฟล์ขั้นสูง",
+                description: "สร้างโครงสร้างโฟลเดอร์ 'โครงงาน' > 'เอกสาร', 'รูปภาพ', 'การนำเสนอ' สร้างไฟล์ตัวอย่างในแต่ละโฟลเดอร์ จากนั้นสร้างไฟล์ zip ของโฟลเดอร์ทั้งหมด",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 19,
+                title: "สร้างเว็บไซต์ HTML พื้นฐาน",
+                description: "ใช้ Notepad สร้างไฟล์ HTML ง่ายๆ ประกอบด้วย หัวข้อ, ย่อหน้าข้อความ, รายการ, และลิงก์ 3 อัน บันทึกเป็น 'index.html' และเปิดดูในเว็บเบราว์เซอร์",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 20,
+                title: "สร้างฐานข้อมูลใน Excel",
+                description: "สร้างฐานข้อมูลนักเรียน ประกอบด้วย รหัสนักเรียน, ชื่อ-นามสกุล, ชั้น, คะแนนเฉลี่ย ใส่ข้อมูล 15 คน ใช้ Filter และ Sort จัดเรียงข้อมูล",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 21,
+                title: "สร้างโบรชัวร์ใน Word",
+                description: "สร้างโบรชัวร์แนะนำโรงเรียน 3 หน้า ใส่รูปภาพ, ตาราง, รายการ จัดรูปแบบให้สวยงาม ใช้ Columns แบ่งเป็น 2 คอลัมน์ บันทึกเป็น PDF",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 22,
+                title: "สร้างแบบฟอร์มใน Word",
+                description: "สร้างแบบฟอร์มใบสมัครสมาชิกชมรม ประกอบด้วย ช่องกรอกข้อมูล, ตารางเลือก, Checkbox สำหรับความสนใจ และลายเซ็น จัดรูปแบบให้เป็นทางการ",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 23,
+                title: "สร้างแผนภูมิขั้นสูงใน Excel",
+                description: "สร้างข้อมูลยอดขาย 12 เดือน สร้างแผนภูมิเส้น (Line Chart) และแผนภูมิวงกลม (Pie Chart) ใส่ชื่อแผนภูมิ, ป้ายกำกับ, และสีสันที่สวยงาม",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 24,
+                title: "สร้างงานนำเสนอแบบโต้ตอบ",
+                description: "สร้าง PowerPoint เกี่ยวกับ 'การอนุรักษ์สิ่งแวดล้อม' 8 สไลด์ ใส่ Hyperlink เชื่อมโยงระหว่างสไลด์, Animation, Transition, และเสียงประกอบ",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 25,
+                title: "จัดการไฟล์มัลติมีเดีย",
+                description: "สร้างโฟลเดอร์ 'มัลติมีเดีย' แบ่งเป็น 'เสียง', 'วิดีโอ', 'รูปภาพ' สร้างไฟล์ตัวอย่างในแต่ละประเภท เปลี่ยนชื่อไฟล์ให้เป็นระบบ และสร้างไฟล์ Index ใน Excel",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 26,
+                title: "สร้างเกมง่ายใน PowerPoint",
+                description: "สร้างเกมทายคำศัพท์ใน PowerPoint ประกอบด้วย หน้าเริ่มเกม, คำถาม 10 ข้อ, ระบบคะแนน, และหน้าสรุปผล ใช้ Hyperlink และ Animation",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 27,
+                title: "สร้างระบบจัดการคลังสินค้า",
+                description: "ใช้ Excel สร้างระบบจัดการคลังสินค้า ประกอบด้วย รหัสสินค้า, ชื่อสินค้า, จำนวน, ราคา, วันหมดอายุ ใช้สูตรคำนวณมูลค่าสินค้า และ Conditional Formatting",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 28,
+                title: "สร้างจดหมายเวียนใน Word",
+                description: "สร้างจดหมายเชิญประชุมผู้ปกครอง ใช้ Mail Merge เชื่อมกับข้อมูลใน Excel (ชื่อผู้ปกครอง, ชื่อนักเรียน, ชั้น) สร้างจดหมายส่วนบุคคล 10 ฉบับ",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 29,
+                title: "สร้างแคลนเดอร์ดิจิทัล",
+                description: "ใช้ Excel หรือ Word สร้างปฏิทินปี 2025 ใส่วันสำคัญ, วันหยุดราชการ, กิจกรรมโรงเรียน จัดรูปแบบให้สวยงาม พิมพ์ได้ และบันทึกเป็น PDF",
+                difficulty: "ยาก",
+                reward: 3
+            },
+            {
+                id: 30,
+                title: "สร้างโปรแกรมคำนวณใน Excel",
+                description: "สร้างโปรแกรมคำนวณเกรดเฉลี่ย ใส่คะแนนสอบกลางภาค (30%), ปลายภาค (50%), งาน (20%) ใช้สูตร IF แสดงเกรด A-F และใช้ VLOOKUP แสดงผลการเรียน",
+                difficulty: "ยาก",
+                reward: 3
+            }
+        ];
+
+        // Load links using JSONP
+        function loadLinksWithJSONP() {
+            // Show loading state
+            linksList.innerHTML = '<div class="text-center py-8 text-gray-500">🔄 กำลังโหลดลิงก์...</div>';
+            emptyState.classList.add('hidden');
+            
+            const script = document.createElement('script');
+            const callbackName = 'jsonpCallback_' + Date.now();
+            
+            // Set timeout for loading
+            const timeout = setTimeout(() => {
+                console.log('Loading timeout, showing empty state');
+                renderLinks();
+                if (document.head.contains(script)) {
+                    document.head.removeChild(script);
+                }
+                delete window[callbackName];
+            }, 5000);
+            
+            window[callbackName] = function(data) {
+                clearTimeout(timeout);
+                if (data && data.links) {
+                    links = data.links.map((link, index) => ({
+                        id: Date.now() + index,
+                        title: link.title,
+                        url: link.url
+                    }));
+                }
+                renderLinks();
+                if (document.head.contains(script)) {
+                    document.head.removeChild(script);
+                }
+                delete window[callbackName];
+            };
+
+            script.onerror = function() {
+                clearTimeout(timeout);
+                console.log('Script loading error, showing empty state');
+                renderLinks();
+                if (document.head.contains(script)) {
+                    document.head.removeChild(script);
+                }
+                delete window[callbackName];
+            };
+
+            script.src = `https://script.google.com/macros/s/AKfycbxwxGNetwhsGil3wbgRsALRc4jSvGeUyCesVpxP2t80oYMXF9c56X2bAQ_EK4l0hT9K/exec?action=getLinks&callback=${callbackName}`;
+            document.head.appendChild(script);
+        }
+
+        // Show modal
+        function showModal() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            linkTitle.focus();
+        }
+
+        // Hide modal
+        function hideModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            linkForm.reset();
+        }
+
+        // Add link to Google Sheets
+        async function addLink(title, url) {
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'กำลังบันทึก...';
+            submitBtn.disabled = true;
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'addLink',
+                    title: title,
+                    url: url,
+                    timestamp: new Date().toLocaleString('th-TH')
+                });
+
+                await fetch(`https://script.google.com/macros/s/AKfycbxwxGNetwhsGil3wbgRsALRc4jSvGeUyCesVpxP2t80oYMXF9c56X2bAQ_EK4l0hT9K/exec?${params}`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+
+                const link = { id: Date.now(), title, url };
+                links.push(link);
+                renderLinks();
+                
+                showNotification('✅ บันทึกลิงค์สำเร็จ!', 'success');
+
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+                showNotification('❌ เกิดข้อผิดพลาดในการบันทึก', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Show teacher dashboard with password
+        function showTeacherDashboard() {
+            const today = new Date();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const year = String(today.getFullYear()).slice(-2);
+            const correctPassword = month + day + year;
+            
+            const password = prompt('🔐 กรุณาใส่รหัสผ่าน (รูปแบบ: MMDDYY)\nเช่น วันที่ 27 เดือน 07 ปี 2025 = 072725');
+            
+            if (password === null) {
+                return; // User cancelled
+            }
+            
+            if (password === correctPassword) {
+                teacherModal.classList.remove('hidden');
+                teacherModal.classList.add('flex');
+                renderTeacherLinks();
+                renderTasksList();
+                showNotification('✅ เข้าสู่ระบบสำเร็จ!', 'success');
+            } else {
+                showNotification('❌ รหัสผ่านไม่ถูกต้อง!', 'error');
+            }
+        }
+
+        // Hide teacher dashboard
+        function hideTeacherDashboard() {
+            teacherModal.classList.add('hidden');
+            teacherModal.classList.remove('flex');
+        }
+
+        // Switch tabs in teacher dashboard
+        function switchTab(activeTab) {
+            // Reset all tabs
+            linksTab.className = 'px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600';
+            tasksTab.className = 'px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600';
+            solutionsTab.className = 'px-4 py-2 font-semibold text-gray-500 hover:text-indigo-600';
+            
+            // Hide all content
+            linksTabContent.classList.add('hidden');
+            tasksTabContent.classList.add('hidden');
+            solutionsTabContent.classList.add('hidden');
+            
+            if (activeTab === 'links') {
+                linksTab.className = 'px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600';
+                linksTabContent.classList.remove('hidden');
+            } else if (activeTab === 'tasks') {
+                tasksTab.className = 'px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600';
+                tasksTabContent.classList.remove('hidden');
+            } else if (activeTab === 'solutions') {
+                solutionsTab.className = 'px-4 py-2 font-semibold text-indigo-600 border-b-2 border-indigo-600';
+                solutionsTabContent.classList.remove('hidden');
+                renderSolutionsList();
+            }
+        }
+
+        // Render teacher links list
+        function renderTeacherLinks() {
+            if (links.length === 0) {
+                teacherLinksList.innerHTML = '<div class="text-center py-8 text-gray-500">ยังไม่มีลิงค์</div>';
+                return;
+            }
+
+            teacherLinksList.innerHTML = links.map(link => `
+                <div class="bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-gray-800">${link.title}</h4>
+                        <p class="text-sm text-blue-600 break-all">${link.url}</p>
+                    </div>
+                    <button onclick="deleteLink(${link.id})" class="text-red-500 hover:text-red-700 ml-2">
+                        🗑️
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Delete link
+        function deleteLink(linkId) {
+            if (confirm('ต้องการลบลิงค์นี้หรือไม่?')) {
+                links = links.filter(link => link.id !== linkId);
+                renderLinks();
+                renderTeacherLinks();
+                showNotification('✅ ลบลิงค์สำเร็จ!', 'success');
+            }
+        }
+
+        // Show task modal
+        function showTaskModal(task = null) {
+            currentEditingTask = task;
+            if (task) {
+                taskModalTitle.textContent = 'แก้ไขใบงาน';
+                taskTitle.value = task.title;
+                taskDescription.value = task.description;
+                taskDifficulty.value = task.difficulty;
+                taskReward.value = task.reward;
+            } else {
+                taskModalTitle.textContent = 'เพิ่มใบงานใหม่';
+                taskForm.reset();
+                taskReward.value = 1;
+            }
+            taskModal.classList.remove('hidden');
+            taskModal.classList.add('flex');
+            taskTitle.focus();
+        }
+
+        // Hide task modal
+        function hideTaskModal() {
+            taskModal.classList.add('hidden');
+            taskModal.classList.remove('flex');
+            taskForm.reset();
+            currentEditingTask = null;
+        }
+
+        // Render tasks list
+        function renderTasksList() {
+            if (computerTasks.length === 0) {
+                tasksList.innerHTML = '<div class="text-center py-8 text-gray-500">ยังไม่มีใบงาน</div>';
+                return;
+            }
+
+            tasksList.innerHTML = computerTasks.map((task, index) => `
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800 mb-2">${task.title}</h4>
+                            <p class="text-sm text-gray-600 mb-2">${task.description}</p>
+                            <div class="flex items-center space-x-4">
+                                <span class="px-2 py-1 rounded text-xs font-medium ${
+                                    task.difficulty === 'ง่าย' ? 'bg-green-100 text-green-800' :
+                                    task.difficulty === 'ปานกลาง' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                }">
+                                    ${task.difficulty}
+                                </span>
+                                <span class="text-sm text-gray-500">รางวัล: ${task.reward} ชิ้น</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2 ml-4">
+                            <button onclick="showTaskModal(computerTasks[${index}])" class="text-blue-500 hover:text-blue-700">
+                                ✏️
+                            </button>
+                            <button onclick="deleteTask(${index})" class="text-red-500 hover:text-red-700">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Delete task
+        function deleteTask(index) {
+            if (confirm('ต้องการลบใบงานนี้หรือไม่?')) {
+                computerTasks.splice(index, 1);
+                renderTasksList();
+                showNotification('✅ ลบใบงานสำเร็จ!', 'success');
+            }
+        }
+
+        // Save task
+        function saveTask() {
+            const title = taskTitle.value.trim();
+            const description = taskDescription.value.trim();
+            const difficulty = taskDifficulty.value;
+            const reward = parseInt(taskReward.value);
+
+            if (!title || !description) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            const taskData = {
+                id: currentEditingTask ? currentEditingTask.id : Date.now(),
+                title,
+                description,
+                difficulty,
+                reward
+            };
+
+            if (currentEditingTask) {
+                const index = computerTasks.findIndex(task => task.id === currentEditingTask.id);
+                computerTasks[index] = taskData;
+                showNotification('✅ แก้ไขใบงานสำเร็จ!', 'success');
+            } else {
+                computerTasks.push(taskData);
+                showNotification('✅ เพิ่มใบงานสำเร็จ!', 'success');
+            }
+
+            renderTasksList();
+            hideTaskModal();
+        }
+
+        // Load tasks from JSON
+        async function loadTasksFromJSON() {
+            try {
+                const response = await fetch(TASKS_JSON_URL);
+                const data = await response.json();
+                
+                if (data && data.tasks) {
+                    computerTasks.length = 0; // Clear existing tasks
+                    computerTasks.push(...data.tasks);
+                    renderTasksList();
+                    showNotification('✅ โหลดใบงานสำเร็จ!', 'success');
+                } else {
+                    showNotification('❌ ไม่พบข้อมูลใบงาน', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                showNotification('❌ เกิดข้อผิดพลาดในการโหลด', 'error');
+            }
+        }
+
+        // Save tasks to JSON (download)
+        function saveTasksToJSON() {
+            const tasksData = {
+                tasks: computerTasks,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(tasksData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'bb.json';
+            link.click();
+            
+            showNotification('✅ ดาวน์โหลดไฟล์สำเร็จ!', 'success');
+        }
+
+        // Show difficulty selection modal
+        function showDifficultyModal() {
+            difficultyModal.classList.remove('hidden');
+            difficultyModal.classList.add('flex');
+        }
+
+        // Hide difficulty selection modal
+        function hideDifficultyModal() {
+            difficultyModal.classList.add('hidden');
+            difficultyModal.classList.remove('flex');
+        }
+
+        // Show exchange modal
+        function showExchangeModal() {
+            exchangeModal.classList.remove('hidden');
+            exchangeModal.classList.add('flex');
+            stickerCount.focus();
+        }
+
+        // Hide exchange modal
+        function hideExchangeModal() {
+            exchangeModal.classList.add('hidden');
+            exchangeModal.classList.remove('flex');
+            stickerCount.value = '0';
+            candyCount.value = '0';
+            exchangeResult.classList.add('hidden');
+            confirmExchangeBtn.classList.add('hidden');
+        }
+
+        // Calculate exchange
+        function calculateExchange() {
+            const stickers = parseInt(stickerCount.value) || 0;
+            const candies = parseInt(candyCount.value) || 0;
+            
+            const jigsawFromStickers = Math.floor(stickers / 10);
+            const jigsawFromCandies = Math.floor(candies / 3);
+            const totalJigsaw = jigsawFromStickers + jigsawFromCandies;
+            
+            const remainingStickers = stickers % 10;
+            const remainingCandies = candies % 3;
+            
+            if (totalJigsaw === 0) {
+                resultContent.innerHTML = '<div class="text-red-600">❌ ไม่สามารถแลกได้ กรุณาเพิ่มจำนวนให้เพียงพอ</div>';
+                confirmExchangeBtn.classList.add('hidden');
+            } else {
+                resultContent.innerHTML = `
+                    <div class="font-semibold text-green-800">🧩 จิ๊กซอว์ที่ได้: ${totalJigsaw} ชิ้น</div>
+                    <div class="text-sm">
+                        <div>• จากสติ๊กเกอร์: ${jigsawFromStickers} ชิ้น</div>
+                        <div>• จากขนม: ${jigsawFromCandies} ชิ้น</div>
+                    </div>
+                    ${remainingStickers > 0 || remainingCandies > 0 ? `
+                    <div class="text-sm text-orange-600 mt-2">
+                        <div class="font-semibold">🔄 ของที่เหลือ:</div>
+                        ${remainingStickers > 0 ? `<div>• สติ๊กเกอร์: ${remainingStickers} อัน</div>` : ''}
+                        ${remainingCandies > 0 ? `<div>• ขนม: ${remainingCandies} อัน</div>` : ''}
+                    </div>
+                    ` : ''}
+                `;
+                confirmExchangeBtn.classList.remove('hidden');
+            }
+            
+            exchangeResult.classList.remove('hidden');
+        }
+
+        // Exchange stickers for candies
+        function exchangeStickersForCandies() {
+            const stickers = parseInt(stickerCount.value) || 0;
+            
+            if (stickers < 3) {
+                showNotification('❌ ต้องมีสติ๊กเกอร์อย่างน้อย 3 อัน', 'error');
+                return;
+            }
+            
+            const candiesFromStickers = Math.floor(stickers / 3);
+            const remainingStickers = stickers % 3;
+            const currentCandies = parseInt(candyCount.value) || 0;
+            const newCandyTotal = currentCandies + candiesFromStickers;
+            
+            // Update the candy count
+            candyCount.value = newCandyTotal;
+            stickerCount.value = remainingStickers;
+            
+            showNotification(`🔄 แลกสำเร็จ! ได้ขนม ${candiesFromStickers} อัน`, 'success');
+            
+            // Auto calculate after exchange
+            calculateExchange();
+        }
+
+        // Confirm exchange
+        function confirmExchange() {
+            const stickers = parseInt(stickerCount.value) || 0;
+            const candies = parseInt(candyCount.value) || 0;
+            const jigsawFromStickers = Math.floor(stickers / 10);
+            const jigsawFromCandies = Math.floor(candies / 3);
+            const totalJigsaw = jigsawFromStickers + jigsawFromCandies;
+            
+            showNotification(`🎉 แลกสำเร็จ! ได้รับจิ๊กซอว์ ${totalJigsaw} ชิ้น`, 'success');
+            hideExchangeModal();
+        }
+
+        // Random task function by difficulty
+        function getRandomTaskByDifficulty(difficulty) {
+            const filteredTasks = computerTasks.filter(task => task.difficulty === difficulty);
+            const randomIndex = Math.floor(Math.random() * filteredTasks.length);
+            const task = filteredTasks[randomIndex];
+            
+            displayTask(task);
+        }
+
+        // Random task from all difficulties with bonus system
+        function getRandomTaskFromAll() {
+            // Weight system: ง่าย 0%, ปานกลาง 30%, ยาก 70%
+            const easyTasks = computerTasks.filter(task => task.difficulty === 'ง่าย');
+            const mediumTasks = computerTasks.filter(task => task.difficulty === 'ปานกลาง');
+            const hardTasks = computerTasks.filter(task => task.difficulty === 'ยาก');
+            
+            const random = Math.random() * 100;
+            let selectedTask;
+            
+            if (random < 30) {
+                // 30% chance for medium tasks
+                const randomIndex = Math.floor(Math.random() * mediumTasks.length);
+                selectedTask = mediumTasks[randomIndex];
+            } else {
+                // 70% chance for hard tasks
+                const randomIndex = Math.floor(Math.random() * hardTasks.length);
+                selectedTask = hardTasks[randomIndex];
+            }
+            
+            // Add bonus jigsaw (2-3 pieces)
+            const bonusJigsaw = Math.floor(Math.random() * 2) + 2; // Random 2-3
+            const taskWithBonus = {
+                ...selectedTask,
+                originalReward: selectedTask.reward,
+                reward: selectedTask.reward + bonusJigsaw,
+                hasBonus: true,
+                bonusAmount: bonusJigsaw
+            };
+            
+            displayTask(taskWithBonus);
+        }
+
+        // Display task function
+        function displayTask(task) {
+            taskContent.innerHTML = `
+                <h4 class="text-xl font-semibold mb-3 text-blue-600">${task.title}</h4>
+                <p class="mb-4">${task.description}</p>
+                <div class="flex items-center space-x-4">
+                    <span class="px-3 py-1 rounded-full text-sm font-medium ${
+                        task.difficulty === 'ง่าย' ? 'bg-green-100 text-green-800' :
+                        task.difficulty === 'ปานกลาง' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                    }">
+                        ระดับ: ${task.difficulty}
+                    </span>
+                    ${task.hasBonus ? `
+                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 animate-pulse">
+                            🎁 โบนัส +${task.bonusAmount} ชิ้น
+                        </span>
+                    ` : ''}
+                </div>
+            `;
+
+            rewardBadge.className = `px-4 py-2 rounded-full text-white font-semibold ${
+                task.hasBonus ? 'bg-purple-500 animate-pulse' :
+                task.reward === 1 ? 'bg-green-500' :
+                task.reward === 2 ? 'bg-yellow-500' :
+                'bg-red-500'
+            }`;
+            rewardBadge.textContent = `${task.reward} ชิ้น`;
+            
+            if (task.hasBonus) {
+                rewardText.innerHTML = `จิ๊กซอว์ ${task.originalReward} ชิ้น <span class="text-purple-600 font-bold">+ โบนัส ${task.bonusAmount} ชิ้น = รวม ${task.reward} ชิ้น</span>`;
+            } else {
+                rewardText.textContent = `จิ๊กซอว์ ${task.reward} ชิ้น`;
+            }
+
+            taskDisplay.classList.remove('hidden');
+            hideDifficultyModal();
+            taskDisplay.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Render links
+        function renderLinks() {
+            if (links.length === 0) {
+                emptyState.classList.remove('hidden');
+                linksList.innerHTML = '';
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            linksList.innerHTML = links.map(link => `
+                <div class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200">
+                    <div class="flex items-center">
+                        <div class="flex-1">
+                            <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="block hover:bg-gray-50 rounded p-2 -m-2 transition-colors duration-200">
+                                <h3 class="font-semibold text-gray-800 mb-1 hover:text-blue-600 transition-colors duration-200">${link.title}</h3>
+                                <p class="text-blue-600 text-sm break-all hover:text-blue-800 transition-colors duration-200">${link.url}</p>
+                            </a>
+                        </div>
+                        <div class="ml-4">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event listeners
+        teacherDashboardBtn.addEventListener('click', showTeacherDashboard);
+        closeTeacherModal.addEventListener('click', hideTeacherDashboard);
+        linksTab.addEventListener('click', () => switchTab('links'));
+        tasksTab.addEventListener('click', () => switchTab('tasks'));
+        solutionsTab.addEventListener('click', () => switchTab('solutions'));
+        difficultyFilter.addEventListener('change', renderSolutionsList);
+        printSolutionsBtn.addEventListener('click', printSolutions);
+        addLinkBtn.addEventListener('click', showModal);
+        addTaskBtn.addEventListener('click', () => showTaskModal());
+        saveTasksBtn.addEventListener('click', saveTasksToJSON);
+        loadTasksBtn.addEventListener('click', loadTasksFromJSON);
+        closeTaskModal.addEventListener('click', hideTaskModal);
+        cancelTaskBtn.addEventListener('click', hideTaskModal);
+        randomTaskBtn.addEventListener('click', showDifficultyModal);
+        exchangeBtn.addEventListener('click', showExchangeModal);
+        closeModal.addEventListener('click', hideModal);
+        cancelBtn.addEventListener('click', hideModal);
+        closeDifficultyModal.addEventListener('click', hideDifficultyModal);
+        closeExchangeModal.addEventListener('click', hideExchangeModal);
+        calculateBtn.addEventListener('click', calculateExchange);
+        exchangeStickersBtn.addEventListener('click', exchangeStickersForCandies);
+        confirmExchangeBtn.addEventListener('click', confirmExchange);
+        easyBtn.addEventListener('click', () => getRandomTaskByDifficulty('ง่าย'));
+        mediumBtn.addEventListener('click', () => getRandomTaskByDifficulty('ปานกลาง'));
+        hardBtn.addEventListener('click', () => getRandomTaskByDifficulty('ยาก'));
+        randomAllBtn.addEventListener('click', getRandomTaskFromAll);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
+        difficultyModal.addEventListener('click', (e) => {
+            if (e.target === difficultyModal) {
+                hideDifficultyModal();
+            }
+        });
+
+        exchangeModal.addEventListener('click', (e) => {
+            if (e.target === exchangeModal) {
+                hideExchangeModal();
+            }
+        });
+
+        teacherModal.addEventListener('click', (e) => {
+            if (e.target === teacherModal) {
+                hideTeacherDashboard();
+            }
+        });
+
+        taskModal.addEventListener('click', (e) => {
+            if (e.target === taskModal) {
+                hideTaskModal();
+            }
+        });
+
+        linkForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = linkTitle.value.trim();
+            const url = linkUrl.value.trim();
+            
+            if (!title || !url) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+            
+            addLink(title, url);
+            hideModal();
+        });
+
+        taskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveTask();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (!modal.classList.contains('hidden')) {
+                    hideModal();
+                }
+                if (!difficultyModal.classList.contains('hidden')) {
+                    hideDifficultyModal();
+                }
+                if (!exchangeModal.classList.contains('hidden')) {
+                    hideExchangeModal();
+                }
+                if (!teacherModal.classList.contains('hidden')) {
+                    hideTeacherDashboard();
+                }
+                if (!taskModal.classList.contains('hidden')) {
+                    hideTaskModal();
+                }
+            }
+        });
+
+        // Render solutions list
+        function renderSolutionsList() {
+            const selectedDifficulty = difficultyFilter.value;
+            let filteredTasks = computerTasks;
+            
+            if (selectedDifficulty !== 'all') {
+                filteredTasks = computerTasks.filter(task => task.difficulty === selectedDifficulty);
+            }
+            
+            if (filteredTasks.length === 0) {
+                solutionsList.innerHTML = '<div class="text-center py-8 text-gray-500">ไม่พบใบงานในระดับที่เลือก</div>';
+                return;
+            }
+            
+            solutionsList.innerHTML = filteredTasks.map(task => {
+                if (!task.solution) return '';
+                
+                return `
+                    <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-bold text-gray-800 mb-2">${task.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${task.description}</p>
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${
+                                    task.difficulty === 'ง่าย' ? 'bg-green-100 text-green-800' :
+                                    task.difficulty === 'ปานกลาง' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                }">
+                                    ${task.difficulty} - รางวัล ${task.reward} ชิ้น
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <!-- Steps -->
+                            <div class="md:col-span-2">
+                                <h5 class="font-semibold text-blue-600 mb-3">📋 ขั้นตอนการทำ</h5>
+                                <div class="space-y-2">
+                                    ${task.solution.steps.map(step => `
+                                        <div class="flex items-start space-x-2">
+                                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                            <p class="text-sm text-gray-700">${step}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <!-- Tips and Shortcuts -->
+                            <div class="space-y-4">
+                                <!-- Tips -->
+                                <div>
+                                    <h5 class="font-semibold text-green-600 mb-2">💡 เทคนิคเพิ่มเติม</h5>
+                                    <div class="space-y-1">
+                                        ${task.solution.tips.map(tip => `
+                                            <p class="text-xs text-gray-600 bg-green-50 p-2 rounded">${tip}</p>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                
+                                <!-- Keyboard Shortcuts -->
+                                <div>
+                                    <h5 class="font-semibold text-purple-600 mb-2">⌨️ คีย์ลัด</h5>
+                                    <div class="space-y-1">
+                                        ${task.solution.keyboardShortcuts.map(shortcut => `
+                                            <p class="text-xs text-gray-600 bg-purple-50 p-2 rounded font-mono">${shortcut}</p>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).filter(html => html !== '').join('');
+        }
+        
+        // Print solutions
+        function printSolutions() {
+            const selectedDifficulty = difficultyFilter.value;
+            let filteredTasks = computerTasks;
+            
+            if (selectedDifficulty !== 'all') {
+                filteredTasks = computerTasks.filter(task => task.difficulty === selectedDifficulty);
+            }
+            
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>เฉลยใบงานคอมพิวเตอร์</title>
+                    <style>
+                        body { font-family: 'Sarabun', sans-serif; margin: 20px; }
+                        .task { page-break-inside: avoid; margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; }
+                        .title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
+                        .description { color: #666; margin-bottom: 15px; }
+                        .difficulty { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; }
+                        .easy { background: #d4edda; color: #155724; }
+                        .medium { background: #fff3cd; color: #856404; }
+                        .hard { background: #f8d7da; color: #721c24; }
+                        .steps { margin: 15px 0; }
+                        .step { margin: 5px 0; padding-left: 20px; }
+                        .tips, .shortcuts { margin: 10px 0; font-size: 12px; }
+                        .section-title { font-weight: bold; color: #007bff; margin-bottom: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>เฉลยใบงานคอมพิวเตอร์${selectedDifficulty !== 'all' ? ' - ระดับ' + selectedDifficulty : ''}</h1>
+                    ${filteredTasks.map(task => {
+                        if (!task.solution) return '';
+                        return `
+                            <div class="task">
+                                <div class="title">${task.title}</div>
+                                <div class="description">${task.description}</div>
+                                <span class="difficulty ${task.difficulty === 'ง่าย' ? 'easy' : task.difficulty === 'ปานกลาง' ? 'medium' : 'hard'}">
+                                    ${task.difficulty} - รางวัล ${task.reward} ชิ้น
+                                </span>
+                                
+                                <div class="steps">
+                                    <div class="section-title">📋 ขั้นตอนการทำ:</div>
+                                    ${task.solution.steps.map(step => `<div class="step">• ${step}</div>`).join('')}
+                                </div>
+                                
+                                <div class="tips">
+                                    <div class="section-title">💡 เทคนิคเพิ่มเติม:</div>
+                                    ${task.solution.tips.map(tip => `<div>• ${tip}</div>`).join('')}
+                                </div>
+                                
+                                <div class="shortcuts">
+                                    <div class="section-title">⌨️ คีย์ลัด:</div>
+                                    ${task.solution.keyboardShortcuts.map(shortcut => `<div>• ${shortcut}</div>`).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).filter(html => html !== '').join('')}
+                </body>
+                </html>
+            `;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            renderLinks(); // Show empty state first
+            loadLinksWithJSONP(); // Then try to load links
+        });
+        
+        // Also initialize immediately in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            // DOM is still loading
+        } else {
+            // DOM is already loaded
+            console.log('DOM already loaded, initializing...');
+            renderLinks();
+            loadLinksWithJSONP();
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cdfcd4f10c732b',t:'MTc1NDgxMzEyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
