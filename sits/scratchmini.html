@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมสร้างโปรแกรม - อัลกอริทึมแบบลากวาง</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .game-layout {
+            display: flex;
+            flex: 1;
+            min-height: calc(100vh - 120px);
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 2px solid #e9ecef;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .controls {
+            background: #343a40;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .level-info {
+            font-weight: 600;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 184, 148, 0.3);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(135deg, #e17055, #d63031);
+        }
+        
+        .btn.primary {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+        }
+        
+        .workspace {
+            flex: 1;
+            display: flex;
+        }
+        
+        .code-area {
+            flex: 1;
+            background: #2d3748;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .drop-zone {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed #4a5568;
+            border-radius: 10px;
+            min-height: 400px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #48cae4;
+            background: rgba(72, 202, 228, 0.1);
+        }
+        
+        .preview-area {
+            width: 350px;
+            background: #f8f9fa;
+            border-left: 2px solid #e9ecef;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .robot-canvas {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .robot {
+            width: 30px;
+            height: 30px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .target {
+            width: 25px;
+            height: 25px;
+            background: #00b894;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .obstacle {
+            background: #636e72;
+            position: absolute;
+            border-radius: 3px;
+        }
+        
+        .block-category {
+            margin-bottom: 25px;
+        }
+        
+        .category-title {
+            background: #495057;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .block {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .block:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(116, 185, 255, 0.3);
+        }
+        
+        .block.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        
+        .block.movement {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+        
+        .block.control {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+        }
+        
+        .block.sensor {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+        }
+        
+        .code-block {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 8px 0;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .code-block:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+        
+        .code-block .delete-btn {
+            background: #e17055;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nested-area {
+            margin-left: 20px;
+            border-left: 2px solid rgba(255,255,255,0.3);
+            padding-left: 15px;
+            margin-top: 10px;
+            min-height: 40px;
+        }
+        
+        .status {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .status h4 {
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .level-selector {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .level-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        .level-btn.active {
+            background: #007bff;
+        }
+        
+        .instructions {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        @media (max-width: 1200px) {
+            .game-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+                border-right: none;
+                border-bottom: 2px solid #e9ecef;
+            }
+            
+            .workspace {
+                flex-direction: column;
+            }
+            
+            .preview-area {
+                width: 100%;
+                border-left: none;
+                border-top: 2px solid #e9ecef;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .sidebar {
+                padding: 15px;
+            }
+            
+            .code-area {
+                padding: 15px;
+            }
+            
+            .preview-area {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 เกมสร้างโปรแกรม</h1>
+            <p>ลากบล็อกคำสั่งมาสร้างอัลกอริทึม ให้หุ่นยนต์เดินไปหาเป้าหมาย</p>
+        </div>
+        
+        <div class="game-layout">
+            <div class="sidebar">
+                <div class="level-selector">
+                    <h4 style="margin-bottom: 10px; color: #495057;">เลือกด่าน:</h4>
+                    <button class="level-btn active" onclick="selectLevel(1)">ด่าน 1</button>
+                    <button class="level-btn" onclick="selectLevel(2)">ด่าน 2</button>
+                    <button class="level-btn" onclick="selectLevel(3)">ด่าน 3</button>
+                    <button class="level-btn" onclick="selectLevel(4)">ด่าน 4</button>
+                    <button class="level-btn" onclick="selectLevel(5)">ด่าน 5</button>
+                </div>
+                
+                <div class="instructions" id="instructions">
+                    ลากบล็อกคำสั่งมาวางในพื้นที่โค้ด แล้วกดรันเพื่อดูผล
+                </div>
+                
+                <div class="block-category">
+                    <div class="category-title">🚶 การเคลื่อนไหว</div>
+                    <div class="block movement" draggable="true" data-type="move" data-action="forward">
+                        ⬆️ เดินหน้า 1 ช่อง
+                    </div>
+                    <div class="block movement" draggable="true" data-type="move" data-action="left">
+                        ⬅️ หันซ้าย
+                    </div>
+                    <div class="block movement" draggable="true" data-type="move" data-action="right">
+                        ➡️ หันขวา
+                    </div>
+                </div>
+                
+                <div class="block-category">
+                    <div class="category-title">🔄 การควบคุม</div>
+                    <div class="block control" draggable="true" data-type="loop" data-count="3">
+                        🔁 ทำซ้ำ 3 ครั้ง
+                    </div>
+                    <div class="block control" draggable="true" data-type="loop" data-count="5">
+                        🔁 ทำซ้ำ 5 ครั้ง
+                    </div>
+                    <div class="block control" draggable="true" data-type="if" data-condition="wall">
+                        🚧 ถ้าเจอกำแพง
+                    </div>
+                </div>
+                
+                <div class="block-category">
+                    <div class="category-title">👁️ เซ็นเซอร์</div>
+                    <div class="block sensor" draggable="true" data-type="sensor" data-check="front">
+                        👀 ดูข้างหน้า
+                    </div>
+                    <div class="block sensor" draggable="true" data-type="wait" data-time="1">
+                        ⏱️ รอ 1 วินาที
+                    </div>
+                </div>
+            </div>
+            
+            <div class="main-area">
+                <div class="controls">
+                    <div class="level-info">
+                        <span id="levelTitle">ด่าน 1: เดินตรงไปข้างหน้า</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="btn primary" onclick="runProgram()">▶️ รันโปรแกรม</button>
+                        <button class="btn" onclick="stepProgram()">⏭️ ทีละขั้น</button>
+                        <button class="btn danger" onclick="clearProgram()">🗑️ ล้างโค้ด</button>
+                        <button class="btn" onclick="resetRobot()">🔄 รีเซ็ต</button>
+                    </div>
+                </div>
+                
+                <div class="workspace">
+                    <div class="code-area">
+                        <div class="drop-zone" id="dropZone">
+                            <div style="color: rgba(255,255,255,0.5); text-align: center; margin-top: 50px; font-size: 1.1rem;">
+                                🎯 ลากบล็อกคำสั่งมาวางที่นี่
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-area">
+                        <div class="robot-canvas" id="robotCanvas">
+                            <div class="robot" id="robot">🤖</div>
+                        </div>
+                        
+                        <div class="status">
+                            <h4>📊 สถานะ</h4>
+                            <div class="status-item">
+                                <span>ตำแหน่ง:</span>
+                                <span id="position">(0, 0)</span>
+                            </div>
+                            <div class="status-item">
+                                <span>ทิศทาง:</span>
+                                <span id="direction">เหนือ</span>
+                            </div>
+                            <div class="status-item">
+                                <span>คำสั่งที่ใช้:</span>
+                                <span id="commandCount">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="success-message" id="successMessage">
+                            🎉 ยินดีด้วย! ผ่านด่านแล้ว
+                        </div>
+                        
+                        <div class="error-message" id="errorMessage">
+                            ❌ เกิดข้อผิดพลาด ลองใหม่นะ
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let robot = { x: 0, y: 0, direction: 0 }; // 0=north, 1=east, 2=south, 3=west
+        let program = [];
+        let isRunning = false;
+        let commandCount = 0;
+        
+        const levels = {
+            1: {
+                title: "ด่าน 1: เดินตรงไปข้างหน้า",
+                instructions: "ให้หุ่นยนต์เดินไปหาดาว ⭐ ที่อยู่ข้างหน้า",
+                robot: { x: 1, y: 4 },
+                target: { x: 1, y: 1 },
+                obstacles: [],
+                maxCommands: 5
+            },
+            2: {
+                title: "ด่าน 2: เลี้ยวและเดิน",
+                instructions: "หุ่นยนต์ต้องเลี้ยวขวาแล้วเดินไปหาดาว",
+                robot: { x: 1, y: 4 },
+                target: { x: 4, y: 4 },
+                obstacles: [],
+                maxCommands: 8
+            },
+            3: {
+                title: "ด่าน 3: หลบสิ่งกีดขวาง",
+                instructions: "มีกำแพงขวางทาง ต้องหาทางอ้อมไปหาดาว",
+                robot: { x: 1, y: 4 },
+                target: { x: 4, y: 1 },
+                obstacles: [
+                    { x: 2, y: 1, width: 30, height: 90 },
+                    { x: 2, y: 3, width: 30, height: 60 }
+                ],
+                maxCommands: 12
+            },
+            4: {
+                title: "ด่าน 4: ใช้ลูป",
+                instructions: "ใช้คำสั่งทำซ้ำเพื่อให้หุ่นยนต์เดินไปหาดาว",
+                robot: { x: 1, y: 4 },
+                target: { x: 6, y: 4 },
+                obstacles: [],
+                maxCommands: 6
+            },
+            5: {
+                title: "ด่าน 5: เขาวงกต",
+                instructions: "นำทางหุ่นยนต์ผ่านเขาวงกตไปหาดาว",
+                robot: { x: 1, y: 4 },
+                target: { x: 6, y: 1 },
+                obstacles: [
+                    { x: 2, y: 1, width: 30, height: 120 },
+                    { x: 4, y: 2, width: 30, height: 90 },
+                    { x: 5, y: 4, width: 60, height: 30 }
+                ],
+                maxCommands: 15
+            }
+        };
+        
+        // Drag and Drop functionality
+        let draggedElement = null;
+        
+        document.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('block')) {
+                draggedElement = e.target;
+                e.target.classList.add('dragging');
+            }
+        });
+        
+        document.addEventListener('dragend', (e) => {
+            if (e.target.classList.contains('block')) {
+                e.target.classList.remove('dragging');
+            }
+        });
+        
+        const dropZone = document.getElementById('dropZone');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            if (draggedElement) {
+                addBlockToProgram(draggedElement);
+                draggedElement = null;
+            }
+        });
+        
+        function addBlockToProgram(blockElement) {
+            const blockData = {
+                type: blockElement.dataset.type,
+                action: blockElement.dataset.action,
+                count: blockElement.dataset.count,
+                condition: blockElement.dataset.condition,
+                check: blockElement.dataset.check,
+                time: blockElement.dataset.time,
+                text: blockElement.textContent.trim(),
+                id: Date.now() + Math.random()
+            };
+            
+            program.push(blockData);
+            renderProgram();
+        }
+        
+        function renderProgram() {
+            const dropZone = document.getElementById('dropZone');
+            
+            if (program.length === 0) {
+                dropZone.innerHTML = `
+                    <div style="color: rgba(255,255,255,0.5); text-align: center; margin-top: 50px; font-size: 1.1rem;">
+                        🎯 ลากบล็อกคำสั่งมาวางที่นี่
+                    </div>
+                `;
+                return;
+            }
+            
+            dropZone.innerHTML = '';
+            
+            program.forEach((block, index) => {
+                const blockElement = document.createElement('div');
+                blockElement.className = 'code-block';
+                blockElement.innerHTML = `
+                    <span>${block.text}</span>
+                    <button class="delete-btn" onclick="removeBlock(${index})">×</button>
+                `;
+                
+                if (block.type === 'loop' || block.type === 'if') {
+                    const nestedArea = document.createElement('div');
+                    nestedArea.className = 'nested-area';
+                    nestedArea.innerHTML = '<div style="color: rgba(255,255,255,0.5); font-size: 1.1rem;">ลากคำสั่งมาวางในลูป</div>';
+                    blockElement.appendChild(nestedArea);
+                }
+                
+                dropZone.appendChild(blockElement);
+            });
+        }
+        
+        function removeBlock(index) {
+            program.splice(index, 1);
+            renderProgram();
+        }
+        
+        function clearProgram() {
+            program = [];
+            renderProgram();
+            commandCount = 0;
+            updateStatus();
+        }
+        
+        function selectLevel(level) {
+            currentLevel = level;
+            
+            // Update level buttons
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Load level
+            const levelData = levels[level];
+            document.getElementById('levelTitle').textContent = levelData.title;
+            document.getElementById('instructions').textContent = levelData.instructions;
+            
+            resetRobot();
+            clearProgram();
+            renderLevel();
+        }
+        
+        function renderLevel() {
+            const canvas = document.getElementById('robotCanvas');
+            const levelData = levels[currentLevel];
+            
+            // Clear canvas
+            canvas.innerHTML = '';
+            
+            // Add obstacles
+            levelData.obstacles.forEach(obstacle => {
+                const obstacleElement = document.createElement('div');
+                obstacleElement.className = 'obstacle';
+                obstacleElement.style.left = obstacle.x * 30 + 'px';
+                obstacleElement.style.top = obstacle.y * 30 + 'px';
+                obstacleElement.style.width = obstacle.width + 'px';
+                obstacleElement.style.height = obstacle.height + 'px';
+                canvas.appendChild(obstacleElement);
+            });
+            
+            // Add target
+            const target = document.createElement('div');
+            target.className = 'target';
+            target.style.left = levelData.target.x * 30 + 'px';
+            target.style.top = levelData.target.y * 30 + 'px';
+            target.textContent = '⭐';
+            canvas.appendChild(target);
+            
+            // Add robot
+            const robotElement = document.createElement('div');
+            robotElement.className = 'robot';
+            robotElement.id = 'robot';
+            robotElement.textContent = '🤖';
+            canvas.appendChild(robotElement);
+            
+            // Set robot position
+            robot = { ...levelData.robot, direction: 0 };
+            updateRobotPosition();
+        }
+        
+        function updateRobotPosition() {
+            const robotElement = document.getElementById('robot');
+            robotElement.style.left = robot.x * 30 + 'px';
+            robotElement.style.top = robot.y * 30 + 'px';
+            
+            // Update direction indicator
+            const directions = ['⬆️', '➡️', '⬇️', '⬅️'];
+            robotElement.textContent = directions[robot.direction];
+            
+            updateStatus();
+        }
+        
+        function updateStatus() {
+            document.getElementById('position').textContent = `(${robot.x}, ${robot.y})`;
+            const directionNames = ['เหนือ', 'ตะวันออก', 'ใต้', 'ตะวันตก'];
+            document.getElementById('direction').textContent = directionNames[robot.direction];
+            document.getElementById('commandCount').textContent = commandCount;
+        }
+        
+        function resetRobot() {
+            const levelData = levels[currentLevel];
+            robot = { ...levelData.robot, direction: 0 };
+            commandCount = 0;
+            updateRobotPosition();
+            hideMessages();
+        }
+        
+        function hideMessages() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        async function runProgram() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            hideMessages();
+            resetRobot();
+            
+            try {
+                await executeProgram(program);
+                checkWinCondition();
+            } catch (error) {
+                showError(error.message);
+            }
+            
+            isRunning = false;
+        }
+        
+        async function executeProgram(commands) {
+            for (let command of commands) {
+                await executeCommand(command);
+                await sleep(500); // Delay for animation
+            }
+        }
+        
+        async function executeCommand(command) {
+            commandCount++;
+            updateStatus();
+            
+            switch (command.type) {
+                case 'move':
+                    if (command.action === 'forward') {
+                        await moveForward();
+                    } else if (command.action === 'left') {
+                        turnLeft();
+                    } else if (command.action === 'right') {
+                        turnRight();
+                    }
+                    break;
+                    
+                case 'loop':
+                    // Simple loop implementation
+                    const count = parseInt(command.count);
+                    for (let i = 0; i < count; i++) {
+                        // For now, just move forward (in real implementation, would execute nested commands)
+                        await moveForward();
+                        await sleep(300);
+                    }
+                    break;
+                    
+                case 'wait':
+                    await sleep(parseInt(command.time) * 1000);
+                    break;
+            }
+        }
+        
+        async function moveForward() {
+            const newX = robot.x + [0, 1, 0, -1][robot.direction];
+            const newY = robot.y + [-1, 0, 1, 0][robot.direction];
+            
+            // Check boundaries
+            if (newX < 0 || newX > 10 || newY < 0 || newY > 8) {
+                throw new Error('หุ่นยนต์เดินออกนอกขอบเขต!');
+            }
+            
+            // Check obstacles
+            if (checkCollision(newX, newY)) {
+                throw new Error('หุ่นยนต์ชนสิ่งกีดขวาง!');
+            }
+            
+            robot.x = newX;
+            robot.y = newY;
+            updateRobotPosition();
+        }
+        
+        function turnLeft() {
+            robot.direction = (robot.direction + 3) % 4;
+            updateRobotPosition();
+        }
+        
+        function turnRight() {
+            robot.direction = (robot.direction + 1) % 4;
+            updateRobotPosition();
+        }
+        
+        function checkCollision(x, y) {
+            const levelData = levels[currentLevel];
+            
+            for (let obstacle of levelData.obstacles) {
+                const robotLeft = x * 30;
+                const robotTop = y * 30;
+                const robotRight = robotLeft + 30;
+                const robotBottom = robotTop + 30;
+                
+                const obstacleLeft = obstacle.x * 30;
+                const obstacleTop = obstacle.y * 30;
+                const obstacleRight = obstacleLeft + obstacle.width;
+                const obstacleBottom = obstacleTop + obstacle.height;
+                
+                if (robotLeft < obstacleRight && robotRight > obstacleLeft &&
+                    robotTop < obstacleBottom && robotBottom > obstacleTop) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        function checkWinCondition() {
+            const levelData = levels[currentLevel];
+            
+            if (robot.x === levelData.target.x && robot.y === levelData.target.y) {
+                showSuccess();
+            } else {
+                showError('ยังไม่ถึงเป้าหมาย ลองใหม่นะ');
+            }
+        }
+        
+        function showSuccess() {
+            document.getElementById('successMessage').style.display = 'block';
+        }
+        
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        async function stepProgram() {
+            // Implementation for step-by-step execution
+            if (program.length > 0 && !isRunning) {
+                isRunning = true;
+                await executeCommand(program[0]);
+                isRunning = false;
+            }
+        }
+        
+        // Initialize game
+        selectLevel(1);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96cf21eb66457334',t:'MTc1NDgyNTEyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
