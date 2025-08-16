@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สมุดสะสมจิ๊กซอว์</title>
+    <title>แสดงตามเวลา</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -19,26 +19,8 @@
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-purple-800 mb-2">🧩 สมุดสะสมจิ๊กซอว์</h1>
             <p class="text-gray-600">บันทึกการสะสมและแลกของรางวัล</p>
-            
-        </div>
+      
 
-        
-            <!-- Name Selection -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">👤 เลือกรายชื่อ</h2>
-            <div class="flex flex-col sm:flex-row gap-4 items-center">
-                <select id="nameSelect" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <option value="">เลือกชื่อ...</option>
-                </select>
-                <div class="flex gap-2">
-                    <input type="text" id="newNameInput" placeholder="ชื่อใหม่" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <button onclick="addNewName()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">เพิ่มชื่อ</button>
-                </div>
-            </div>
-            <div id="currentNameDisplay" class="mt-4 text-center">
-                <span class="text-lg font-semibold text-purple-600">กรุณาเลือกชื่อก่อนใช้งาน</span>
-            </div>
-   
         <!-- Schedule Page Content -->
        
             <!-- Quick Start Section -->
@@ -85,7 +67,7 @@
             <!-- Add Custom Time Slot -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">⏰ เพิ่มช่วงเวลาแบบกำหนดเอง</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">เวลาเริ่ม</label>
                         <input type="time" id="startTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -93,10 +75,6 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">เวลาสิ้นสุด</label>
                         <input type="time" id="endTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">วันที่</label>
-                        <input type="date" id="scheduleDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                     <div>
                         <button onclick="addCustomTimeSlot()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold">
@@ -120,18 +98,11 @@
                     </div>
                 </div>
 
-                <!-- Filter Controls -->
+                <!-- Info Display -->
                 <div class="mb-6 flex flex-wrap gap-4 items-center">
-                    <div class="flex items-center gap-2">
-                        <label class="text-sm font-medium text-gray-700">กรองวันที่:</label>
-                        <input type="date" id="filterDate" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="applyDateFilter()">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+                        <span class="text-blue-800 font-medium">📋 แสดงตารางตามช่วงเวลา - ใช้งานได้ตลอด</span>
                     </div>
-                    <button onclick="showTodayOnly()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm">
-                        📅 วันนี้
-                    </button>
-                    <button onclick="showAllDates()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm">
-                        📋 ทั้งหมด
-                    </button>
                 </div>
 
                 <!-- Schedule Cards Display -->
@@ -169,10 +140,6 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">เวลาสิ้นสุด</label>
                             <input type="time" id="editEndTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">วันที่</label>
-                            <input type="date" id="editDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                         </div>
                     </div>
 
@@ -1418,14 +1385,6 @@
         }
 
         function initializeSchedulePage() {
-            // Set today's date as default
-            const today = new Date().toISOString().split('T')[0];
-            const scheduleDateEl = document.getElementById('scheduleDate');
-            const filterDateEl = document.getElementById('filterDate');
-            
-            if (scheduleDateEl) scheduleDateEl.value = today;
-            if (filterDateEl) filterDateEl.value = today;
-            
             // Load and display schedule data
             loadScheduleSlots();
             displayScheduleCards();
@@ -1433,12 +1392,10 @@
 
         // New Schedule Functions
         function createQuickSlot(startTime, endTime) {
-            const today = new Date().toISOString().split('T')[0];
             const slotId = generateUniqueId();
             
             const newSlot = {
                 id: slotId,
-                date: today,
                 startTime: startTime,
                 endTime: endTime,
                 names: [],
@@ -1451,7 +1408,7 @@
             // Show success message
             Swal.fire({
                 title: '⏰ สร้างช่วงเวลาสำเร็จ!',
-                text: `เพิ่มช่วงเวลา ${startTime}-${endTime} วันนี้เรียบร้อย!`,
+                text: `เพิ่มช่วงเวลา ${startTime}-${endTime} เรียบร้อย!`,
                 icon: 'success',
                 confirmButtonColor: '#10b981',
                 confirmButtonText: '👍 เยี่ยม!',
@@ -1470,10 +1427,9 @@
         function addCustomTimeSlot() {
             const startTime = document.getElementById('startTime').value;
             const endTime = document.getElementById('endTime').value;
-            const date = document.getElementById('scheduleDate').value;
             
-            if (!startTime || !endTime || !date) {
-                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+            if (!startTime || !endTime) {
+                showMessage('กรุณากรอกเวลาให้ครบถ้วน', 'error');
                 return;
             }
             
@@ -1485,7 +1441,6 @@
             const slotId = generateUniqueId();
             const newSlot = {
                 id: slotId,
-                date: date,
                 startTime: startTime,
                 endTime: endTime,
                 names: [],
@@ -1501,7 +1456,7 @@
             
             Swal.fire({
                 title: '⏰ เพิ่มช่วงเวลาสำเร็จ!',
-                text: `เพิ่มช่วงเวลา ${startTime}-${endTime} วันที่ ${formatThaiDate(date)} เรียบร้อย!`,
+                text: `เพิ่มช่วงเวลา ${startTime}-${endTime} เรียบร้อย!`,
                 icon: 'success',
                 confirmButtonColor: '#2563eb',
                 confirmButtonText: '👍 เยี่ยม!',
@@ -1523,11 +1478,9 @@
             
             // Show sample data if no real data exists
             if (scheduleSlots.length === 0) {
-                const today = new Date().toISOString().split('T')[0];
                 const sampleSlots = [
                     {
                         id: 'SAMPLE01',
-                        date: today,
                         startTime: '09:00',
                         endTime: '10:00',
                         names: [
@@ -1538,7 +1491,6 @@
                     },
                     {
                         id: 'SAMPLE02',
-                        date: today,
                         startTime: '10:00',
                         endTime: '11:00',
                         names: [
@@ -1553,24 +1505,16 @@
                 return;
             }
             
-            // Filter slots based on current filter
-            let filteredSlots = [...scheduleSlots];
-            if (currentFilter !== 'all') {
-                filteredSlots = scheduleSlots.filter(slot => slot.date === currentFilter);
-            }
-            
-            // Sort by date and time
-            filteredSlots.sort((a, b) => {
-                const dateCompare = new Date(a.date) - new Date(b.date);
-                if (dateCompare !== 0) return dateCompare;
+            // Sort by time only
+            const sortedSlots = [...scheduleSlots].sort((a, b) => {
                 return a.startTime.localeCompare(b.startTime);
             });
             
-            if (filteredSlots.length === 0) {
+            if (sortedSlots.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
             } else {
-                container.innerHTML = filteredSlots.map(slot => createSlotCard(slot)).join('');
+                container.innerHTML = sortedSlots.map(slot => createSlotCard(slot)).join('');
                 emptyState.classList.add('hidden');
             }
         }
@@ -1598,7 +1542,7 @@
                                 </h3>
                                 ${sampleBadge}
                             </div>
-                            <p class="text-gray-600">📅 ${formatThaiDate(slot.date)}</p>
+                            <p class="text-gray-600">🔄 ใช้งานได้ตลอด</p>
                         </div>
                         <div class="text-right">
                             <div class="text-2xl font-bold text-purple-600">${totalPuzzles} 🧩</div>
@@ -1682,7 +1626,6 @@
                 const formData = new FormData();
                 formData.append('action', 'addTimeSlot');
                 formData.append('id', slot.id);
-                formData.append('date', slot.date);
                 formData.append('startTime', slot.startTime);
                 formData.append('endTime', slot.endTime);
                 formData.append('timestamp', slot.timestamp);
@@ -1802,7 +1745,7 @@
             selectedNamesForSlot = slot.names ? [...slot.names] : [];
             
             document.getElementById('slotModalTitle').textContent = 
-                `👥 จัดการรายชื่อ: ${slot.startTime}-${slot.endTime} (${formatThaiDate(slot.date)})`;
+                `👥 จัดการรายชื่อ: ${slot.startTime}-${slot.endTime}`;
             
             updateAvailableNamesList();
             updateSelectedNamesList();
@@ -1819,7 +1762,6 @@
             // Populate form with current values
             document.getElementById('editStartTime').value = slot.startTime;
             document.getElementById('editEndTime').value = slot.endTime;
-            document.getElementById('editDate').value = slot.date;
             
             document.getElementById('editTimeSlotModal').classList.remove('hidden');
         }
@@ -2189,7 +2131,6 @@
             // Populate form with current values
             document.getElementById('editStartTime').value = slot.startTime;
             document.getElementById('editEndTime').value = slot.endTime;
-            document.getElementById('editDate').value = slot.date;
             
             document.getElementById('editTimeSlotModal').classList.remove('hidden');
         }
@@ -2199,10 +2140,9 @@
             
             const startTime = document.getElementById('editStartTime').value;
             const endTime = document.getElementById('editEndTime').value;
-            const date = document.getElementById('editDate').value;
             
-            if (!startTime || !endTime || !date) {
-                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+            if (!startTime || !endTime) {
+                showMessage('กรุณากรอกเวลาให้ครบถ้วน', 'error');
                 return;
             }
             
@@ -2221,7 +2161,6 @@
                 if (slot) {
                     slot.startTime = startTime;
                     slot.endTime = endTime;
-                    slot.date = date;
                 }
                 
                 displayScheduleCards();
@@ -2230,7 +2169,7 @@
                 
                 Swal.fire({
                     title: '✏️ แก้ไขสำเร็จ!',
-                    text: `แก้ไขช่วงเวลาเป็น ${startTime}-${endTime} วันที่ ${formatThaiDate(date)} เรียบร้อย!`,
+                    text: `แก้ไขช่วงเวลาเป็น ${startTime}-${endTime} เรียบร้อย!`,
                     icon: 'success',
                     confirmButtonColor: '#ea580c',
                     confirmButtonText: '👍 เยี่ยม!',
@@ -2247,7 +2186,6 @@
                 formData.append('action', 'editTimeSlot');
                 formData.append('id', uniqueId);
                 formData.append('slotId', editingSlotId);
-                formData.append('date', date);
                 formData.append('startTime', startTime);
                 formData.append('endTime', endTime);
                 formData.append('timestamp', new Date().toISOString());
@@ -2314,5 +2252,5 @@
         // Set default page
         showPage('main');
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'970091ec755c7335',t:'MTc1NTM0MzUxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97016ab1c03774f2',t:'MTc1NTM1MjM5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
