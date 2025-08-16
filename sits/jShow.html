@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมุดสะสมจิ๊กซอว์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Kanit', sans-serif; }
+        .loading { display: none; }
+        .loading.show { display: inline-block; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-purple-800 mb-2">🧩 สมุดสะสมจิ๊กซอว์</h1>
+            <p class="text-gray-600">บันทึกการสะสมและแลกของรางวัล</p>
+            
+            <!-- Navigation Menu -->
+            <div class="mt-6 flex justify-center gap-4">
+                <button onclick="showPage('main')" id="mainPageBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-semibold">
+                    📊 หน้าหลัก
+                </button>
+                <button onclick="showPage('schedule')" id="schedulePageBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold">
+                    📅 ตารางบันทึกเวลา
+                </button>
+            </div>
+        </div>
+
+            <div id="schedulePage" class="page-content hidden">
+            <!-- Quick Start Section -->
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl shadow-lg p-6 mb-6 border border-green-200">
+                <h2 class="text-2xl font-semibold text-green-800 mb-4">🚀 เริ่มต้นใช้งานง่ายๆ</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-4 border border-green-200">
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">📝 วิธีใช้งาน 3 ขั้นตอน</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">1</span>
+                                <span class="text-sm">คลิกปุ่มเวลาด่วน หรือกรอกเวลาเอง</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">2</span>
+                                <span class="text-sm">คลิก "เพิ่มคน" เพื่อใส่รายชื่อ</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">3</span>
+                                <span class="text-sm">ระบุจำนวนจิ๊กซอว์ที่ทำได้</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-green-200">
+                        <h3 class="text-lg font-semibold text-purple-700 mb-3">⚡ ช่วงเวลาด่วน</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="createQuickSlot('09:00', '10:00')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                                09:00-10:00
+                            </button>
+                            <button onclick="createQuickSlot('10:00', '11:00')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                                10:00-11:00
+                            </button>
+                            <button onclick="createQuickSlot('13:00', '14:00')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                                13:00-14:00
+                            </button>
+                            <button onclick="createQuickSlot('14:00', '15:00')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                                14:00-15:00
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Custom Time Slot -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">⏰ เพิ่มช่วงเวลาแบบกำหนดเอง</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เวลาเริ่ม</label>
+                        <input type="time" id="startTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เวลาสิ้นสุด</label>
+                        <input type="time" id="endTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">วันที่</label>
+                        <input type="date" id="scheduleDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <button onclick="addCustomTimeSlot()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold">
+                            เพิ่มช่วงเวลา
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Schedule Display -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800">📅 ตารางบันทึกจิ๊กซอว์</h2>
+                    <div class="flex gap-2">
+                        <button onclick="exportScheduleData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                            📊 ส่งออก
+                        </button>
+                        <button onclick="clearAllData()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">
+                            🗑️ ล้างข้อมูล
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="mb-6 flex flex-wrap gap-4 items-center">
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-medium text-gray-700">กรองวันที่:</label>
+                        <input type="date" id="filterDate" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="applyDateFilter()">
+                    </div>
+                    <button onclick="showTodayOnly()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm">
+                        📅 วันนี้
+                    </button>
+                    <button onclick="showAllDates()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm">
+                        📋 ทั้งหมด
+                    </button>
+                </div>
+
+                <!-- Schedule Cards Display -->
+                <div id="scheduleDisplay" class="space-y-4">
+                    <!-- Sample data will be shown here initially -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyScheduleState" class="hidden text-center py-12">
+                    <div class="text-6xl mb-4">📋</div>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">ยังไม่มีตารางเวลา</h3>
+                    <p class="text-gray-500 mb-6">เริ่มต้นโดยการคลิกปุ่มช่วงเวลาด่วนด้านบน</p>
+                    <button onclick="createQuickSlot('09:00', '10:00')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
+                        🚀 เริ่มต้นใช้งาน
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Time Slot Modal -->
+        <div id="editTimeSlotModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-orange-700">✏️ แก้ไขช่วงเวลา</h3>
+                        <button onclick="closeModal('editTimeSlotModal')" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <!-- Edit Form -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">เวลาเริ่ม</label>
+                            <input type="time" id="editStartTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">เวลาสิ้นสุด</label>
+                            <input type="time" id="editEndTime" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">วันที่</label>
+                            <input type="date" id="editDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="closeModal('editTimeSlotModal')" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            ยกเลิก
+                        </button>
+                        <button onclick="saveEditedTimeSlot()" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg" id="saveEditBtn">
+                            บันทึกการแก้ไข
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Names to Time Slot Modal -->
+        <div id="addNamesToSlotModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-blue-700" id="slotModalTitle">👥 เพิ่มรายชื่อในช่วงเวลา</h3>
+                        <button onclick="closeModal('addNamesToSlotModal')" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <!-- Available Names -->
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">📋 รายชื่อที่มี</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3" id="availableNamesList">
+                            <!-- Names will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Selected Names -->
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-3">✅ รายชื่อที่เลือก</h4>
+                        <div class="min-h-[100px] bg-gray-50 rounded-lg p-4">
+                            <div id="selectedNamesList" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <div class="text-gray-500 text-center col-span-full">ยังไม่ได้เลือกรายชื่อ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3">
+                        <button onclick="closeModal('addNamesToSlotModal')" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            ยกเลิก
+                        </button>
+                        <button onclick="saveNamesToSlot()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" id="saveNamesBtn">
+                            บันทึกรายชื่อ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGj7Y_hxNvJOMyugOyD8JOKxgxpV4Avzf7gBy48AJvOwM8KpNoR1-oZ2gzcZHF1ks1/exec';
+        
+        let currentData = {
+            puzzle: 0,
+            candy: 0,
+            sticker: 0
+        };
+        
+        let currentName = '';
+        let allNames = [];
+
+        // Load initial data using JSONP to avoid CORS issues
+        function loadData() {
+            try {
+                showLoading(true);
+                console.log('กำลังโหลดข้อมูลจาก:', GOOGLE_SCRIPT_URL);
+                
+                // Use JSONP method to avoid CORS issues
+                const script = document.createElement('script');
+                const callbackName = 'loadDataCallback_' + Date.now();
+                
+                // Create global callback function
+                window[callbackName] = function(data) {
+                    console.log('JSONP response:', data);
+                    
+                    if (data && data.success && data.names) {
+                        allNames = data.names;
+                        updateNameSelect();
+                        showMessage(`โหลดข้อมูลเรียบร้อย! พบรายชื่อ ${data.names.length} คน`, 'success');
+                    } else if (data && data.success && (!data.names || data.names.length === 0)) {
+                        allNames = [];
+                        updateNameSelect();
+                        showMessage('ยังไม่มีรายชื่อในระบบ กรุณาเพิ่มรายชื่อใหม่', 'success');
+                    } else {
+                        console.error('Server returned error or invalid data:', data);
+                        throw new Error(data?.error || 'Invalid response format');
+                    }
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                // Handle script load error
+                script.onerror = function() {
+                    console.error('JSONP script load failed');
+                    allNames = [];
+                    updateNameSelect();
+                    showMessage('ไม่สามารถเชื่อมต่อ Google Sheets ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต', 'warning');
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getNames&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load data error:', error);
+                allNames = [];
+                updateNameSelect();
+                showMessage(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
+                showLoading(false);
+            }
+        }
+
+        // Load data for specific name using JSONP
+        function loadDataForName(name) {
+            if (!name) return;
+            
+            try {
+                showLoading(true);
+                console.log('Loading data for:', name);
+                
+                const script = document.createElement('script');
+                const callbackName = 'loadNameDataCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    console.log('JSONP response for', name, ':', data);
+                    
+                    if (data && data.success) {
+                        currentData = data.data || { puzzle: 0, candy: 0, sticker: 0 };
+                        updateDisplay();
+                        showMessage(`โหลดข้อมูลของ ${name} เรียบร้อย`, 'success');
+                    } else {
+                        currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                        updateDisplay();
+                        showMessage(`เริ่มต้นข้อมูลใหม่สำหรับ ${name}`, 'success');
+                    }
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                script.onerror = function() {
+                    console.error('JSONP script load failed for name data');
+                    currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                    updateDisplay();
+                    showMessage(`เริ่มต้นข้อมูลใหม่สำหรับ ${name} (ไม่สามารถเชื่อมต่อได้)`, 'warning');
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getData&name=${encodeURIComponent(name)}&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load data for name error:', error);
+                currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                updateDisplay();
+                showMessage(`เริ่มต้นข้อมูลใหม่สำหรับ ${name} (เกิดข้อผิดพลาด)`, 'warning');
+                showLoading(false);
+            }
+        }
+
+        // Update name select dropdown
+        function updateNameSelect() {
+            const select = document.getElementById('nameSelect');
+            select.innerHTML = '<option value="">เลือกชื่อ...</option>';
+            
+            allNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        }
+
+        // Add new name
+        async function addNewName() {
+            const nameInput = document.getElementById('newNameInput');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                showMessage('กรุณาใส่ชื่อ', 'error');
+                return;
+            }
+            
+            if (allNames.includes(name)) {
+                showMessage('ชื่อนี้มีอยู่แล้ว', 'error');
+                return;
+            }
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'addName');
+                formData.append('id', uniqueId);
+                formData.append('name', name);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    allNames.push(name);
+                    updateNameSelect();
+                    document.getElementById('nameSelect').value = name;
+                    selectName(name);
+                    nameInput.value = '';
+                    Swal.fire({
+                        title: '👤 เพิ่มชื่อสำเร็จ!',
+                        text: `เพิ่มชื่อ "${name}" เรียบร้อย!`,
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการเพิ่มชื่อ', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Select name
+        function selectName(name) {
+            currentName = name;
+            updateCurrentNameDisplay();
+            updateButtonStates();
+            
+            if (name) {
+                loadDataForName(name);
+            } else {
+                currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                updateDisplay();
+            }
+        }
+
+        // Update current name display
+        function updateCurrentNameDisplay() {
+            const display = document.getElementById('currentNameDisplay');
+            if (currentName) {
+                display.innerHTML = `<span class="text-lg font-semibold text-green-600">กำลังดูข้อมูลของ: ${currentName}</span>`;
+            } else {
+                display.innerHTML = `<span class="text-lg font-semibold text-purple-600">กรุณาเลือกชื่อก่อนใช้งาน</span>`;
+            }
+        }
+
+        // Update button states
+        function updateButtonStates() {
+            const buttons = ['addPuzzleBtn', 'addCandyBtn', 'addStickerBtn', 'smartExchangeBtn', 'manualExchangeBtn', 'rewardExchangeBtn'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = !currentName;
+                }
+            });
+        }
+
+        // Optimal Exchange Functions
+        function calculateOptimalExchange() {
+            // ตรวจสอบว่า element มีอยู่จริงก่อนใช้งาน
+            const exchangeResultEl = document.getElementById('exchangeResult');
+            
+            if (!currentName) {
+                if (exchangeResultEl) {
+                    exchangeResultEl.textContent = 'กรุณาเลือกชื่อเพื่อดูผลการแลก';
+                }
+                return;
+            }
+
+            const stickers = currentData.sticker;
+            const candies = currentData.candy;
+
+            // อัตราการแลกใหม่: สติ๊กเกอร์ 8 อัน = จิ๊กซอว์ 1 ชิ้น, ขนม 3 อัน = จิ๊กซอว์ 1 ชิ้น
+            // สติ๊กเกอร์ 3 อัน = ขนม 1 อัน
+
+            // คำนวณวิธีที่คุ้มค่าที่สุด
+            let bestResult = findOptimalExchange(stickers, candies);
+
+            // อัปเดต UI เฉพาะเมื่อ element มีอยู่จริง
+            if (exchangeResultEl) {
+                if (bestResult.totalPuzzles === 0) {
+                    exchangeResultEl.innerHTML = 
+                        '<div class="text-red-600">ไม่สามารถแลกจิ๊กซอว์ได้ (ต้องการขนมอย่างน้อย 3 อัน หรือสติ๊กเกอร์อย่างน้อย 8 อัน)</div>';
+                } else {
+                    let resultText = `<div class="space-y-2">
+                        <div class="font-semibold text-green-700">🎯 ได้จิ๊กซอว์: ${bestResult.totalPuzzles} ชิ้น</div>
+                        <div class="text-sm">
+                            <div>📝 วิธีการแลก:</div>`;
+                    
+                    if (bestResult.candyUsed > 0) {
+                        resultText += `<div>• ใช้ขนม ${bestResult.candyUsed} อัน → จิ๊กซอว์ ${Math.floor(bestResult.candyUsed / 3)} ชิ้น</div>`;
+                    }
+                    if (bestResult.stickerUsedDirect > 0) {
+                        resultText += `<div>• ใช้สติ๊กเกอร์ ${bestResult.stickerUsedDirect} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerUsedDirect / 8)} ชิ้น</div>`;
+                    }
+                    if (bestResult.stickerToCandy > 0) {
+                        resultText += `<div>• แลกสติ๊กเกอร์ ${bestResult.stickerToCandy} อัน → ขนม ${Math.floor(bestResult.stickerToCandy / 3)} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerToCandy / 9)} ชิ้น</div>`;
+                    }
+                    
+                    resultText += `</div><div class="text-sm mt-2 pt-2 border-t">
+                        <div class="text-gray-600">🔄 ของที่เหลือ:</div>`;
+                    
+                    if (bestResult.remainingStickers > 0) {
+                        resultText += `<div>• สติ๊กเกอร์: ${bestResult.remainingStickers} อัน</div>`;
+                    }
+                    if (bestResult.remainingCandies > 0) {
+                        resultText += `<div>• ขนม: ${bestResult.remainingCandies} อัน</div>`;
+                    }
+                    
+                    resultText += `</div></div>`;
+                    
+                    exchangeResultEl.innerHTML = resultText;
+                }
+            }
+        }
+
+        function findOptimalExchange(stickers, candies) {
+            let bestResult = {
+                totalPuzzles: 0,
+                candyUsed: 0,
+                stickerUsedDirect: 0,
+                stickerToCandy: 0,
+                remainingStickers: stickers,
+                remainingCandies: candies
+            };
+
+            // ลองทุกวิธีที่เป็นไปได้
+            for (let candyUsed = 0; candyUsed <= candies; candyUsed += 3) {
+                for (let stickerDirect = 0; stickerDirect <= stickers; stickerDirect += 8) {
+                    let remainingStickers = stickers - stickerDirect;
+                    
+                    // คำนวณการแลกสติ๊กเกอร์เป็นขนม
+                    let maxStickerToCandy = Math.floor(remainingStickers / 3) * 3;
+                    
+                    for (let stickerToCandy = 0; stickerToCandy <= maxStickerToCandy; stickerToCandy += 3) {
+                        let extraCandies = Math.floor(stickerToCandy / 3);
+                        let totalAvailableCandies = candies + extraCandies;
+                        
+                        if (candyUsed <= totalAvailableCandies) {
+                            let puzzlesFromCandy = Math.floor(candyUsed / 3);
+                            let puzzlesFromStickerDirect = Math.floor(stickerDirect / 8);
+                            let puzzlesFromStickerToCandy = Math.floor(stickerToCandy / 9); // 9 สติ๊กเกอร์ = 3 ขนม = 1 จิ๊กซอว์
+                            
+                            let totalPuzzles = puzzlesFromCandy + puzzlesFromStickerDirect + puzzlesFromStickerToCandy;
+                            
+                            if (totalPuzzles > bestResult.totalPuzzles) {
+                                bestResult = {
+                                    totalPuzzles: totalPuzzles,
+                                    candyUsed: candyUsed,
+                                    stickerUsedDirect: stickerDirect,
+                                    stickerToCandy: stickerToCandy,
+                                    remainingStickers: stickers - stickerDirect - stickerToCandy,
+                                    remainingCandies: candies + extraCandies - candyUsed
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+
+            return bestResult;
+        }
+
+        async function executeOptimalExchange() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+
+            const stickers = currentData.sticker;
+            const candies = currentData.candy;
+            
+            let optimalResult = findOptimalExchange(stickers, candies);
+            
+            if (optimalResult.totalPuzzles === 0) {
+                showMessage('ไม่สามารถแลกจิ๊กซอว์ได้ ต้องการขนมอย่างน้อย 3 อัน หรือสติ๊กเกอร์อย่างน้อย 8 อัน', 'error');
+                return;
+            }
+
+            // สร้างข้อความยืนยัน
+            let confirmMsg = `<div class="text-left">
+                <div class="text-lg font-semibold text-green-600 mb-3">🎯 ได้จิ๊กซอว์: ${optimalResult.totalPuzzles} ชิ้น</div>
+                <div class="mb-3">
+                    <div class="font-semibold text-blue-600 mb-2">📝 วิธีการแลก:</div>`;
+            
+            if (optimalResult.candyUsed > 0) {
+                confirmMsg += `<div class="ml-4">• ใช้ขนม ${optimalResult.candyUsed} อัน</div>`;
+            }
+            if (optimalResult.stickerUsedDirect > 0) {
+                confirmMsg += `<div class="ml-4">• ใช้สติ๊กเกอร์ ${optimalResult.stickerUsedDirect} อัน (แลกตรง)</div>`;
+            }
+            if (optimalResult.stickerToCandy > 0) {
+                confirmMsg += `<div class="ml-4">• แลกสติ๊กเกอร์ ${optimalResult.stickerToCandy} อัน เป็นขนม</div>`;
+            }
+            
+            confirmMsg += `</div><div>
+                    <div class="font-semibold text-purple-600 mb-2">🔄 ของที่เหลือ:</div>
+                    <div class="ml-4">• สติ๊กเกอร์: ${optimalResult.remainingStickers} อัน</div>
+                    <div class="ml-4">• ขนม: ${optimalResult.remainingCandies} อัน</div>
+                </div>
+            </div>`;
+
+            const result = await Swal.fire({
+                title: '🧩 ยืนยันการแลกจิ๊กซอว์',
+                html: confirmMsg,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '✅ ยืนยันการแลก',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold',
+                    htmlContainer: 'text-sm'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            const uniqueId = generateUniqueId();
+
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'optimalExchange');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('puzzleGained', optimalResult.totalPuzzles);
+                formData.append('candyUsed', optimalResult.candyUsed);
+                formData.append('stickerUsedDirect', optimalResult.stickerUsedDirect);
+                formData.append('stickerToCandy', optimalResult.stickerToCandy);
+                formData.append('remainingStickers', optimalResult.remainingStickers);
+                formData.append('remainingCandies', optimalResult.remainingCandies);
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData.puzzle += optimalResult.totalPuzzles;
+                    currentData.sticker = optimalResult.remainingStickers;
+                    currentData.candy = optimalResult.remainingCandies;
+                    updateDisplay();
+                    calculateOptimalExchange();
+                    
+                    Swal.fire({
+                        title: '🎉 สำเร็จ!',
+                        text: `แลกจิ๊กซอว์ ${optimalResult.totalPuzzles} ชิ้นเรียบร้อย! ใช้วิธีที่คุ้มค่าที่สุด`,
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการแลก', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            // ตรวจสอบว่า elements มีอยู่จริงก่อนอัปเดต
+            const puzzleCountEl = document.getElementById('puzzleCount');
+            const candyCountEl = document.getElementById('candyCount');
+            const stickerCountEl = document.getElementById('stickerCount');
+            
+            if (puzzleCountEl) puzzleCountEl.textContent = currentData.puzzle;
+            if (candyCountEl) candyCountEl.textContent = currentData.candy;
+            if (stickerCountEl) stickerCountEl.textContent = currentData.sticker;
+            
+            calculateOptimalExchange();
+        }
+
+        // Update exchange display (removed - not used in current UI)
+
+        // Change amount for adding items
+        function changeAmount(type, delta) {
+            const input = document.getElementById(type + 'Amount');
+            const newValue = Math.max(1, parseInt(input.value) + delta);
+            input.value = newValue;
+        }
+
+        // Change amount for exchange (removed - not used in current UI)
+
+        // Generate unique 8-character alphanumeric ID
+        function generateUniqueId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Add item
+        async function addItem(type) {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            const amount = parseInt(document.getElementById(type + 'Amount').value);
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'addItem');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('type', type);
+                formData.append('amount', amount);
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData[type] += amount;
+                    updateDisplay();
+                    Swal.fire({
+                        title: '✅ เพิ่มสำเร็จ!',
+                        text: `เพิ่ม${getTypeName(type)} ${amount} ชิ้นให้ ${currentName} เรียบร้อย!`,
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการบันทึก', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Exchange item (removed - replaced by manual exchange system)
+
+        // Helper functions
+        function getTypeName(type) {
+            const names = {
+                puzzle: 'จิ๊กซอว์',
+                candy: 'ขนม',
+                sticker: 'สติ๊กเกอร์'
+            };
+            return names[type] || type;
+        }
+
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('statusMessage');
+            messageEl.textContent = message;
+            let bgColor = 'bg-red-500 text-white';
+            
+            if (type === 'success') {
+                bgColor = 'bg-green-500 text-white';
+            } else if (type === 'warning') {
+                bgColor = 'bg-yellow-500 text-white';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-500 text-white';
+            }
+            
+            messageEl.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${bgColor}`;
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 4000);
+        }
+
+        function showLoading(show) {
+            const loadingEl = document.getElementById('loadingIndicator');
+            if (show) {
+                loadingEl.classList.add('show');
+            } else {
+                loadingEl.classList.remove('show');
+            }
+        }
+
+        // Old reward exchange functions (removed - replaced by new modal system)
+
+        // Event listeners (cleaned up - removed unused ones)
+        
+        // Name selection event
+        document.getElementById('nameSelect').addEventListener('change', function() {
+            selectName(this.value);
+        });
+        
+        // Enter key for new name
+        document.getElementById('newNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addNewName();
+            }
+        });
+
+        // Modal Functions
+        function openSmartExchangeModal() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            document.getElementById('modalCurrentStickers').textContent = currentData.sticker;
+            document.getElementById('modalCurrentCandies').textContent = currentData.candy;
+            
+            // Calculate optimal exchange for modal
+            const stickers = currentData.sticker;
+            const candies = currentData.candy;
+            let bestResult = findOptimalExchange(stickers, candies);
+            
+            if (bestResult.totalPuzzles === 0) {
+                document.getElementById('modalExchangeResult').innerHTML = 
+                    '<div class="text-red-600">ไม่สามารถแลกจิ๊กซอว์ได้ (ต้องการขนมอย่างน้อย 3 อัน หรือสติ๊กเกอร์อย่างน้อย 8 อัน)</div>';
+                document.getElementById('confirmSmartExchange').disabled = true;
+            } else {
+                let resultText = `<div class="space-y-2">
+                    <div class="font-semibold text-green-700">🎯 ได้จิ๊กซอว์: ${bestResult.totalPuzzles} ชิ้น</div>
+                    <div class="text-sm">
+                        <div>📝 วิธีการแลก:</div>`;
+                
+                if (bestResult.candyUsed > 0) {
+                    resultText += `<div>• ใช้ขนม ${bestResult.candyUsed} อัน → จิ๊กซอว์ ${Math.floor(bestResult.candyUsed / 3)} ชิ้น</div>`;
+                }
+                if (bestResult.stickerUsedDirect > 0) {
+                    resultText += `<div>• ใช้สติ๊กเกอร์ ${bestResult.stickerUsedDirect} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerUsedDirect / 8)} ชิ้น</div>`;
+                }
+                if (bestResult.stickerToCandy > 0) {
+                    resultText += `<div>• แลกสติ๊กเกอร์ ${bestResult.stickerToCandy} อัน → ขนม ${Math.floor(bestResult.stickerToCandy / 3)} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerToCandy / 9)} ชิ้น</div>`;
+                }
+                
+                resultText += `</div><div class="text-sm mt-2 pt-2 border-t">
+                    <div class="text-gray-600">🔄 ของที่เหลือ:</div>`;
+                
+                if (bestResult.remainingStickers > 0) {
+                    resultText += `<div>• สติ๊กเกอร์: ${bestResult.remainingStickers} อัน</div>`;
+                }
+                if (bestResult.remainingCandies > 0) {
+                    resultText += `<div>• ขนม: ${bestResult.remainingCandies} อัน</div>`;
+                }
+                
+                resultText += `</div></div>`;
+                
+                document.getElementById('modalExchangeResult').innerHTML = resultText;
+                document.getElementById('confirmSmartExchange').disabled = false;
+            }
+            
+            document.getElementById('smartExchangeModal').classList.remove('hidden');
+        }
+
+        function openManualExchangeModal() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            updateManualExchangeDisplay();
+            document.getElementById('manualExchangeModal').classList.remove('hidden');
+        }
+
+        function openRewardExchangeModal() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            loadRewards();
+            document.getElementById('modalCurrentPuzzles').textContent = currentData.puzzle;
+            document.getElementById('rewardExchangeModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Manual Exchange Functions
+        function changeManualAmount(type, delta) {
+            const input = document.getElementById(type + 'Amount');
+            let newValue = parseInt(input.value) + delta;
+            
+            // Set minimum values and steps
+            if (type === 'candyToPuzzle') {
+                newValue = Math.max(3, newValue);
+                newValue = Math.ceil(newValue / 3) * 3; // Round to nearest 3
+            } else if (type === 'stickerToPuzzle') {
+                newValue = Math.max(8, newValue);
+                newValue = Math.ceil(newValue / 8) * 8; // Round to nearest 8
+            } else if (type === 'stickerToCandy') {
+                newValue = Math.max(3, newValue);
+                newValue = Math.ceil(newValue / 3) * 3; // Round to nearest 3
+            } else {
+                newValue = Math.max(1, newValue);
+            }
+            
+            input.value = newValue;
+            updateManualExchangeDisplay();
+        }
+
+        function updateManualExchangeDisplay() {
+            // Update candy to puzzle
+            const candyAmount = parseInt(document.getElementById('candyToPuzzleAmount').value);
+            document.getElementById('candyToPuzzleDisplay').textContent = candyAmount;
+            document.getElementById('candyToPuzzleResult').textContent = Math.floor(candyAmount / 3);
+            
+            // Update sticker to puzzle
+            const stickerAmount = parseInt(document.getElementById('stickerToPuzzleAmount').value);
+            document.getElementById('stickerToPuzzleDisplay').textContent = stickerAmount;
+            document.getElementById('stickerToPuzzleResult').textContent = Math.floor(stickerAmount / 8);
+            
+            // Update sticker to candy
+            const stickerToCandyAmount = parseInt(document.getElementById('stickerToCandyAmount').value);
+            document.getElementById('stickerToCandyDisplay').textContent = stickerToCandyAmount;
+            document.getElementById('stickerToCandyResult').textContent = Math.floor(stickerToCandyAmount / 3);
+            
+            // Update puzzle to candy
+            const puzzleToCandyAmount = parseInt(document.getElementById('puzzleToCandyAmount').value);
+            document.getElementById('puzzleToCandyDisplay').textContent = puzzleToCandyAmount;
+            document.getElementById('puzzleToCandyResult').textContent = puzzleToCandyAmount * 5;
+            
+            // Update puzzle to sticker
+            const puzzleToStickerAmount = parseInt(document.getElementById('puzzleToStickerAmount').value);
+            document.getElementById('puzzleToStickerDisplay').textContent = puzzleToStickerAmount;
+            document.getElementById('puzzleToStickerResult').textContent = puzzleToStickerAmount * 3;
+        }
+
+        async function executeManualExchange(type) {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+
+            const amount = parseInt(document.getElementById(type + 'Amount').value);
+            let exchangeData = {};
+
+            switch (type) {
+                case 'candyToPuzzle':
+                    if (currentData.candy < amount) {
+                        showMessage(`ขนมไม่เพียงพอ! ต้องการ ${amount} อัน มีอยู่ ${currentData.candy} อัน`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        candyUsed: amount,
+                        puzzleGained: Math.floor(amount / 3),
+                        description: `แลกขนม ${amount} อัน เป็นจิ๊กซอว์ ${Math.floor(amount / 3)} ชิ้น`
+                    };
+                    break;
+                    
+                case 'stickerToPuzzle':
+                    if (currentData.sticker < amount) {
+                        showMessage(`สติ๊กเกอร์ไม่เพียงพอ! ต้องการ ${amount} อัน มีอยู่ ${currentData.sticker} อัน`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        stickerUsed: amount,
+                        puzzleGained: Math.floor(amount / 8),
+                        description: `แลกสติ๊กเกอร์ ${amount} อัน เป็นจิ๊กซอว์ ${Math.floor(amount / 8)} ชิ้น`
+                    };
+                    break;
+                    
+                case 'stickerToCandy':
+                    if (currentData.sticker < amount) {
+                        showMessage(`สติ๊กเกอร์ไม่เพียงพอ! ต้องการ ${amount} อัน มีอยู่ ${currentData.sticker} อัน`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        stickerUsed: amount,
+                        candyGained: Math.floor(amount / 3),
+                        description: `แลกสติ๊กเกอร์ ${amount} อัน เป็นขนม ${Math.floor(amount / 3)} อัน`
+                    };
+                    break;
+                    
+                case 'puzzleToCandy':
+                    if (currentData.puzzle < amount) {
+                        showMessage(`จิ๊กซอว์ไม่เพียงพอ! ต้องการ ${amount} ชิ้น มีอยู่ ${currentData.puzzle} ชิ้น`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        puzzleUsed: amount,
+                        candyGained: amount * 5,
+                        description: `แลกจิ๊กซอว์ ${amount} ชิ้น เป็นขนม ${amount * 5} อัน`
+                    };
+                    break;
+                    
+                case 'puzzleToSticker':
+                    if (currentData.puzzle < amount) {
+                        showMessage(`จิ๊กซอว์ไม่เพียงพอ! ต้องการ ${amount} ชิ้น มีอยู่ ${currentData.puzzle} ชิ้น`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        puzzleUsed: amount,
+                        stickerGained: amount * 3,
+                        description: `แลกจิ๊กซอว์ ${amount} ชิ้น เป็นสติ๊กเกอร์ ${amount * 3} อัน`
+                    };
+                    break;
+            }
+
+            const result = await Swal.fire({
+                title: '🔄 ยืนยันการแลกเปลี่ยน',
+                text: `ต้องการ${exchangeData.description}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '✅ ยืนยัน',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            const uniqueId = generateUniqueId();
+
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'manualExchange');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('type', type);
+                formData.append('exchangeData', JSON.stringify(exchangeData));
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update local data
+                    if (exchangeData.candyUsed) currentData.candy -= exchangeData.candyUsed;
+                    if (exchangeData.stickerUsed) currentData.sticker -= exchangeData.stickerUsed;
+                    if (exchangeData.puzzleUsed) currentData.puzzle -= exchangeData.puzzleUsed;
+                    if (exchangeData.puzzleGained) currentData.puzzle += exchangeData.puzzleGained;
+                    if (exchangeData.candyGained) currentData.candy += exchangeData.candyGained;
+                    if (exchangeData.stickerGained) currentData.sticker += exchangeData.stickerGained;
+                    
+                    updateDisplay();
+                    updateManualExchangeDisplay();
+                    
+                    Swal.fire({
+                        title: '🎉 สำเร็จ!',
+                        text: exchangeData.description + ' เรียบร้อย!',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการแลก', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Reward Functions
+        let availableRewards = [];
+
+        function loadRewards() {
+            try {
+                const script = document.createElement('script');
+                const callbackName = 'loadRewardsCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    console.log('JSONP rewards response:', data);
+                    
+                    if (data && data.success && data.rewards) {
+                        availableRewards = data.rewards;
+                    }
+                    
+                    updateRewardSelect();
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+                
+                script.onerror = function() {
+                    console.error('JSONP script load failed for rewards');
+                    updateRewardSelect();
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getRewards&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load rewards error:', error);
+                updateRewardSelect();
+            }
+        }
+
+        function updateRewardSelect() {
+            const select = document.getElementById('rewardSelect');
+            select.innerHTML = '<option value="">เลือกของรางวัล...</option>';
+            
+            // Add default rewards
+            const defaultRewards = [
+                { name: 'จุ่ม Gacha pon', cost: 10 },
+                { name: 'โมเดลรถ', cost: 5 },
+                { name: 'ปากกา', cost: 10 }
+            ];
+            
+            defaultRewards.forEach(reward => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(reward);
+                option.textContent = `${reward.name} (${reward.cost} จิ๊กซอว์)`;
+                select.appendChild(option);
+            });
+            
+            // Add saved rewards
+            availableRewards.forEach(reward => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(reward);
+                option.textContent = `${reward.name} (${reward.cost} จิ๊กซอว์)`;
+                select.appendChild(option);
+            });
+            
+            // Add custom option
+            const customOption = document.createElement('option');
+            customOption.value = 'custom';
+            customOption.textContent = '+ เพิ่มของรางวัลใหม่';
+            select.appendChild(customOption);
+        }
+
+        function updateRewardSelection() {
+            const select = document.getElementById('rewardSelect');
+            const customForm = document.getElementById('customRewardForm');
+            const rewardDetails = document.getElementById('selectedRewardDetails');
+            
+            if (select.value === 'custom') {
+                customForm.classList.remove('hidden');
+                rewardDetails.classList.add('hidden');
+            } else if (select.value) {
+                const reward = JSON.parse(select.value);
+                document.getElementById('selectedRewardTitle').textContent = `${reward.name} (${reward.cost} จิ๊กซอว์ต่อชิ้น)`;
+                document.getElementById('rewardQuantity').value = 1;
+                updateRewardCost();
+                
+                customForm.classList.add('hidden');
+                rewardDetails.classList.remove('hidden');
+            } else {
+                customForm.classList.add('hidden');
+                rewardDetails.classList.add('hidden');
+            }
+        }
+
+        function changeRewardQuantity(delta) {
+            const input = document.getElementById('rewardQuantity');
+            const newValue = Math.max(1, parseInt(input.value) + delta);
+            input.value = newValue;
+            updateRewardCost();
+        }
+
+        function updateRewardCost() {
+            const select = document.getElementById('rewardSelect');
+            if (select && select.value && select.value !== 'custom') {
+                const reward = JSON.parse(select.value);
+                const quantityEl = document.getElementById('rewardQuantity');
+                const totalCostEl = document.getElementById('totalRewardCost');
+                const confirmBtn = document.getElementById('confirmRewardExchange');
+                
+                if (quantityEl && totalCostEl) {
+                    const quantity = parseInt(quantityEl.value);
+                    const totalCost = reward.cost * quantity;
+                    totalCostEl.textContent = totalCost;
+                    
+                    if (confirmBtn) {
+                        confirmBtn.disabled = currentData.puzzle < totalCost;
+                    }
+                }
+            }
+        }
+
+        async function addNewReward() {
+            const name = document.getElementById('newRewardName').value.trim();
+            const cost = parseInt(document.getElementById('newRewardCost').value);
+            
+            if (!name) {
+                showMessage('กรุณาใส่ชื่อของรางวัล', 'error');
+                return;
+            }
+            
+            if (cost < 1) {
+                showMessage('จำนวนจิ๊กซอว์ต้องมากกว่า 0', 'error');
+                return;
+            }
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'addReward');
+                formData.append('id', uniqueId);
+                formData.append('name', name);
+                formData.append('cost', cost);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    availableRewards.push({ name, cost });
+                    updateRewardSelect();
+                    
+                    // Select the new reward
+                    const select = document.getElementById('rewardSelect');
+                    select.value = JSON.stringify({ name, cost });
+                    updateRewardSelection();
+                    
+                    // Clear form
+                    document.getElementById('newRewardName').value = '';
+                    document.getElementById('newRewardCost').value = '1';
+                    
+                    Swal.fire({
+                        title: '🎁 เพิ่มของรางวัลสำเร็จ!',
+                        text: `เพิ่มของรางวัล "${name}" เรียบร้อย!`,
+                        icon: 'success',
+                        confirmButtonColor: '#ea580c',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการเพิ่มของรางวัล', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function executeRewardExchange() {
+            const select = document.getElementById('rewardSelect');
+            if (!select.value || select.value === 'custom') {
+                showMessage('กรุณาเลือกของรางวัล', 'error');
+                return;
+            }
+            
+            const reward = JSON.parse(select.value);
+            const quantity = parseInt(document.getElementById('rewardQuantity').value);
+            const totalCost = reward.cost * quantity;
+            
+            if (currentData.puzzle < totalCost) {
+                showMessage(`จิ๊กซอว์ไม่เพียงพอ! ต้องการ ${totalCost} ชิ้น มีอยู่ ${currentData.puzzle} ชิ้น`, 'error');
+                return;
+            }
+            
+            const result = await Swal.fire({
+                title: '🎁 ยืนยันการแลกของรางวัล',
+                html: `<div class="text-left">
+                    <div class="text-lg font-semibold text-orange-600 mb-2">🎯 ${reward.name}</div>
+                    <div class="mb-2">👤 ผู้รับ: <span class="font-semibold">${currentName}</span></div>
+                    <div class="mb-2">📦 จำนวน: <span class="font-semibold">${quantity} ชิ้น</span></div>
+                    <div class="text-red-600 font-semibold">🧩 ใช้จิ๊กซอว์: ${totalCost} ชิ้น</div>
+                </div>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ea580c',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '✅ ยืนยันการแลก',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold',
+                    htmlContainer: 'text-sm'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'exchangeReward');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('rewardName', reward.name);
+                formData.append('amount', quantity);
+                formData.append('puzzleUsed', totalCost);
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData.puzzle -= totalCost;
+                    updateDisplay();
+                    closeModal('rewardExchangeModal');
+                    
+                    Swal.fire({
+                        title: '🎁 แลกของรางวัลสำเร็จ!',
+                        html: `<div class="text-center">
+                            <div class="text-2xl mb-2">🎉</div>
+                            <div class="text-lg font-semibold text-orange-600">${reward.name}</div>
+                            <div class="text-sm text-gray-600 mt-2">แลกให้ ${currentName} เรียบร้อย!</div>
+                        </div>`,
+                        icon: 'success',
+                        confirmButtonColor: '#ea580c',
+                        confirmButtonText: '🎊 ยอดเยี่ยม!',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold',
+                            htmlContainer: 'text-sm'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการแลกของรางวัล', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Schedule Page Variables
+        let scheduleSlots = [];
+        let currentFilter = 'all';
+        let selectedSlotId = null;
+        let selectedNamesForSlot = [];
+        let editingSlotId = null;
+
+        // Page Navigation Functions
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            if (pageId === 'main') {
+                document.getElementById('mainPage').classList.remove('hidden');
+                document.getElementById('mainPageBtn').classList.remove('bg-gray-600');
+                document.getElementById('mainPageBtn').classList.add('bg-purple-600');
+                document.getElementById('schedulePageBtn').classList.remove('bg-blue-600');
+                document.getElementById('schedulePageBtn').classList.add('bg-gray-600');
+            } else if (pageId === 'schedule') {
+                document.getElementById('schedulePage').classList.remove('hidden');
+                document.getElementById('schedulePageBtn').classList.remove('bg-gray-600');
+                document.getElementById('schedulePageBtn').classList.add('bg-blue-600');
+                document.getElementById('mainPageBtn').classList.remove('bg-purple-600');
+                document.getElementById('mainPageBtn').classList.add('bg-gray-600');
+                
+                // Initialize schedule page
+                initializeSchedulePage();
+            }
+        }
+
+        function initializeSchedulePage() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            const scheduleDateEl = document.getElementById('scheduleDate');
+            const filterDateEl = document.getElementById('filterDate');
+            
+            if (scheduleDateEl) scheduleDateEl.value = today;
+            if (filterDateEl) filterDateEl.value = today;
+            
+            // Load and display schedule data
+            loadScheduleSlots();
+            displayScheduleCards();
+        }
+
+        // New Schedule Functions
+        function createQuickSlot(startTime, endTime) {
+            const today = new Date().toISOString().split('T')[0];
+            const slotId = generateUniqueId();
+            
+            const newSlot = {
+                id: slotId,
+                date: today,
+                startTime: startTime,
+                endTime: endTime,
+                names: [],
+                timestamp: new Date().toISOString()
+            };
+            
+            scheduleSlots.push(newSlot);
+            displayScheduleCards();
+            
+            // Show success message
+            Swal.fire({
+                title: '⏰ สร้างช่วงเวลาสำเร็จ!',
+                text: `เพิ่มช่วงเวลา ${startTime}-${endTime} วันนี้เรียบร้อย!`,
+                icon: 'success',
+                confirmButtonColor: '#10b981',
+                confirmButtonText: '👍 เยี่ยม!',
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+            
+            // Save to server
+            saveSlotToServer(newSlot);
+        }
+
+        function addCustomTimeSlot() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const date = document.getElementById('scheduleDate').value;
+            
+            if (!startTime || !endTime || !date) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+            
+            if (startTime >= endTime) {
+                showMessage('เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด', 'error');
+                return;
+            }
+            
+            const slotId = generateUniqueId();
+            const newSlot = {
+                id: slotId,
+                date: date,
+                startTime: startTime,
+                endTime: endTime,
+                names: [],
+                timestamp: new Date().toISOString()
+            };
+            
+            scheduleSlots.push(newSlot);
+            displayScheduleCards();
+            
+            // Clear form
+            document.getElementById('startTime').value = '';
+            document.getElementById('endTime').value = '';
+            
+            Swal.fire({
+                title: '⏰ เพิ่มช่วงเวลาสำเร็จ!',
+                text: `เพิ่มช่วงเวลา ${startTime}-${endTime} วันที่ ${formatThaiDate(date)} เรียบร้อย!`,
+                icon: 'success',
+                confirmButtonColor: '#2563eb',
+                confirmButtonText: '👍 เยี่ยม!',
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+            
+            // Save to server
+            saveSlotToServer(newSlot);
+        }
+
+        function displayScheduleCards() {
+            const container = document.getElementById('scheduleDisplay');
+            const emptyState = document.getElementById('emptyScheduleState');
+            
+            // Show sample data if no real data exists
+            if (scheduleSlots.length === 0) {
+                const today = new Date().toISOString().split('T')[0];
+                const sampleSlots = [
+                    {
+                        id: 'SAMPLE01',
+                        date: today,
+                        startTime: '09:00',
+                        endTime: '10:00',
+                        names: [
+                            { name: 'น้องแอน', puzzles: 5 },
+                            { name: 'น้องบิม', puzzles: 3 }
+                        ],
+                        isSample: true
+                    },
+                    {
+                        id: 'SAMPLE02',
+                        date: today,
+                        startTime: '10:00',
+                        endTime: '11:00',
+                        names: [
+                            { name: 'น้องชาย', puzzles: 4 }
+                        ],
+                        isSample: true
+                    }
+                ];
+                
+                container.innerHTML = sampleSlots.map(slot => createSlotCard(slot)).join('');
+                emptyState.classList.add('hidden');
+                return;
+            }
+            
+            // Filter slots based on current filter
+            let filteredSlots = [...scheduleSlots];
+            if (currentFilter !== 'all') {
+                filteredSlots = scheduleSlots.filter(slot => slot.date === currentFilter);
+            }
+            
+            // Sort by date and time
+            filteredSlots.sort((a, b) => {
+                const dateCompare = new Date(a.date) - new Date(b.date);
+                if (dateCompare !== 0) return dateCompare;
+                return a.startTime.localeCompare(b.startTime);
+            });
+            
+            if (filteredSlots.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                container.innerHTML = filteredSlots.map(slot => createSlotCard(slot)).join('');
+                emptyState.classList.add('hidden');
+            }
+        }
+
+        function createSlotCard(slot) {
+            const totalPuzzles = slot.names ? slot.names.reduce((sum, nameData) => sum + (nameData.puzzles || 0), 0) : 0;
+            const sampleClass = slot.isSample ? 'bg-yellow-50 border-yellow-300' : 'bg-white border-gray-200';
+            const sampleBadge = slot.isSample ? '<span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">ตัวอย่าง</span>' : '';
+            
+            const namesDisplay = slot.names && slot.names.length > 0 
+                ? slot.names.map(nameData => 
+                    `<span class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-2 mb-2">
+                        ${nameData.name} <span class="font-semibold">${nameData.puzzles || 0}🧩</span>
+                    </span>`
+                ).join('')
+                : '<span class="text-gray-500 text-sm italic">ยังไม่มีรายชื่อ</span>';
+            
+            return `
+                <div class="border ${sampleClass} rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-xl font-semibold text-gray-800">
+                                    ⏰ ${slot.startTime} - ${slot.endTime}
+                                </h3>
+                                ${sampleBadge}
+                            </div>
+                            <p class="text-gray-600">📅 ${formatThaiDate(slot.date)}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-purple-600">${totalPuzzles} 🧩</div>
+                            <div class="text-sm text-gray-500">รวมจิ๊กซอว์</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-2">👥 รายชื่อผู้เข้าร่วม:</h4>
+                        <div class="min-h-[40px]">
+                            ${namesDisplay}
+                        </div>
+                    </div>
+                    
+                    ${!slot.isSample ? `
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="addPeopleToSlot('${slot.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            👥 เพิ่มคน
+                        </button>
+                        <button onclick="editSlot('${slot.id}')" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            ✏️ แก้ไข
+                        </button>
+                        <button onclick="deleteSlot('${slot.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            🗑️ ลบ
+                        </button>
+                    </div>
+                    ` : `
+                    <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-3">
+                        <p class="text-yellow-800 text-sm">
+                            <strong>💡 นี่คือข้อมูลตัวอย่าง</strong> - คลิกปุ่มช่วงเวลาด่วนด้านบนเพื่อเริ่มสร้างตารางจริง
+                        </p>
+                    </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function loadScheduleSlots() {
+            try {
+                const script = document.createElement('script');
+                const callbackName = 'loadScheduleSlotsCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    console.log('JSONP schedule slots response:', data);
+                    
+                    if (data && data.success && data.timeSlots) {
+                        scheduleSlots = data.timeSlots;
+                    } else {
+                        scheduleSlots = [];
+                    }
+                    
+                    displayScheduleCards();
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+                
+                script.onerror = function() {
+                    console.error('JSONP script load failed for schedule slots');
+                    scheduleSlots = [];
+                    displayScheduleCards();
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getSchedule&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load schedule slots error:', error);
+                scheduleSlots = [];
+                displayScheduleCards();
+            }
+        }
+
+        async function saveSlotToServer(slot) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'addTimeSlot');
+                formData.append('id', slot.id);
+                formData.append('date', slot.date);
+                formData.append('startTime', slot.startTime);
+                formData.append('endTime', slot.endTime);
+                formData.append('timestamp', slot.timestamp);
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Failed to save slot to server:', result);
+                }
+            } catch (error) {
+                console.error('Error saving slot to server:', error);
+            }
+        }
+
+        // Filter and Utility Functions
+        function applyDateFilter() {
+            const filterDate = document.getElementById('filterDate').value;
+            currentFilter = filterDate || 'all';
+            displayScheduleCards();
+        }
+
+        function showTodayOnly() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = today;
+            currentFilter = today;
+            displayScheduleCards();
+        }
+
+        function showAllDates() {
+            document.getElementById('filterDate').value = '';
+            currentFilter = 'all';
+            displayScheduleCards();
+        }
+
+        function exportScheduleData() {
+            if (scheduleSlots.length === 0) {
+                showMessage('ไม่มีข้อมูลให้ส่งออก', 'error');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = 'วันที่,เวลาเริ่ม,เวลาสิ้นสุด,รายชื่อ,จิ๊กซอว์,รวมจิ๊กซอว์\n';
+            
+            scheduleSlots.forEach(slot => {
+                const dateStr = formatThaiDate(slot.date);
+                
+                if (slot.names && slot.names.length > 0) {
+                    slot.names.forEach(nameData => {
+                        csvContent += `"${dateStr}","${slot.startTime}","${slot.endTime}","${nameData.name}","${nameData.puzzles || 0}","${slot.names.reduce((sum, n) => sum + (n.puzzles || 0), 0)}"\n`;
+                    });
+                } else {
+                    csvContent += `"${dateStr}","${slot.startTime}","${slot.endTime}","ไม่มีรายชื่อ","0","0"\n`;
+                }
+            });
+            
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `ตารางจิ๊กซอว์_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage('ส่งออกข้อมูลเรียบร้อย', 'success');
+        }
+
+        async function clearAllData() {
+            const result = await Swal.fire({
+                title: '🗑️ ยืนยันการล้างข้อมูล',
+                text: 'ต้องการลบข้อมูลตารางเวลาทั้งหมด?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '🗑️ ลบทั้งหมด',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+            
+            scheduleSlots = [];
+            displayScheduleCards();
+            
+            Swal.fire({
+                title: '🗑️ ล้างข้อมูลสำเร็จ!',
+                text: 'ลบข้อมูลตารางเวลาทั้งหมดเรียบร้อย!',
+                icon: 'success',
+                confirmButtonColor: '#10b981',
+                confirmButtonText: '👍 เยี่ยม!',
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+        }
+
+        // People Management Functions
+        function addPeopleToSlot(slotId) {
+            const slot = scheduleSlots.find(s => s.id === slotId);
+            if (!slot) return;
+            
+            // Open the existing modal for adding names
+            selectedSlotId = slotId;
+            selectedNamesForSlot = slot.names ? [...slot.names] : [];
+            
+            document.getElementById('slotModalTitle').textContent = 
+                `👥 จัดการรายชื่อ: ${slot.startTime}-${slot.endTime} (${formatThaiDate(slot.date)})`;
+            
+            updateAvailableNamesList();
+            updateSelectedNamesList();
+            
+            document.getElementById('addNamesToSlotModal').classList.remove('hidden');
+        }
+
+        function editSlot(slotId) {
+            const slot = scheduleSlots.find(s => s.id === slotId);
+            if (!slot) return;
+            
+            editingSlotId = slotId;
+            
+            // Populate form with current values
+            document.getElementById('editStartTime').value = slot.startTime;
+            document.getElementById('editEndTime').value = slot.endTime;
+            document.getElementById('editDate').value = slot.date;
+            
+            document.getElementById('editTimeSlotModal').classList.remove('hidden');
+        }
+
+        async function deleteSlot(slotId) {
+            const slot = scheduleSlots.find(s => s.id === slotId);
+            if (!slot) return;
+            
+            const result = await Swal.fire({
+                title: '🗑️ ยืนยันการลบ',
+                text: `ต้องการลบช่วงเวลา ${slot.startTime}-${slot.endTime} วันที่ ${formatThaiDate(slot.date)}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '🗑️ ลบ',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+            
+            // Remove from local array
+            scheduleSlots = scheduleSlots.filter(s => s.id !== slotId);
+            displayScheduleCards();
+            
+            Swal.fire({
+                title: '🗑️ ลบสำเร็จ!',
+                text: 'ลบช่วงเวลาเรียบร้อย!',
+                icon: 'success',
+                confirmButtonColor: '#10b981',
+                confirmButtonText: '👍 เยี่ยม!',
+                timer: 2000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+            
+            // Delete from server
+            deleteSlotFromServer(slotId);
+        }
+
+        async function deleteSlotFromServer(slotId) {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'deleteTimeSlot');
+                formData.append('id', generateUniqueId());
+                formData.append('slotId', slotId);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Failed to delete slot from server:', result);
+                }
+            } catch (error) {
+                console.error('Error deleting slot from server:', error);
+            }
+        }
+
+        function formatThaiDate(dateString) {
+            const date = new Date(dateString);
+            const thaiMonths = [
+                'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+            ];
+            
+            const day = date.getDate();
+            const month = thaiMonths[date.getMonth()];
+            const year = date.getFullYear() + 543;
+            
+            return `${day} ${month} ${year}`;
+        }
+
+        function filterScheduleByDate() {
+            const filterDate = document.getElementById('filterDate').value;
+            if (!filterDate) {
+                updateScheduleTable();
+                return;
+            }
+            
+            const filteredSlots = timeSlots.filter(slot => slot.date === filterDate);
+            const originalSlots = timeSlots;
+            timeSlots = filteredSlots;
+            updateScheduleTable();
+            timeSlots = originalSlots;
+        }
+
+        function showTodaySchedule() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = today;
+            filterScheduleByDate();
+        }
+
+        function showAllSchedule() {
+            document.getElementById('filterDate').value = '';
+            updateScheduleTable();
+        }
+
+        function openAddNamesModal(slotId) {
+            selectedSlotId = slotId;
+            selectedNamesForSlot = [];
+            
+            const slot = timeSlots.find(s => s.id === slotId);
+            if (!slot) return;
+            
+            document.getElementById('slotModalTitle').textContent = 
+                `👥 เพิ่มรายชื่อ: ${slot.startTime}-${slot.endTime} (${formatThaiDate(slot.date)})`;
+            
+            // Populate available names
+            updateAvailableNamesList();
+            updateSelectedNamesList();
+            
+            document.getElementById('addNamesToSlotModal').classList.remove('hidden');
+        }
+
+        function updateAvailableNamesList() {
+            const container = document.getElementById('availableNamesList');
+            
+            if (allNames.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-500">ยังไม่มีรายชื่อในระบบ</div>';
+                return;
+            }
+            
+            container.innerHTML = allNames.map(name => `
+                <button onclick="toggleNameSelection('${name}')" 
+                        class="name-btn bg-gray-100 hover:bg-blue-100 border border-gray-300 rounded-lg px-3 py-2 text-sm transition-colors"
+                        data-name="${name}">
+                    ${name}
+                </button>
+            `).join('');
+        }
+
+        function toggleNameSelection(name) {
+            const existingIndex = selectedNamesForSlot.findIndex(item => item.name === name);
+            
+            if (existingIndex >= 0) {
+                // Remove from selection
+                selectedNamesForSlot.splice(existingIndex, 1);
+            } else {
+                // Add to selection with default puzzle count
+                selectedNamesForSlot.push({
+                    name: name,
+                    puzzles: 1
+                });
+            }
+            
+            updateSelectedNamesList();
+            updateNameButtonStates();
+        }
+
+        function updateSelectedNamesList() {
+            const container = document.getElementById('selectedNamesList');
+            
+            if (selectedNamesForSlot.length === 0) {
+                container.innerHTML = '<div class="text-gray-500 text-center col-span-full">ยังไม่ได้เลือกรายชื่อ</div>';
+                return;
+            }
+            
+            container.innerHTML = selectedNamesForSlot.map((item, index) => `
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold text-blue-800">${item.name}</span>
+                        <button onclick="removeNameFromSelection('${item.name}')" class="text-red-500 hover:text-red-700">
+                            ❌
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm text-gray-600">จิ๊กซอว์:</label>
+                        <div class="flex items-center gap-1">
+                            <button onclick="changePuzzleCount('${item.name}', -1)" class="bg-red-500 hover:bg-red-600 text-white w-6 h-6 rounded-full text-xs">-</button>
+                            <input type="number" value="${item.puzzles}" min="0" 
+                                   onchange="updatePuzzleCount('${item.name}', this.value)"
+                                   class="w-16 text-center border rounded px-1 py-1 text-sm">
+                            <button onclick="changePuzzleCount('${item.name}', 1)" class="bg-green-500 hover:bg-green-600 text-white w-6 h-6 rounded-full text-xs">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateNameButtonStates() {
+            document.querySelectorAll('.name-btn').forEach(btn => {
+                const name = btn.dataset.name;
+                const isSelected = selectedNamesForSlot.some(item => item.name === name);
+                
+                if (isSelected) {
+                    btn.classList.remove('bg-gray-100', 'hover:bg-blue-100');
+                    btn.classList.add('bg-blue-500', 'text-white');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-100', 'hover:bg-blue-100');
+                }
+            });
+        }
+
+        function removeNameFromSelection(name) {
+            selectedNamesForSlot = selectedNamesForSlot.filter(item => item.name !== name);
+            updateSelectedNamesList();
+            updateNameButtonStates();
+        }
+
+        function changePuzzleCount(name, delta) {
+            const item = selectedNamesForSlot.find(item => item.name === name);
+            if (item) {
+                item.puzzles = Math.max(0, item.puzzles + delta);
+                updateSelectedNamesList();
+            }
+        }
+
+        function updatePuzzleCount(name, value) {
+            const item = selectedNamesForSlot.find(item => item.name === name);
+            if (item) {
+                item.puzzles = Math.max(0, parseInt(value) || 0);
+                updateSelectedNamesList();
+            }
+        }
+
+        async function saveNamesToSlot() {
+            if (!selectedSlotId) {
+                showMessage('เกิดข้อผิดพลาด: ไม่พบช่วงเวลาที่เลือก', 'error');
+                return;
+            }
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                // Update local data first
+                const slot = scheduleSlots.find(s => s.id === selectedSlotId);
+                if (slot) {
+                    slot.names = [...selectedNamesForSlot];
+                }
+                
+                displayScheduleCards();
+                closeModal('addNamesToSlotModal');
+                
+                const totalPuzzles = selectedNamesForSlot.reduce((sum, item) => sum + (item.puzzles || 0), 0);
+                
+                Swal.fire({
+                    title: '👥 บันทึกรายชื่อสำเร็จ!',
+                    text: selectedNamesForSlot.length > 0 
+                        ? `เพิ่ม ${selectedNamesForSlot.length} คน รวม ${totalPuzzles} จิ๊กซอว์ เรียบร้อย!`
+                        : 'ล้างรายชื่อเรียบร้อย!',
+                    icon: 'success',
+                    confirmButtonColor: '#2563eb',
+                    confirmButtonText: '👍 เยี่ยม!',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'rounded-xl',
+                        title: 'text-xl font-bold'
+                    }
+                });
+                
+                // Save to server
+                const formData = new FormData();
+                formData.append('action', 'addNamesToSlot');
+                formData.append('id', uniqueId);
+                formData.append('slotId', selectedSlotId);
+                formData.append('names', JSON.stringify(selectedNamesForSlot));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Failed to save names to server:', result);
+                }
+                
+            } catch (error) {
+                console.error('Error saving names:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function deleteTimeSlot(slotId) {
+            const slot = timeSlots.find(s => s.id === slotId);
+            if (!slot) return;
+            
+            const result = await Swal.fire({
+                title: '🗑️ ยืนยันการลบ',
+                text: `ต้องการลบช่วงเวลา ${slot.startTime}-${slot.endTime} วันที่ ${formatThaiDate(slot.date)}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '🗑️ ลบ',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'deleteTimeSlot');
+                formData.append('id', uniqueId);
+                formData.append('slotId', slotId);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    timeSlots = timeSlots.filter(s => s.id !== slotId);
+                    updateScheduleTable();
+                    
+                    Swal.fire({
+                        title: '🗑️ ลบสำเร็จ!',
+                        text: 'ลบช่วงเวลาเรียบร้อย!',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการลบช่วงเวลา', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function refreshSchedule() {
+            loadScheduleData();
+            showMessage('รีเฟรชข้อมูลเรียบร้อย', 'success');
+        }
+
+        function openEditTimeSlotModal(slotId) {
+            editingSlotId = slotId;
+            const slot = timeSlots.find(s => s.id === slotId);
+            if (!slot) return;
+            
+            // Populate form with current values
+            document.getElementById('editStartTime').value = slot.startTime;
+            document.getElementById('editEndTime').value = slot.endTime;
+            document.getElementById('editDate').value = slot.date;
+            
+            document.getElementById('editTimeSlotModal').classList.remove('hidden');
+        }
+
+        async function saveEditedTimeSlot() {
+            if (!editingSlotId) return;
+            
+            const startTime = document.getElementById('editStartTime').value;
+            const endTime = document.getElementById('editEndTime').value;
+            const date = document.getElementById('editDate').value;
+            
+            if (!startTime || !endTime || !date) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+            
+            if (startTime >= endTime) {
+                showMessage('เวลาเริ่มต้องน้อยกว่าเวลาสิ้นสุด', 'error');
+                return;
+            }
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                // Update local data first
+                const slot = scheduleSlots.find(s => s.id === editingSlotId);
+                if (slot) {
+                    slot.startTime = startTime;
+                    slot.endTime = endTime;
+                    slot.date = date;
+                }
+                
+                displayScheduleCards();
+                closeModal('editTimeSlotModal');
+                editingSlotId = null;
+                
+                Swal.fire({
+                    title: '✏️ แก้ไขสำเร็จ!',
+                    text: `แก้ไขช่วงเวลาเป็น ${startTime}-${endTime} วันที่ ${formatThaiDate(date)} เรียบร้อย!`,
+                    icon: 'success',
+                    confirmButtonColor: '#ea580c',
+                    confirmButtonText: '👍 เยี่ยม!',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'rounded-xl',
+                        title: 'text-xl font-bold'
+                    }
+                });
+                
+                // Save to server
+                const formData = new FormData();
+                formData.append('action', 'editTimeSlot');
+                formData.append('id', uniqueId);
+                formData.append('slotId', editingSlotId);
+                formData.append('date', date);
+                formData.append('startTime', startTime);
+                formData.append('endTime', endTime);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Failed to save edited slot to server:', result);
+                }
+                
+            } catch (error) {
+                console.error('Error saving edited slot:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function exportSchedule() {
+            if (timeSlots.length === 0) {
+                showMessage('ไม่มีข้อมูลให้ส่งออก', 'error');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = 'วันที่,เวลาเริ่ม,เวลาสิ้นสุด,รายชื่อ,จิ๊กซอว์,รวมจิ๊กซอว์\n';
+            
+            timeSlots.forEach(slot => {
+                const dateStr = formatThaiDate(slot.date);
+                const timeRange = `${slot.startTime}-${slot.endTime}`;
+                
+                if (slot.names && slot.names.length > 0) {
+                    slot.names.forEach(nameData => {
+                        csvContent += `"${dateStr}","${slot.startTime}","${slot.endTime}","${nameData.name}","${nameData.puzzles || 0}","${slot.names.reduce((sum, n) => sum + (n.puzzles || 0), 0)}"\n`;
+                    });
+                } else {
+                    csvContent += `"${dateStr}","${slot.startTime}","${slot.endTime}","ไม่มีรายชื่อ","0","0"\n`;
+                }
+            });
+            
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `ตารางจิ๊กซอว์_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage('ส่งออกข้อมูลเรียบร้อย', 'success');
+        }
+
+
+
+        // Initialize
+        loadData();
+        updateButtonStates();
+        
+        // Set default page
+        showPage('main');
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'970091ec755c7335',t:'MTc1NTM0MzUxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
