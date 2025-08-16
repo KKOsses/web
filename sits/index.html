@@ -42,15 +42,26 @@
                 </div>
                 
                 <div class="space-y-3">
-                    <button id="randomAllBtn" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
+                    <button id="easyMediumBtn" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
                         <div class="flex items-center">
                             <span class="text-2xl mr-3">🎲</span>
                             <div class="text-left">
-                                <div class="font-bold">สุ่มรวม + โบนัส</div>
-                                <div class="text-sm opacity-90">ปานกลาง 30% | ยาก 70% + โบนัส 2-3 ชิ้น</div>
+                                <div class="font-bold">ง่าย + ปานกลาง</div>
+                                <div class="text-sm opacity-90">ง่าย 40% | ปานกลาง 60% + โบนัส 1-3 ชิ้น</div>
                             </div>
                         </div>
                         <span class="text-xl">🎁</span>
+                    </button>
+                    
+                    <button id="mediumHardBtn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">🎯</span>
+                            <div class="text-left">
+                                <div class="font-bold">ปานกลาง + ยาก</div>
+                                <div class="text-sm opacity-90">ปานกลาง 30% | ยาก 70% + โบนัส 3-5 ชิ้น</div>
+                            </div>
+                        </div>
+                        <span class="text-xl">🏆</span>
                     </button>
                     
                     <button id="easyBtn" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-between">
@@ -396,7 +407,8 @@
         const easyBtn = document.getElementById('easyBtn');
         const mediumBtn = document.getElementById('mediumBtn');
         const hardBtn = document.getElementById('hardBtn');
-        const randomAllBtn = document.getElementById('randomAllBtn');
+        const easyMediumBtn = document.getElementById('easyMediumBtn');
+        const mediumHardBtn = document.getElementById('mediumHardBtn');
         const exchangeModal = document.getElementById('exchangeModal');
         const closeExchangeModal = document.getElementById('closeExchangeModal');
         const stickerCount = document.getElementById('stickerCount');
@@ -1726,10 +1738,41 @@
             displayTask(task);
         }
 
-        // Random task from all difficulties with bonus system
-        function getRandomTaskFromAll() {
-            // Weight system: ง่าย 0%, ปานกลาง 30%, ยาก 70%
+        // Random task from easy + medium with bonus system
+        function getRandomEasyMediumTask() {
+            // Weight system: ง่าย 40%, ปานกลาง 60%
             const easyTasks = computerTasks.filter(task => task.difficulty === 'ง่าย');
+            const mediumTasks = computerTasks.filter(task => task.difficulty === 'ปานกลาง');
+            
+            const random = Math.random() * 100;
+            let selectedTask;
+            
+            if (random < 40) {
+                // 40% chance for easy tasks
+                const randomIndex = Math.floor(Math.random() * easyTasks.length);
+                selectedTask = easyTasks[randomIndex];
+            } else {
+                // 60% chance for medium tasks
+                const randomIndex = Math.floor(Math.random() * mediumTasks.length);
+                selectedTask = mediumTasks[randomIndex];
+            }
+            
+            // Add bonus jigsaw (1-3 pieces)
+            const bonusJigsaw = Math.floor(Math.random() * 3) + 1; // Random 1-3
+            const taskWithBonus = {
+                ...selectedTask,
+                originalReward: selectedTask.reward,
+                reward: selectedTask.reward + bonusJigsaw,
+                hasBonus: true,
+                bonusAmount: bonusJigsaw
+            };
+            
+            displayTask(taskWithBonus);
+        }
+
+        // Random task from medium + hard with bonus system
+        function getRandomMediumHardTask() {
+            // Weight system: ปานกลาง 30%, ยาก 70%
             const mediumTasks = computerTasks.filter(task => task.difficulty === 'ปานกลาง');
             const hardTasks = computerTasks.filter(task => task.difficulty === 'ยาก');
             
@@ -1746,8 +1789,8 @@
                 selectedTask = hardTasks[randomIndex];
             }
             
-            // Add bonus jigsaw (2-3 pieces)
-            const bonusJigsaw = Math.floor(Math.random() * 2) + 2; // Random 2-3
+            // Add bonus jigsaw (3-5 pieces)
+            const bonusJigsaw = Math.floor(Math.random() * 3) + 3; // Random 3-5
             const taskWithBonus = {
                 ...selectedTask,
                 originalReward: selectedTask.reward,
@@ -1851,7 +1894,8 @@
         easyBtn.addEventListener('click', () => getRandomTaskByDifficulty('ง่าย'));
         mediumBtn.addEventListener('click', () => getRandomTaskByDifficulty('ปานกลาง'));
         hardBtn.addEventListener('click', () => getRandomTaskByDifficulty('ยาก'));
-        randomAllBtn.addEventListener('click', getRandomTaskFromAll);
+        easyMediumBtn.addEventListener('click', getRandomEasyMediumTask);
+        mediumHardBtn.addEventListener('click', getRandomMediumHardTask);
 
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -2108,5 +2152,5 @@
             loadLinksWithJSONP();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96ce730c259e7335',t:'MTc1NDgxNzk2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96ff2d8e458874d4',t:'MTc1NTMyODkxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
