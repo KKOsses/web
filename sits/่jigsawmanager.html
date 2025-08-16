@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมุดสะสมจิ๊กซอว์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Kanit', sans-serif; }
+        .loading { display: none; }
+        .loading.show { display: inline-block; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 via-purple-50 to-pink-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-purple-800 mb-2">🧩 สมุดสะสมจิ๊กซอว์</h1>
+            <p class="text-gray-600">บันทึกการสะสมและแลกของรางวัล</p>
+        </div>
+
+        <!-- Name Selection -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">👤 เลือกรายชื่อ</h2>
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <select id="nameSelect" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <option value="">เลือกชื่อ...</option>
+                </select>
+                <div class="flex gap-2">
+                    <input type="text" id="newNameInput" placeholder="ชื่อใหม่" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <button onclick="addNewName()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">เพิ่มชื่อ</button>
+                </div>
+            </div>
+            <div id="currentNameDisplay" class="mt-4 text-center">
+                <span class="text-lg font-semibold text-purple-600">กรุณาเลือกชื่อก่อนใช้งาน</span>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">📊 สถานะปัจจุบัน</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-3xl mb-2">🧩</div>
+                    <div class="text-2xl font-bold" id="puzzleCount">0</div>
+                    <div class="text-sm">จิ๊กซอว์</div>
+                </div>
+                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-3xl mb-2">🍭</div>
+                    <div class="text-2xl font-bold" id="candyCount">0</div>
+                    <div class="text-sm">ขนม</div>
+                </div>
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-lg text-center">
+                    <div class="text-3xl mb-2">⭐</div>
+                    <div class="text-2xl font-bold" id="stickerCount">0</div>
+                    <div class="text-sm">สติ๊กเกอร์</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Items Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">➕ เพิ่มของสะสม</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="text-4xl mb-2">🧩</div>
+                    <h3 class="font-semibold mb-3">จิ๊กซอว์</h3>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button onclick="changeAmount('puzzle', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                        <input type="number" id="puzzleAmount" value="1" min="1" class="w-16 text-center border rounded px-2 py-1">
+                        <button onclick="changeAmount('puzzle', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                    </div>
+                    <button onclick="addItem('puzzle')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg w-full disabled:bg-gray-400 disabled:cursor-not-allowed" id="addPuzzleBtn" disabled>
+                        เพิ่มจิ๊กซอว์
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-4xl mb-2">🍭</div>
+                    <h3 class="font-semibold mb-3">ขนม</h3>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button onclick="changeAmount('candy', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                        <input type="number" id="candyAmount" value="1" min="1" class="w-16 text-center border rounded px-2 py-1">
+                        <button onclick="changeAmount('candy', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                    </div>
+                    <button onclick="addItem('candy')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg w-full disabled:bg-gray-400 disabled:cursor-not-allowed" id="addCandyBtn" disabled>
+                        เพิ่มขนม
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-4xl mb-2">⭐</div>
+                    <h3 class="font-semibold mb-3">สติ๊กเกอร์</h3>
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <button onclick="changeAmount('sticker', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                        <input type="number" id="stickerAmount" value="1" min="1" class="w-16 text-center border rounded px-2 py-1">
+                        <button onclick="changeAmount('sticker', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                    </div>
+                    <button onclick="addItem('sticker')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg w-full disabled:bg-gray-400 disabled:cursor-not-allowed" id="addStickerBtn" disabled>
+                        เพิ่มสติ๊กเกอร์
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exchange Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">🔄 แลกเปลี่ยนอัจฉริยะ</h2>
+            
+            <!-- Exchange Rates Info -->
+            <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                <h3 class="text-lg font-semibold text-blue-800 mb-3">📊 อัตราการแลก</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-white rounded p-3 text-center">
+                        <div class="font-semibold text-purple-600">🏷️ สติ๊กเกอร์ 8 อัน</div>
+                        <div class="text-gray-600">= จิ๊กซอว์ 1 ชิ้น 🧩</div>
+                    </div>
+                    <div class="bg-white rounded p-3 text-center">
+                        <div class="font-semibold text-green-600">🍬 ขนม 3 อัน</div>
+                        <div class="text-gray-600">= จิ๊กซอว์ 1 ชิ้น 🧩</div>
+                    </div>
+                    <div class="bg-white rounded p-3 text-center">
+                        <div class="font-semibold text-orange-600">🏷️ สติ๊กเกอร์ 3 อัน</div>
+                        <div class="text-gray-600">= ขนม 1 อัน 🍬</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exchange Buttons -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <!-- Smart Exchange Button -->
+                <button onclick="openSmartExchangeModal()" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-4 rounded-lg font-semibold text-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2" id="smartExchangeBtn" disabled>
+                    <span class="text-2xl">🧩</span>
+                    <div>
+                        <div>แลกจิ๊กซอว์อัจฉริยะ</div>
+                        <div class="text-sm opacity-90">ระบบเลือกวิธีคุ้มค่าที่สุด</div>
+                    </div>
+                </button>
+
+                <!-- Manual Exchange Button -->
+                <button onclick="openManualExchangeModal()" class="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white px-6 py-4 rounded-lg font-semibold text-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2" id="manualExchangeBtn" disabled>
+                    <span class="text-2xl">🔄</span>
+                    <div>
+                        <div>แลกเปลี่ยนแบบกำหนดเอง</div>
+                        <div class="text-sm opacity-90">เลือกแลกเองตามต้องการ</div>
+                    </div>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Reward Exchange Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">🎁 แลกของรางวัล</h2>
+            
+            <div class="max-w-2xl mx-auto">
+                <button onclick="openRewardExchangeModal()" class="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-4 rounded-lg font-semibold text-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 w-full flex items-center justify-center gap-3" id="rewardExchangeBtn" disabled>
+                    <span class="text-3xl">🎁</span>
+                    <div>
+                        <div>แลกของรางวัล</div>
+                        <div class="text-sm opacity-90">เลือกของรางวัลที่ต้องการ</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="hidden fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50"></div>
+        
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl z-50">
+            <div class="flex items-center gap-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                <span>กำลังบันทึกข้อมูล...</span>
+            </div>
+        </div>
+
+        <!-- Smart Exchange Modal -->
+        <div id="smartExchangeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-blue-700">🧩 แลกจิ๊กซอว์อัจฉริยะ</h3>
+                        <button onclick="closeModal('smartExchangeModal')" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <!-- Current Status -->
+                    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                        <h4 class="font-semibold text-blue-800 mb-3">📊 สถานะปัจจุบัน</h4>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-white rounded p-3">
+                                <div class="text-2xl">🏷️</div>
+                                <div class="font-semibold text-purple-600" id="modalCurrentStickers">0</div>
+                                <div class="text-xs text-gray-600">สติ๊กเกอร์ที่มี</div>
+                            </div>
+                            <div class="bg-white rounded p-3">
+                                <div class="text-2xl">🍬</div>
+                                <div class="font-semibold text-green-600" id="modalCurrentCandies">0</div>
+                                <div class="text-xs text-gray-600">ขนมที่มี</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exchange Preview -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                        <h4 class="font-semibold text-yellow-800 mb-2">📋 ผลการแลกที่คุ้มค่าที่สุด:</h4>
+                        <div id="modalExchangeResult" class="text-sm text-gray-700">
+                            กำลังคำนวณ...
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3">
+                        <button onclick="closeModal('smartExchangeModal')" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            ยกเลิก
+                        </button>
+                        <button onclick="executeOptimalExchange()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" id="confirmSmartExchange">
+                            ยืนยันการแลก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Exchange Modal -->
+        <div id="manualExchangeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-green-700">🔄 แลกเปลี่ยนแบบกำหนดเอง</h3>
+                        <button onclick="closeModal('manualExchangeModal')" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <!-- Exchange Options -->
+                    <div class="space-y-4">
+                        <!-- Candy to Puzzle -->
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-700 mb-3">🍬 แลกขนมเป็นจิ๊กซอว์</h4>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="changeManualAmount('candyToPuzzle', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                                    <input type="number" id="candyToPuzzleAmount" value="3" min="3" step="3" class="w-16 text-center border rounded px-2 py-1">
+                                    <button onclick="changeManualAmount('candyToPuzzle', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    ขนม <span id="candyToPuzzleDisplay">3</span> อัน → จิ๊กซอว์ <span id="candyToPuzzleResult">1</span> ชิ้น
+                                </div>
+                                <button onclick="executeManualExchange('candyToPuzzle')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" id="candyToPuzzleBtn">
+                                    แลก
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sticker to Puzzle -->
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-700 mb-3">🏷️ แลกสติ๊กเกอร์เป็นจิ๊กซอว์</h4>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="changeManualAmount('stickerToPuzzle', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                                    <input type="number" id="stickerToPuzzleAmount" value="8" min="8" step="8" class="w-16 text-center border rounded px-2 py-1">
+                                    <button onclick="changeManualAmount('stickerToPuzzle', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    สติ๊กเกอร์ <span id="stickerToPuzzleDisplay">8</span> อัน → จิ๊กซอว์ <span id="stickerToPuzzleResult">1</span> ชิ้น
+                                </div>
+                                <button onclick="executeManualExchange('stickerToPuzzle')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg" id="stickerToPuzzleBtn">
+                                    แลก
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sticker to Candy -->
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-orange-700 mb-3">🏷️ แลกสติ๊กเกอร์เป็นขนม</h4>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="changeManualAmount('stickerToCandy', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                                    <input type="number" id="stickerToCandyAmount" value="3" min="3" step="3" class="w-16 text-center border rounded px-2 py-1">
+                                    <button onclick="changeManualAmount('stickerToCandy', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    สติ๊กเกอร์ <span id="stickerToCandyDisplay">3</span> อัน → ขนม <span id="stickerToCandyResult">1</span> อัน
+                                </div>
+                                <button onclick="executeManualExchange('stickerToCandy')" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg" id="stickerToCandyBtn">
+                                    แลก
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Puzzle to Items -->
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-700 mb-3">🧩 แลกจิ๊กซอว์เป็นของสะสม</h4>
+                            
+                            <!-- Puzzle to Candy -->
+                            <div class="flex items-center gap-4 mb-3">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="changeManualAmount('puzzleToCandy', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                                    <input type="number" id="puzzleToCandyAmount" value="1" min="1" class="w-16 text-center border rounded px-2 py-1">
+                                    <button onclick="changeManualAmount('puzzleToCandy', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    จิ๊กซอว์ <span id="puzzleToCandyDisplay">1</span> ชิ้น → ขนม <span id="puzzleToCandyResult">5</span> อัน
+                                </div>
+                                <button onclick="executeManualExchange('puzzleToCandy')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" id="puzzleToCandyBtn">
+                                    แลก
+                                </button>
+                            </div>
+
+                            <!-- Puzzle to Sticker -->
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="changeManualAmount('puzzleToSticker', -1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                                    <input type="number" id="puzzleToStickerAmount" value="1" min="1" class="w-16 text-center border rounded px-2 py-1">
+                                    <button onclick="changeManualAmount('puzzleToSticker', 1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    จิ๊กซอว์ <span id="puzzleToStickerDisplay">1</span> ชิ้น → สติ๊กเกอร์ <span id="puzzleToStickerResult">3</span> อัน
+                                </div>
+                                <button onclick="executeManualExchange('puzzleToSticker')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" id="puzzleToStickerBtn">
+                                    แลก
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Close Button -->
+                    <div class="mt-6">
+                        <button onclick="closeModal('manualExchangeModal')" class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            ปิด
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reward Exchange Modal -->
+        <div id="rewardExchangeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold text-orange-700">🎁 แลกของรางวัล</h3>
+                        <button onclick="closeModal('rewardExchangeModal')" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    
+                    <!-- Reward Selection -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">เลือกของรางวัล</label>
+                            <select id="rewardSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" onchange="updateRewardSelection()">
+                                <option value="">เลือกของรางวัล...</option>
+                                <option value="custom">+ เพิ่มของรางวัลใหม่</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Reward Form -->
+                        <div id="customRewardForm" class="hidden bg-yellow-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-700 mb-3">🌟 เพิ่มของรางวัลใหม่</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อของรางวัล</label>
+                                    <input type="text" id="newRewardName" placeholder="เช่น หนังสือ, ของเล่น" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนจิ๊กซอว์ที่ใช้</label>
+                                    <input type="number" id="newRewardCost" value="1" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button onclick="addNewReward()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg">
+                                    เพิ่มของรางวัล
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Selected Reward Details -->
+                        <div id="selectedRewardDetails" class="hidden bg-orange-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-orange-700 mb-3" id="selectedRewardTitle">รายละเอียดของรางวัล</h4>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนที่ต้องการ</label>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="changeRewardQuantity(-1)" class="bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full">-</button>
+                                        <input type="number" id="rewardQuantity" value="1" min="1" class="flex-1 text-center border border-gray-300 rounded px-2 py-2">
+                                        <button onclick="changeRewardQuantity(1)" class="bg-green-500 hover:bg-green-600 text-white w-8 h-8 rounded-full">+</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">จิ๊กซอว์ที่ใช้รวม</label>
+                                    <div class="text-2xl font-bold text-orange-600" id="totalRewardCost">0</div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-4">
+                                จิ๊กซอว์ที่มี: <span class="font-semibold" id="modalCurrentPuzzles">0</span> ชิ้น
+                            </div>
+                            <button onclick="executeRewardExchange()" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg w-full" id="confirmRewardExchange">
+                                ยืนยันการแลก
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Close Button -->
+                    <div class="mt-6">
+                        <button onclick="closeModal('rewardExchangeModal')" class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            ปิด
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGj7Y_hxNvJOMyugOyD8JOKxgxpV4Avzf7gBy48AJvOwM8KpNoR1-oZ2gzcZHF1ks1/exec';
+        
+        let currentData = {
+            puzzle: 0,
+            candy: 0,
+            sticker: 0
+        };
+        
+        let currentName = '';
+        let allNames = [];
+
+        // Load initial data using JSONP to avoid CORS issues
+        function loadData() {
+            try {
+                showLoading(true);
+                console.log('กำลังโหลดข้อมูลจาก:', GOOGLE_SCRIPT_URL);
+                
+                // Use JSONP method to avoid CORS issues
+                const script = document.createElement('script');
+                const callbackName = 'loadDataCallback_' + Date.now();
+                
+                // Create global callback function
+                window[callbackName] = function(data) {
+                    console.log('JSONP response:', data);
+                    
+                    if (data && data.success && data.names) {
+                        allNames = data.names;
+                        updateNameSelect();
+                        showMessage(`โหลดข้อมูลเรียบร้อย! พบรายชื่อ ${data.names.length} คน`, 'success');
+                    } else if (data && data.success && (!data.names || data.names.length === 0)) {
+                        allNames = [];
+                        updateNameSelect();
+                        showMessage('ยังไม่มีรายชื่อในระบบ กรุณาเพิ่มรายชื่อใหม่', 'success');
+                    } else {
+                        console.error('Server returned error or invalid data:', data);
+                        throw new Error(data?.error || 'Invalid response format');
+                    }
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                // Handle script load error
+                script.onerror = function() {
+                    console.error('JSONP script load failed');
+                    allNames = [];
+                    updateNameSelect();
+                    showMessage('ไม่สามารถเชื่อมต่อ Google Sheets ได้ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต', 'warning');
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getNames&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load data error:', error);
+                allNames = [];
+                updateNameSelect();
+                showMessage(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
+                showLoading(false);
+            }
+        }
+
+        // Load data for specific name using JSONP
+        function loadDataForName(name) {
+            if (!name) return;
+            
+            try {
+                showLoading(true);
+                console.log('Loading data for:', name);
+                
+                const script = document.createElement('script');
+                const callbackName = 'loadNameDataCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    console.log('JSONP response for', name, ':', data);
+                    
+                    if (data && data.success) {
+                        currentData = data.data || { puzzle: 0, candy: 0, sticker: 0 };
+                        updateDisplay();
+                        showMessage(`โหลดข้อมูลของ ${name} เรียบร้อย`, 'success');
+                    } else {
+                        currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                        updateDisplay();
+                        showMessage(`เริ่มต้นข้อมูลใหม่สำหรับ ${name}`, 'success');
+                    }
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                script.onerror = function() {
+                    console.error('JSONP script load failed for name data');
+                    currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                    updateDisplay();
+                    showMessage(`เริ่มต้นข้อมูลใหม่สำหรับ ${name} (ไม่สามารถเชื่อมต่อได้)`, 'warning');
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    showLoading(false);
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getData&name=${encodeURIComponent(name)}&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load data for name error:', error);
+                currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                updateDisplay();
+                showMessage(`เริ่มต้นข้อมูลใหม่สำหรับ ${name} (เกิดข้อผิดพลาด)`, 'warning');
+                showLoading(false);
+            }
+        }
+
+        // Update name select dropdown
+        function updateNameSelect() {
+            const select = document.getElementById('nameSelect');
+            select.innerHTML = '<option value="">เลือกชื่อ...</option>';
+            
+            allNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        }
+
+        // Add new name
+        async function addNewName() {
+            const nameInput = document.getElementById('newNameInput');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                showMessage('กรุณาใส่ชื่อ', 'error');
+                return;
+            }
+            
+            if (allNames.includes(name)) {
+                showMessage('ชื่อนี้มีอยู่แล้ว', 'error');
+                return;
+            }
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'addName');
+                formData.append('id', uniqueId);
+                formData.append('name', name);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    allNames.push(name);
+                    updateNameSelect();
+                    document.getElementById('nameSelect').value = name;
+                    selectName(name);
+                    nameInput.value = '';
+                    Swal.fire({
+                        title: '👤 เพิ่มชื่อสำเร็จ!',
+                        text: `เพิ่มชื่อ "${name}" เรียบร้อย!`,
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการเพิ่มชื่อ', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Select name
+        function selectName(name) {
+            currentName = name;
+            updateCurrentNameDisplay();
+            updateButtonStates();
+            
+            if (name) {
+                loadDataForName(name);
+            } else {
+                currentData = { puzzle: 0, candy: 0, sticker: 0 };
+                updateDisplay();
+            }
+        }
+
+        // Update current name display
+        function updateCurrentNameDisplay() {
+            const display = document.getElementById('currentNameDisplay');
+            if (currentName) {
+                display.innerHTML = `<span class="text-lg font-semibold text-green-600">กำลังดูข้อมูลของ: ${currentName}</span>`;
+            } else {
+                display.innerHTML = `<span class="text-lg font-semibold text-purple-600">กรุณาเลือกชื่อก่อนใช้งาน</span>`;
+            }
+        }
+
+        // Update button states
+        function updateButtonStates() {
+            const buttons = ['addPuzzleBtn', 'addCandyBtn', 'addStickerBtn', 'smartExchangeBtn', 'manualExchangeBtn', 'rewardExchangeBtn'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.disabled = !currentName;
+                }
+            });
+        }
+
+        // Optimal Exchange Functions
+        function calculateOptimalExchange() {
+            // ตรวจสอบว่า element มีอยู่จริงก่อนใช้งาน
+            const exchangeResultEl = document.getElementById('exchangeResult');
+            
+            if (!currentName) {
+                if (exchangeResultEl) {
+                    exchangeResultEl.textContent = 'กรุณาเลือกชื่อเพื่อดูผลการแลก';
+                }
+                return;
+            }
+
+            const stickers = currentData.sticker;
+            const candies = currentData.candy;
+
+            // อัตราการแลกใหม่: สติ๊กเกอร์ 8 อัน = จิ๊กซอว์ 1 ชิ้น, ขนม 3 อัน = จิ๊กซอว์ 1 ชิ้น
+            // สติ๊กเกอร์ 3 อัน = ขนม 1 อัน
+
+            // คำนวณวิธีที่คุ้มค่าที่สุด
+            let bestResult = findOptimalExchange(stickers, candies);
+
+            // อัปเดต UI เฉพาะเมื่อ element มีอยู่จริง
+            if (exchangeResultEl) {
+                if (bestResult.totalPuzzles === 0) {
+                    exchangeResultEl.innerHTML = 
+                        '<div class="text-red-600">ไม่สามารถแลกจิ๊กซอว์ได้ (ต้องการขนมอย่างน้อย 3 อัน หรือสติ๊กเกอร์อย่างน้อย 8 อัน)</div>';
+                } else {
+                    let resultText = `<div class="space-y-2">
+                        <div class="font-semibold text-green-700">🎯 ได้จิ๊กซอว์: ${bestResult.totalPuzzles} ชิ้น</div>
+                        <div class="text-sm">
+                            <div>📝 วิธีการแลก:</div>`;
+                    
+                    if (bestResult.candyUsed > 0) {
+                        resultText += `<div>• ใช้ขนม ${bestResult.candyUsed} อัน → จิ๊กซอว์ ${Math.floor(bestResult.candyUsed / 3)} ชิ้น</div>`;
+                    }
+                    if (bestResult.stickerUsedDirect > 0) {
+                        resultText += `<div>• ใช้สติ๊กเกอร์ ${bestResult.stickerUsedDirect} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerUsedDirect / 8)} ชิ้น</div>`;
+                    }
+                    if (bestResult.stickerToCandy > 0) {
+                        resultText += `<div>• แลกสติ๊กเกอร์ ${bestResult.stickerToCandy} อัน → ขนม ${Math.floor(bestResult.stickerToCandy / 3)} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerToCandy / 9)} ชิ้น</div>`;
+                    }
+                    
+                    resultText += `</div><div class="text-sm mt-2 pt-2 border-t">
+                        <div class="text-gray-600">🔄 ของที่เหลือ:</div>`;
+                    
+                    if (bestResult.remainingStickers > 0) {
+                        resultText += `<div>• สติ๊กเกอร์: ${bestResult.remainingStickers} อัน</div>`;
+                    }
+                    if (bestResult.remainingCandies > 0) {
+                        resultText += `<div>• ขนม: ${bestResult.remainingCandies} อัน</div>`;
+                    }
+                    
+                    resultText += `</div></div>`;
+                    
+                    exchangeResultEl.innerHTML = resultText;
+                }
+            }
+        }
+
+        function findOptimalExchange(stickers, candies) {
+            let bestResult = {
+                totalPuzzles: 0,
+                candyUsed: 0,
+                stickerUsedDirect: 0,
+                stickerToCandy: 0,
+                remainingStickers: stickers,
+                remainingCandies: candies
+            };
+
+            // ลองทุกวิธีที่เป็นไปได้
+            for (let candyUsed = 0; candyUsed <= candies; candyUsed += 3) {
+                for (let stickerDirect = 0; stickerDirect <= stickers; stickerDirect += 8) {
+                    let remainingStickers = stickers - stickerDirect;
+                    
+                    // คำนวณการแลกสติ๊กเกอร์เป็นขนม
+                    let maxStickerToCandy = Math.floor(remainingStickers / 3) * 3;
+                    
+                    for (let stickerToCandy = 0; stickerToCandy <= maxStickerToCandy; stickerToCandy += 3) {
+                        let extraCandies = Math.floor(stickerToCandy / 3);
+                        let totalAvailableCandies = candies + extraCandies;
+                        
+                        if (candyUsed <= totalAvailableCandies) {
+                            let puzzlesFromCandy = Math.floor(candyUsed / 3);
+                            let puzzlesFromStickerDirect = Math.floor(stickerDirect / 8);
+                            let puzzlesFromStickerToCandy = Math.floor(stickerToCandy / 9); // 9 สติ๊กเกอร์ = 3 ขนม = 1 จิ๊กซอว์
+                            
+                            let totalPuzzles = puzzlesFromCandy + puzzlesFromStickerDirect + puzzlesFromStickerToCandy;
+                            
+                            if (totalPuzzles > bestResult.totalPuzzles) {
+                                bestResult = {
+                                    totalPuzzles: totalPuzzles,
+                                    candyUsed: candyUsed,
+                                    stickerUsedDirect: stickerDirect,
+                                    stickerToCandy: stickerToCandy,
+                                    remainingStickers: stickers - stickerDirect - stickerToCandy,
+                                    remainingCandies: candies + extraCandies - candyUsed
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+
+            return bestResult;
+        }
+
+        async function executeOptimalExchange() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+
+            const stickers = currentData.sticker;
+            const candies = currentData.candy;
+            
+            let optimalResult = findOptimalExchange(stickers, candies);
+            
+            if (optimalResult.totalPuzzles === 0) {
+                showMessage('ไม่สามารถแลกจิ๊กซอว์ได้ ต้องการขนมอย่างน้อย 3 อัน หรือสติ๊กเกอร์อย่างน้อย 8 อัน', 'error');
+                return;
+            }
+
+            // สร้างข้อความยืนยัน
+            let confirmMsg = `<div class="text-left">
+                <div class="text-lg font-semibold text-green-600 mb-3">🎯 ได้จิ๊กซอว์: ${optimalResult.totalPuzzles} ชิ้น</div>
+                <div class="mb-3">
+                    <div class="font-semibold text-blue-600 mb-2">📝 วิธีการแลก:</div>`;
+            
+            if (optimalResult.candyUsed > 0) {
+                confirmMsg += `<div class="ml-4">• ใช้ขนม ${optimalResult.candyUsed} อัน</div>`;
+            }
+            if (optimalResult.stickerUsedDirect > 0) {
+                confirmMsg += `<div class="ml-4">• ใช้สติ๊กเกอร์ ${optimalResult.stickerUsedDirect} อัน (แลกตรง)</div>`;
+            }
+            if (optimalResult.stickerToCandy > 0) {
+                confirmMsg += `<div class="ml-4">• แลกสติ๊กเกอร์ ${optimalResult.stickerToCandy} อัน เป็นขนม</div>`;
+            }
+            
+            confirmMsg += `</div><div>
+                    <div class="font-semibold text-purple-600 mb-2">🔄 ของที่เหลือ:</div>
+                    <div class="ml-4">• สติ๊กเกอร์: ${optimalResult.remainingStickers} อัน</div>
+                    <div class="ml-4">• ขนม: ${optimalResult.remainingCandies} อัน</div>
+                </div>
+            </div>`;
+
+            const result = await Swal.fire({
+                title: '🧩 ยืนยันการแลกจิ๊กซอว์',
+                html: confirmMsg,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '✅ ยืนยันการแลก',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold',
+                    htmlContainer: 'text-sm'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            const uniqueId = generateUniqueId();
+
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'optimalExchange');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('puzzleGained', optimalResult.totalPuzzles);
+                formData.append('candyUsed', optimalResult.candyUsed);
+                formData.append('stickerUsedDirect', optimalResult.stickerUsedDirect);
+                formData.append('stickerToCandy', optimalResult.stickerToCandy);
+                formData.append('remainingStickers', optimalResult.remainingStickers);
+                formData.append('remainingCandies', optimalResult.remainingCandies);
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData.puzzle += optimalResult.totalPuzzles;
+                    currentData.sticker = optimalResult.remainingStickers;
+                    currentData.candy = optimalResult.remainingCandies;
+                    updateDisplay();
+                    calculateOptimalExchange();
+                    
+                    Swal.fire({
+                        title: '🎉 สำเร็จ!',
+                        text: `แลกจิ๊กซอว์ ${optimalResult.totalPuzzles} ชิ้นเรียบร้อย! ใช้วิธีที่คุ้มค่าที่สุด`,
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการแลก', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Update display
+        function updateDisplay() {
+            // ตรวจสอบว่า elements มีอยู่จริงก่อนอัปเดต
+            const puzzleCountEl = document.getElementById('puzzleCount');
+            const candyCountEl = document.getElementById('candyCount');
+            const stickerCountEl = document.getElementById('stickerCount');
+            
+            if (puzzleCountEl) puzzleCountEl.textContent = currentData.puzzle;
+            if (candyCountEl) candyCountEl.textContent = currentData.candy;
+            if (stickerCountEl) stickerCountEl.textContent = currentData.sticker;
+            
+            calculateOptimalExchange();
+        }
+
+        // Update exchange display (removed - not used in current UI)
+
+        // Change amount for adding items
+        function changeAmount(type, delta) {
+            const input = document.getElementById(type + 'Amount');
+            const newValue = Math.max(1, parseInt(input.value) + delta);
+            input.value = newValue;
+        }
+
+        // Change amount for exchange (removed - not used in current UI)
+
+        // Generate unique 8-character alphanumeric ID
+        function generateUniqueId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Add item
+        async function addItem(type) {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            const amount = parseInt(document.getElementById(type + 'Amount').value);
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'addItem');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('type', type);
+                formData.append('amount', amount);
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData[type] += amount;
+                    updateDisplay();
+                    Swal.fire({
+                        title: '✅ เพิ่มสำเร็จ!',
+                        text: `เพิ่ม${getTypeName(type)} ${amount} ชิ้นให้ ${currentName} เรียบร้อย!`,
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการบันทึก', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Exchange item (removed - replaced by manual exchange system)
+
+        // Helper functions
+        function getTypeName(type) {
+            const names = {
+                puzzle: 'จิ๊กซอว์',
+                candy: 'ขนม',
+                sticker: 'สติ๊กเกอร์'
+            };
+            return names[type] || type;
+        }
+
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('statusMessage');
+            messageEl.textContent = message;
+            let bgColor = 'bg-red-500 text-white';
+            
+            if (type === 'success') {
+                bgColor = 'bg-green-500 text-white';
+            } else if (type === 'warning') {
+                bgColor = 'bg-yellow-500 text-white';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-500 text-white';
+            }
+            
+            messageEl.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${bgColor}`;
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 4000);
+        }
+
+        function showLoading(show) {
+            const loadingEl = document.getElementById('loadingIndicator');
+            if (show) {
+                loadingEl.classList.add('show');
+            } else {
+                loadingEl.classList.remove('show');
+            }
+        }
+
+        // Old reward exchange functions (removed - replaced by new modal system)
+
+        // Event listeners (cleaned up - removed unused ones)
+        
+        // Name selection event
+        document.getElementById('nameSelect').addEventListener('change', function() {
+            selectName(this.value);
+        });
+        
+        // Enter key for new name
+        document.getElementById('newNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addNewName();
+            }
+        });
+
+        // Modal Functions
+        function openSmartExchangeModal() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            document.getElementById('modalCurrentStickers').textContent = currentData.sticker;
+            document.getElementById('modalCurrentCandies').textContent = currentData.candy;
+            
+            // Calculate optimal exchange for modal
+            const stickers = currentData.sticker;
+            const candies = currentData.candy;
+            let bestResult = findOptimalExchange(stickers, candies);
+            
+            if (bestResult.totalPuzzles === 0) {
+                document.getElementById('modalExchangeResult').innerHTML = 
+                    '<div class="text-red-600">ไม่สามารถแลกจิ๊กซอว์ได้ (ต้องการขนมอย่างน้อย 3 อัน หรือสติ๊กเกอร์อย่างน้อย 8 อัน)</div>';
+                document.getElementById('confirmSmartExchange').disabled = true;
+            } else {
+                let resultText = `<div class="space-y-2">
+                    <div class="font-semibold text-green-700">🎯 ได้จิ๊กซอว์: ${bestResult.totalPuzzles} ชิ้น</div>
+                    <div class="text-sm">
+                        <div>📝 วิธีการแลก:</div>`;
+                
+                if (bestResult.candyUsed > 0) {
+                    resultText += `<div>• ใช้ขนม ${bestResult.candyUsed} อัน → จิ๊กซอว์ ${Math.floor(bestResult.candyUsed / 3)} ชิ้น</div>`;
+                }
+                if (bestResult.stickerUsedDirect > 0) {
+                    resultText += `<div>• ใช้สติ๊กเกอร์ ${bestResult.stickerUsedDirect} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerUsedDirect / 8)} ชิ้น</div>`;
+                }
+                if (bestResult.stickerToCandy > 0) {
+                    resultText += `<div>• แลกสติ๊กเกอร์ ${bestResult.stickerToCandy} อัน → ขนม ${Math.floor(bestResult.stickerToCandy / 3)} อัน → จิ๊กซอว์ ${Math.floor(bestResult.stickerToCandy / 9)} ชิ้น</div>`;
+                }
+                
+                resultText += `</div><div class="text-sm mt-2 pt-2 border-t">
+                    <div class="text-gray-600">🔄 ของที่เหลือ:</div>`;
+                
+                if (bestResult.remainingStickers > 0) {
+                    resultText += `<div>• สติ๊กเกอร์: ${bestResult.remainingStickers} อัน</div>`;
+                }
+                if (bestResult.remainingCandies > 0) {
+                    resultText += `<div>• ขนม: ${bestResult.remainingCandies} อัน</div>`;
+                }
+                
+                resultText += `</div></div>`;
+                
+                document.getElementById('modalExchangeResult').innerHTML = resultText;
+                document.getElementById('confirmSmartExchange').disabled = false;
+            }
+            
+            document.getElementById('smartExchangeModal').classList.remove('hidden');
+        }
+
+        function openManualExchangeModal() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            updateManualExchangeDisplay();
+            document.getElementById('manualExchangeModal').classList.remove('hidden');
+        }
+
+        function openRewardExchangeModal() {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+            
+            loadRewards();
+            document.getElementById('modalCurrentPuzzles').textContent = currentData.puzzle;
+            document.getElementById('rewardExchangeModal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Manual Exchange Functions
+        function changeManualAmount(type, delta) {
+            const input = document.getElementById(type + 'Amount');
+            let newValue = parseInt(input.value) + delta;
+            
+            // Set minimum values and steps
+            if (type === 'candyToPuzzle') {
+                newValue = Math.max(3, newValue);
+                newValue = Math.ceil(newValue / 3) * 3; // Round to nearest 3
+            } else if (type === 'stickerToPuzzle') {
+                newValue = Math.max(8, newValue);
+                newValue = Math.ceil(newValue / 8) * 8; // Round to nearest 8
+            } else if (type === 'stickerToCandy') {
+                newValue = Math.max(3, newValue);
+                newValue = Math.ceil(newValue / 3) * 3; // Round to nearest 3
+            } else {
+                newValue = Math.max(1, newValue);
+            }
+            
+            input.value = newValue;
+            updateManualExchangeDisplay();
+        }
+
+        function updateManualExchangeDisplay() {
+            // Update candy to puzzle
+            const candyAmount = parseInt(document.getElementById('candyToPuzzleAmount').value);
+            document.getElementById('candyToPuzzleDisplay').textContent = candyAmount;
+            document.getElementById('candyToPuzzleResult').textContent = Math.floor(candyAmount / 3);
+            
+            // Update sticker to puzzle
+            const stickerAmount = parseInt(document.getElementById('stickerToPuzzleAmount').value);
+            document.getElementById('stickerToPuzzleDisplay').textContent = stickerAmount;
+            document.getElementById('stickerToPuzzleResult').textContent = Math.floor(stickerAmount / 8);
+            
+            // Update sticker to candy
+            const stickerToCandyAmount = parseInt(document.getElementById('stickerToCandyAmount').value);
+            document.getElementById('stickerToCandyDisplay').textContent = stickerToCandyAmount;
+            document.getElementById('stickerToCandyResult').textContent = Math.floor(stickerToCandyAmount / 3);
+            
+            // Update puzzle to candy
+            const puzzleToCandyAmount = parseInt(document.getElementById('puzzleToCandyAmount').value);
+            document.getElementById('puzzleToCandyDisplay').textContent = puzzleToCandyAmount;
+            document.getElementById('puzzleToCandyResult').textContent = puzzleToCandyAmount * 5;
+            
+            // Update puzzle to sticker
+            const puzzleToStickerAmount = parseInt(document.getElementById('puzzleToStickerAmount').value);
+            document.getElementById('puzzleToStickerDisplay').textContent = puzzleToStickerAmount;
+            document.getElementById('puzzleToStickerResult').textContent = puzzleToStickerAmount * 3;
+        }
+
+        async function executeManualExchange(type) {
+            if (!currentName) {
+                showMessage('กรุณาเลือกชื่อก่อน', 'error');
+                return;
+            }
+
+            const amount = parseInt(document.getElementById(type + 'Amount').value);
+            let exchangeData = {};
+
+            switch (type) {
+                case 'candyToPuzzle':
+                    if (currentData.candy < amount) {
+                        showMessage(`ขนมไม่เพียงพอ! ต้องการ ${amount} อัน มีอยู่ ${currentData.candy} อัน`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        candyUsed: amount,
+                        puzzleGained: Math.floor(amount / 3),
+                        description: `แลกขนม ${amount} อัน เป็นจิ๊กซอว์ ${Math.floor(amount / 3)} ชิ้น`
+                    };
+                    break;
+                    
+                case 'stickerToPuzzle':
+                    if (currentData.sticker < amount) {
+                        showMessage(`สติ๊กเกอร์ไม่เพียงพอ! ต้องการ ${amount} อัน มีอยู่ ${currentData.sticker} อัน`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        stickerUsed: amount,
+                        puzzleGained: Math.floor(amount / 8),
+                        description: `แลกสติ๊กเกอร์ ${amount} อัน เป็นจิ๊กซอว์ ${Math.floor(amount / 8)} ชิ้น`
+                    };
+                    break;
+                    
+                case 'stickerToCandy':
+                    if (currentData.sticker < amount) {
+                        showMessage(`สติ๊กเกอร์ไม่เพียงพอ! ต้องการ ${amount} อัน มีอยู่ ${currentData.sticker} อัน`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        stickerUsed: amount,
+                        candyGained: Math.floor(amount / 3),
+                        description: `แลกสติ๊กเกอร์ ${amount} อัน เป็นขนม ${Math.floor(amount / 3)} อัน`
+                    };
+                    break;
+                    
+                case 'puzzleToCandy':
+                    if (currentData.puzzle < amount) {
+                        showMessage(`จิ๊กซอว์ไม่เพียงพอ! ต้องการ ${amount} ชิ้น มีอยู่ ${currentData.puzzle} ชิ้น`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        puzzleUsed: amount,
+                        candyGained: amount * 5,
+                        description: `แลกจิ๊กซอว์ ${amount} ชิ้น เป็นขนม ${amount * 5} อัน`
+                    };
+                    break;
+                    
+                case 'puzzleToSticker':
+                    if (currentData.puzzle < amount) {
+                        showMessage(`จิ๊กซอว์ไม่เพียงพอ! ต้องการ ${amount} ชิ้น มีอยู่ ${currentData.puzzle} ชิ้น`, 'error');
+                        return;
+                    }
+                    exchangeData = {
+                        puzzleUsed: amount,
+                        stickerGained: amount * 3,
+                        description: `แลกจิ๊กซอว์ ${amount} ชิ้น เป็นสติ๊กเกอร์ ${amount * 3} อัน`
+                    };
+                    break;
+            }
+
+            const result = await Swal.fire({
+                title: '🔄 ยืนยันการแลกเปลี่ยน',
+                text: `ต้องการ${exchangeData.description}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '✅ ยืนยัน',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+
+            const uniqueId = generateUniqueId();
+
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'manualExchange');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('type', type);
+                formData.append('exchangeData', JSON.stringify(exchangeData));
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update local data
+                    if (exchangeData.candyUsed) currentData.candy -= exchangeData.candyUsed;
+                    if (exchangeData.stickerUsed) currentData.sticker -= exchangeData.stickerUsed;
+                    if (exchangeData.puzzleUsed) currentData.puzzle -= exchangeData.puzzleUsed;
+                    if (exchangeData.puzzleGained) currentData.puzzle += exchangeData.puzzleGained;
+                    if (exchangeData.candyGained) currentData.candy += exchangeData.candyGained;
+                    if (exchangeData.stickerGained) currentData.sticker += exchangeData.stickerGained;
+                    
+                    updateDisplay();
+                    updateManualExchangeDisplay();
+                    
+                    Swal.fire({
+                        title: '🎉 สำเร็จ!',
+                        text: exchangeData.description + ' เรียบร้อย!',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการแลก', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Reward Functions
+        let availableRewards = [];
+
+        function loadRewards() {
+            try {
+                const script = document.createElement('script');
+                const callbackName = 'loadRewardsCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    console.log('JSONP rewards response:', data);
+                    
+                    if (data && data.success && data.rewards) {
+                        availableRewards = data.rewards;
+                    }
+                    
+                    updateRewardSelect();
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+                
+                script.onerror = function() {
+                    console.error('JSONP script load failed for rewards');
+                    updateRewardSelect();
+                    
+                    // Cleanup
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                };
+                
+                script.src = `${GOOGLE_SCRIPT_URL}?action=getRewards&callback=${callbackName}&t=${Date.now()}`;
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                console.error('Load rewards error:', error);
+                updateRewardSelect();
+            }
+        }
+
+        function updateRewardSelect() {
+            const select = document.getElementById('rewardSelect');
+            select.innerHTML = '<option value="">เลือกของรางวัล...</option>';
+            
+            // Add default rewards
+            const defaultRewards = [
+                { name: 'จุ่ม Gacha pon', cost: 10 },
+                { name: 'โมเดลรถ', cost: 5 },
+                { name: 'ปากกา', cost: 10 }
+            ];
+            
+            defaultRewards.forEach(reward => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(reward);
+                option.textContent = `${reward.name} (${reward.cost} จิ๊กซอว์)`;
+                select.appendChild(option);
+            });
+            
+            // Add saved rewards
+            availableRewards.forEach(reward => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(reward);
+                option.textContent = `${reward.name} (${reward.cost} จิ๊กซอว์)`;
+                select.appendChild(option);
+            });
+            
+            // Add custom option
+            const customOption = document.createElement('option');
+            customOption.value = 'custom';
+            customOption.textContent = '+ เพิ่มของรางวัลใหม่';
+            select.appendChild(customOption);
+        }
+
+        function updateRewardSelection() {
+            const select = document.getElementById('rewardSelect');
+            const customForm = document.getElementById('customRewardForm');
+            const rewardDetails = document.getElementById('selectedRewardDetails');
+            
+            if (select.value === 'custom') {
+                customForm.classList.remove('hidden');
+                rewardDetails.classList.add('hidden');
+            } else if (select.value) {
+                const reward = JSON.parse(select.value);
+                document.getElementById('selectedRewardTitle').textContent = `${reward.name} (${reward.cost} จิ๊กซอว์ต่อชิ้น)`;
+                document.getElementById('rewardQuantity').value = 1;
+                updateRewardCost();
+                
+                customForm.classList.add('hidden');
+                rewardDetails.classList.remove('hidden');
+            } else {
+                customForm.classList.add('hidden');
+                rewardDetails.classList.add('hidden');
+            }
+        }
+
+        function changeRewardQuantity(delta) {
+            const input = document.getElementById('rewardQuantity');
+            const newValue = Math.max(1, parseInt(input.value) + delta);
+            input.value = newValue;
+            updateRewardCost();
+        }
+
+        function updateRewardCost() {
+            const select = document.getElementById('rewardSelect');
+            if (select && select.value && select.value !== 'custom') {
+                const reward = JSON.parse(select.value);
+                const quantityEl = document.getElementById('rewardQuantity');
+                const totalCostEl = document.getElementById('totalRewardCost');
+                const confirmBtn = document.getElementById('confirmRewardExchange');
+                
+                if (quantityEl && totalCostEl) {
+                    const quantity = parseInt(quantityEl.value);
+                    const totalCost = reward.cost * quantity;
+                    totalCostEl.textContent = totalCost;
+                    
+                    if (confirmBtn) {
+                        confirmBtn.disabled = currentData.puzzle < totalCost;
+                    }
+                }
+            }
+        }
+
+        async function addNewReward() {
+            const name = document.getElementById('newRewardName').value.trim();
+            const cost = parseInt(document.getElementById('newRewardCost').value);
+            
+            if (!name) {
+                showMessage('กรุณาใส่ชื่อของรางวัล', 'error');
+                return;
+            }
+            
+            if (cost < 1) {
+                showMessage('จำนวนจิ๊กซอว์ต้องมากกว่า 0', 'error');
+                return;
+            }
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'addReward');
+                formData.append('id', uniqueId);
+                formData.append('name', name);
+                formData.append('cost', cost);
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    availableRewards.push({ name, cost });
+                    updateRewardSelect();
+                    
+                    // Select the new reward
+                    const select = document.getElementById('rewardSelect');
+                    select.value = JSON.stringify({ name, cost });
+                    updateRewardSelection();
+                    
+                    // Clear form
+                    document.getElementById('newRewardName').value = '';
+                    document.getElementById('newRewardCost').value = '1';
+                    
+                    Swal.fire({
+                        title: '🎁 เพิ่มของรางวัลสำเร็จ!',
+                        text: `เพิ่มของรางวัล "${name}" เรียบร้อย!`,
+                        icon: 'success',
+                        confirmButtonColor: '#ea580c',
+                        confirmButtonText: '👍 เยี่ยม!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการเพิ่มของรางวัล', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function executeRewardExchange() {
+            const select = document.getElementById('rewardSelect');
+            if (!select.value || select.value === 'custom') {
+                showMessage('กรุณาเลือกของรางวัล', 'error');
+                return;
+            }
+            
+            const reward = JSON.parse(select.value);
+            const quantity = parseInt(document.getElementById('rewardQuantity').value);
+            const totalCost = reward.cost * quantity;
+            
+            if (currentData.puzzle < totalCost) {
+                showMessage(`จิ๊กซอว์ไม่เพียงพอ! ต้องการ ${totalCost} ชิ้น มีอยู่ ${currentData.puzzle} ชิ้น`, 'error');
+                return;
+            }
+            
+            const result = await Swal.fire({
+                title: '🎁 ยืนยันการแลกของรางวัล',
+                html: `<div class="text-left">
+                    <div class="text-lg font-semibold text-orange-600 mb-2">🎯 ${reward.name}</div>
+                    <div class="mb-2">👤 ผู้รับ: <span class="font-semibold">${currentName}</span></div>
+                    <div class="mb-2">📦 จำนวน: <span class="font-semibold">${quantity} ชิ้น</span></div>
+                    <div class="text-red-600 font-semibold">🧩 ใช้จิ๊กซอว์: ${totalCost} ชิ้น</div>
+                </div>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ea580c',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '✅ ยืนยันการแลก',
+                cancelButtonText: '❌ ยกเลิก',
+                customClass: {
+                    popup: 'rounded-xl',
+                    title: 'text-xl font-bold',
+                    htmlContainer: 'text-sm'
+                }
+            });
+
+            if (!result.isConfirmed) return;
+            
+            const uniqueId = generateUniqueId();
+            
+            try {
+                showLoading(true);
+                
+                const formData = new FormData();
+                formData.append('action', 'exchangeReward');
+                formData.append('id', uniqueId);
+                formData.append('name', currentName);
+                formData.append('rewardName', reward.name);
+                formData.append('amount', quantity);
+                formData.append('puzzleUsed', totalCost);
+                formData.append('date', new Date().toLocaleDateString('th-TH'));
+                formData.append('timestamp', new Date().toISOString());
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData.puzzle -= totalCost;
+                    updateDisplay();
+                    closeModal('rewardExchangeModal');
+                    
+                    Swal.fire({
+                        title: '🎁 แลกของรางวัลสำเร็จ!',
+                        html: `<div class="text-center">
+                            <div class="text-2xl mb-2">🎉</div>
+                            <div class="text-lg font-semibold text-orange-600">${reward.name}</div>
+                            <div class="text-sm text-gray-600 mt-2">แลกให้ ${currentName} เรียบร้อย!</div>
+                        </div>`,
+                        icon: 'success',
+                        confirmButtonColor: '#ea580c',
+                        confirmButtonText: '🎊 ยอดเยี่ยม!',
+                        customClass: {
+                            popup: 'rounded-xl',
+                            title: 'text-xl font-bold',
+                            htmlContainer: 'text-sm'
+                        }
+                    });
+                } else {
+                    showMessage('เกิดข้อผิดพลาดในการแลกของรางวัล', 'error');
+                }
+            } catch (error) {
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Initialize
+        loadData();
+        updateButtonStates();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9700287ff75e7323',t:'MTc1NTMzOTE5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
