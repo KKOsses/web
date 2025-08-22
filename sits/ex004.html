@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การ์ดใบงาน - พลิกการ์ด</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        
+        .card-flip {
+            perspective: 1000px;
+            width: 100%;
+            height: 400px;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .card-flip.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .task-item {
+            transition: all 0.3s ease;
+        }
+        
+        .task-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .jigsaw-piece {
+            display: inline-block;
+            margin: 2px;
+            font-size: 24px;
+            animation: bounce 0.5s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .celebration {
+            animation: celebrate 1s ease-in-out;
+        }
+        
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 p-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">🎯 การ์ดใบงานประจำวัน</h1>
+            <p class="text-white/80">คลิกที่การ์ดเพื่อพลิกดูงาน!</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card-flip" id="mainCard">
+            <div class="card-inner">
+                <!-- Front Side -->
+                <div class="card-front bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center cursor-pointer" onclick="flipCard()">
+                    <div class="text-center text-white">
+                        <div class="text-6xl mb-4">📋</div>
+                        <h2 class="text-3xl font-bold mb-2">ใบงานประจำวัน</h2>
+                        <p class="text-xl opacity-90">คลิกเพื่อดูรายการงาน</p>
+                        <div class="mt-4 text-sm opacity-75">
+                            <div class="animate-bounce">👆 คลิกที่นี่</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back Side -->
+                <div class="card-back bg-white p-6">
+                    <div class="h-full flex flex-col">
+                        <!-- Header -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-2xl font-bold text-gray-800">งานประจำวัน</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="resetAll()" class="text-red-500 hover:text-red-700 text-sm">
+                                        🔄 รีเซ็ตทั้งหมด
+                                    </button>
+                                    <button onclick="flipCard()" class="text-blue-500 hover:text-blue-700 text-sm">
+                                        🔄 พลิกกลับ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Task Display -->
+                        <div class="flex-1 flex flex-col items-center justify-center mb-6">
+                            <div class="text-center mb-8">
+                                <div class="text-6xl mb-4" id="currentTaskIcon">🎯</div>
+                                <h4 class="text-xl font-bold text-gray-800 mb-2">งานปัจจุบัน</h4>
+                                <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl border-2 border-blue-200 mb-4">
+                                    <div class="text-3xl mb-2" id="taskEmoji">🎲</div>
+                                    <div class="text-lg font-medium text-gray-800" id="currentTaskText">
+                                        กำลังสุ่มงาน...
+                                    </div>
+                                </div>
+                                
+                                <!-- Accuracy Display -->
+                                <div class="mb-4 p-3 bg-green-50 rounded-lg border-2 border-green-200" id="accuracyDisplay" style="display: none;">
+                                    <div class="text-sm font-medium text-green-700">
+                                        ความแม่นยำ: <span id="accuracyValue">100</span>%
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <button onclick="completeCurrentTask()" id="completeBtn" class="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors text-lg font-medium" style="display: none;">
+                                        ✅ เสร็จแล้ว
+                                    </button>
+                                    
+                                    <button onclick="randomTask()" id="nextTaskBtn" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all text-lg font-medium" style="display: none;">
+                                        🎲 งานถัดไป
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-1">งานที่ทำแล้ว</div>
+                                    <div class="text-xl font-bold text-blue-600" id="completedCount">0</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-1">จิ๊กซอว์สะสม</div>
+                                    <div class="text-xl font-bold text-green-600" id="totalJigsawCount">0</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-600 mb-1">เวลาที่เหลือ</div>
+                                    <div class="text-xl font-bold text-orange-600" id="timeRemaining">60:00</div>
+                                </div>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <div class="text-xs text-gray-500">ทำ 3, 6, 9 งาน = สติ๊กเกอร์ 10 ใบ!</div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                    <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-300" id="hourlyProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="text-xs text-purple-600 mt-1" id="nextMilestone">เป้าหมายถัดไป: 3 งาน</div>
+                            </div>
+                        </div>
+
+                        <!-- Reward Section -->
+                        <div class="space-y-3">
+                            <div class="bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-lg border-2 border-yellow-300">
+                                <div class="text-center">
+                                    <h4 class="font-bold text-gray-800 mb-2">🏆 รางวัลจิ๊กซอว์</h4>
+                                    <div id="rewardDisplay" class="text-2xl mb-2">
+                                        รอการทำงานให้เสร็จ...
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        • 100% = 5 จิ๊กซอว์ | • 90% = 4 จิ๊กซอว์<br>
+                                        • 80% = 3 จิ๊กซอว์ | • ต่ำกว่า 80% = 2 จิ๊กซอว์
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-pink-100 to-purple-100 p-4 rounded-lg border-2 border-pink-300" id="bonusRewardSection">
+                                <div class="text-center">
+                                    <h4 class="font-bold text-gray-800 mb-2">🎁 รางวัลสติ๊กเกอร์</h4>
+                                    <div id="bonusRewardDisplay" class="text-xl mb-2">
+                                        <div id="stickerCount">0</div>
+                                        <div class="text-sm">สติ๊กเกอร์ที่ได้รับ</div>
+                                    </div>
+                                    <div class="text-sm text-gray-600">
+                                        ทำงานครบ 3, 6, 9 งาน = +10 สติ๊กเกอร์
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Celebration Modal -->
+        <div id="celebrationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-2xl max-w-md mx-4 text-center celebration">
+                <div class="text-6xl mb-4">🎉</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">ยินดีด้วย!</h3>
+                <p class="text-gray-600 mb-6">คุณทำงานเสร็จครบทุกอย่างแล้ว!</p>
+                <div id="finalReward" class="text-3xl mb-6"></div>
+                <button onclick="closeCelebration()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all">
+                    เยี่ยมเลย! 🎊
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let completedTasks = 0;
+        let isFlipped = false;
+        let currentTask = null;
+        let startTime = Date.now();
+        let timeRemaining = 3600; // 60 minutes in seconds
+        let timerInterval = null;
+        let totalStickers = 0;
+        let totalJigsaws = 0;
+        let milestones = [3, 6, 9];
+        let currentMilestoneIndex = 0;
+        
+        const tasks = [
+            { id: 1, emoji: '🎨', text: 'ระบายสีเสร็จ 1 รูป', accuracy: 100 },
+            { id: 2, emoji: '🇹🇭', text: 'ฝึกพิมพ์อักษรไทย 30 ตัว', accuracy: 85 },
+            { id: 3, emoji: '🇺🇸', text: 'ฝึกพิมพ์อักษรภาษาอังกฤษ 20 ตัว', accuracy: 90 },
+            { id: 4, emoji: '📝', text: 'พิมพ์คำศัพท์ 5 คำ', accuracy: 95 }
+        ];
+
+        function flipCard() {
+            const card = document.getElementById('mainCard');
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+            
+            // เริ่มจับเวลาและสุ่มงานเมื่อพลิกการ์ดครั้งแรก
+            if (isFlipped && !timerInterval) {
+                startTimer();
+                setTimeout(() => {
+                    randomTask();
+                }, 500); // หน่วงเวลาเล็กน้อยเพื่อให้การ์ดพลิกเสร็จก่อน
+            }
+        }
+        
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimeDisplay();
+                updateProgress();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    checkBonusReward();
+                }
+            }, 1000);
+        }
+        
+        function updateTimeDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timeRemaining').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function updateProgress() {
+            const nextMilestone = milestones[currentMilestoneIndex] || 9;
+            const progress = (completedTasks / nextMilestone) * 100;
+            document.getElementById('hourlyProgress').style.width = Math.min(progress, 100) + '%';
+            
+            // อัปเดตข้อความเป้าหมายถัดไป
+            if (currentMilestoneIndex < milestones.length) {
+                document.getElementById('nextMilestone').textContent = 
+                    `เป้าหมายถัดไป: ${nextMilestone} งาน`;
+            } else {
+                document.getElementById('nextMilestone').textContent = 'เสร็จสิ้นเป้าหมายทั้งหมด!';
+            }
+        }
+
+        function randomTask() {
+            // สุ่มงานจากรายการ
+            const randomIndex = Math.floor(Math.random() * tasks.length);
+            currentTask = tasks[randomIndex];
+            
+            // อัปเดต UI
+            document.getElementById('taskEmoji').textContent = currentTask.emoji;
+            document.getElementById('currentTaskText').textContent = currentTask.text;
+            document.getElementById('accuracyValue').textContent = currentTask.accuracy;
+            
+            // แสดงความแม่นยำ
+            document.getElementById('accuracyDisplay').style.display = 'block';
+            
+            // แสดงปุ่มเสร็จแล้ว
+            document.getElementById('completeBtn').style.display = 'inline-block';
+            document.getElementById('nextTaskBtn').style.display = 'none';
+            
+            // เพิ่มเอฟเฟกต์
+            document.getElementById('taskEmoji').style.animation = 'bounce 0.5s ease-in-out';
+            setTimeout(() => {
+                document.getElementById('taskEmoji').style.animation = '';
+            }, 500);
+        }
+
+        function completeCurrentTask() {
+            if (!currentTask) return;
+            
+            completedTasks++;
+            document.getElementById('completedCount').textContent = completedTasks;
+            
+            // คำนวณรางวัล
+            const jigsawCount = calculateJigsawReward(currentTask.accuracy);
+            
+            // แสดงรางวัล
+            displayTaskReward(jigsawCount);
+            
+            // อัปเดตความคืบหน้า
+            updateProgress();
+            
+            // ตรวจสอบรางวัลสติ๊กเกอร์
+            checkStickerReward();
+            
+            // เปลี่ยนปุ่ม
+            document.getElementById('completeBtn').style.display = 'none';
+            document.getElementById('nextTaskBtn').style.display = 'inline-block';
+        }
+        
+        function checkStickerReward() {
+            // ตรวจสอบว่าถึงเป้าหมายหรือไม่
+            if (currentMilestoneIndex < milestones.length && 
+                completedTasks === milestones[currentMilestoneIndex]) {
+                
+                // ได้รับสติ๊กเกอร์ 10 ใบ
+                totalStickers += 10;
+                updateStickerDisplay();
+                showStickerCelebration(milestones[currentMilestoneIndex]);
+                
+                // ไปเป้าหมายถัดไป
+                currentMilestoneIndex++;
+            }
+        }
+        
+        function updateStickerDisplay() {
+            document.getElementById('stickerCount').textContent = totalStickers;
+        }
+        
+        function showStickerCelebration(milestone) {
+            // สร้าง modal สำหรับรางวัลสติ๊กเกอร์
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white p-8 rounded-2xl max-w-md mx-4 text-center celebration">
+                    <div class="text-6xl mb-4">🎊</div>
+                    <h3 class="text-2xl font-bold text-purple-600 mb-4">รางวัลสติ๊กเกอร์!</h3>
+                    <p class="text-gray-600 mb-4">คุณทำงานเสร็จครบ ${milestone} งานแล้ว!</p>
+                    <div class="text-4xl mb-4">⭐⭐⭐⭐⭐<br>⭐⭐⭐⭐⭐</div>
+                    <div class="text-xl font-bold text-purple-600 mb-6">ได้รับสติ๊กเกอร์ 10 ใบ!</div>
+                    <div class="text-lg text-gray-600 mb-4">รวมทั้งหมด: ${totalStickers} สติ๊กเกอร์</div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all">
+                        เยี่ยมมาก! 🌟
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function calculateJigsawReward(accuracy) {
+            if (accuracy >= 100) return 5;
+            if (accuracy >= 90) return 4;
+            if (accuracy >= 80) return 3;
+            return 2;
+        }
+
+        function displayTaskReward(count) {
+            let jigsawPieces = '';
+            for (let i = 0; i < count; i++) {
+                jigsawPieces += '🧩';
+            }
+            
+            // เพิ่มจิ๊กซอว์สะสม
+            totalJigsaws += count;
+            document.getElementById('totalJigsawCount').textContent = totalJigsaws;
+            
+            // อัปเดตส่วนแสดงรางวัล
+            document.getElementById('rewardDisplay').innerHTML = 
+                `<div class="celebration">${jigsawPieces}<br><span class="text-lg font-bold text-green-600">ได้รับ ${count} จิ๊กซอว์!</span><br><span class="text-sm text-gray-600">รวม: ${totalJigsaws} จิ๊กซอว์</span></div>`;
+        }
+
+        function resetForNextTask() {
+            // รีเซ็ต UI
+            document.getElementById('taskEmoji').textContent = '🎲';
+            document.getElementById('currentTaskText').textContent = 'กดปุ่ม "งานถัดไป" เพื่อสุ่มงานใหม่';
+            document.getElementById('accuracyDisplay').style.display = 'none';
+            
+            currentTask = null;
+        }
+
+        function showCelebration() {
+            document.getElementById('celebrationModal').classList.remove('hidden');
+            document.getElementById('celebrationModal').classList.add('flex');
+        }
+
+        function closeCelebration() {
+            document.getElementById('celebrationModal').classList.add('hidden');
+            document.getElementById('celebrationModal').classList.remove('flex');
+        }
+
+        function resetAll() {
+            // รีเซ็ตตัวแปรทั้งหมด
+            completedTasks = 0;
+            totalStickers = 0;
+            totalJigsaws = 0;
+            currentMilestoneIndex = 0;
+            currentTask = null;
+            timeRemaining = 3600;
+            
+            // หยุดจับเวลา
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // รีเซ็ต UI
+            document.getElementById('completedCount').textContent = '0';
+            document.getElementById('stickerCount').textContent = '0';
+            document.getElementById('totalJigsawCount').textContent = '0';
+            document.getElementById('timeRemaining').textContent = '60:00';
+            document.getElementById('taskEmoji').textContent = '🎲';
+            document.getElementById('currentTaskText').textContent = 'กำลังสุ่มงาน...';
+            document.getElementById('accuracyDisplay').style.display = 'none';
+            document.getElementById('rewardDisplay').innerHTML = 'รอการทำงานให้เสร็จ...';
+            document.getElementById('hourlyProgress').style.width = '0%';
+            document.getElementById('nextMilestone').textContent = 'เป้าหมายถัดไป: 3 งาน';
+            
+            // รีเซ็ตปุ่ม
+            document.getElementById('completeBtn').style.display = 'none';
+            document.getElementById('nextTaskBtn').style.display = 'none';
+            
+            // ปิด modal ที่เปิดอยู่
+            const modals = document.querySelectorAll('.fixed.inset-0');
+            modals.forEach(modal => {
+                if (modal.id !== 'celebrationModal') {
+                    modal.remove();
+                }
+            });
+            
+            // เริ่มใหม่ทันที
+            startTimer();
+            setTimeout(() => {
+                randomTask();
+            }, 500);
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97334588d644ce3f',t:'MTc1NTg3NTE2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
