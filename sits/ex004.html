@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>การ์ดใบงาน - พลิกการ์ด</title>
+    <title>การ์ดใบงานสำหรับเด็กเล็ก</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
@@ -146,6 +146,10 @@
                                 </div>
                                 
                                 <div class="space-y-3">
+                                    <button onclick="openPracticeLink()" id="practiceBtn" class="bg-blue-500 text-white px-8 py-3 rounded-lg hover:bg-blue-600 transition-colors text-lg font-medium" style="display: none;">
+                                        🔗 เปิดหน้าฝึกพิมพ์
+                                    </button>
+                                    
                                     <button onclick="completeCurrentTask()" id="completeBtn" class="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors text-lg font-medium" style="display: none;">
                                         ✅ เสร็จแล้ว
                                     </button>
@@ -309,7 +313,16 @@
             // แสดงความแม่นยำ
             document.getElementById('accuracyDisplay').style.display = 'block';
             
-            // แสดงปุ่มเสร็จแล้ว
+            // ตรวจสอบว่าเป็นงานฝึกพิมพ์หรือไม่
+            const isTypingTask = currentTask.text.includes('ฝึกพิมพ์');
+            
+            // แสดงปุ่มตามประเภทงาน
+            if (isTypingTask) {
+                document.getElementById('practiceBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('practiceBtn').style.display = 'none';
+            }
+            
             document.getElementById('completeBtn').style.display = 'inline-block';
             document.getElementById('nextTaskBtn').style.display = 'none';
             
@@ -318,6 +331,23 @@
             setTimeout(() => {
                 document.getElementById('taskEmoji').style.animation = '';
             }, 500);
+        }
+        
+        function openPracticeLink() {
+            if (!currentTask) return;
+            
+            let url = '';
+            
+            // ตรวจสอบประเภทงานฝึกพิมพ์
+            if (currentTask.text.includes('คำศัพท์')) {
+                url = 'https://kkosses.github.io/web/sits/ex002.html';
+            } else if (currentTask.text.includes('อักษรไทย') || currentTask.text.includes('อักษรภาษาอังกฤษ')) {
+                url = 'https://kkosses.github.io/web/sits/ex003.html';
+            }
+            
+            if (url) {
+                window.open(url, '_blank');
+            }
         }
 
         function completeCurrentTask() {
@@ -451,6 +481,7 @@
             document.getElementById('nextMilestone').textContent = 'เป้าหมายถัดไป: 3 งาน';
             
             // รีเซ็ตปุ่ม
+            document.getElementById('practiceBtn').style.display = 'none';
             document.getElementById('completeBtn').style.display = 'none';
             document.getElementById('nextTaskBtn').style.display = 'none';
             
@@ -469,5 +500,5 @@
             }, 500);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97334588d644ce3f',t:'MTc1NTg3NTE2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9733513bf6f4445e',t:'MTc1NTg3NTY0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
